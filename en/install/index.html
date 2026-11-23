@@ -1305,6 +1305,7 @@ python<span class="w"> </span>scripts/install.py
 <ul>
 <li><code>~/.codex/skills/comfyui-apng-motion</code></li>
 <li><code>~/.config/magpie/library/skills/comfyui-apng-motion</code> (when the parent exists)</li>
+<li><code>~/.claude/skills/comfyui-apng-motion</code> (when <code>~/.claude/skills</code> exists)</li>
 </ul>
 <p>Custom location:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/install.py<span class="w"> </span>--dest<span class="w"> </span>/path/to/skills/comfyui-apng-motion
@@ -1324,7 +1325,7 @@ python<span class="w"> </span>scripts/install.py
 </tr>
 <tr>
 <td>Claude Code</td>
-<td><code>~/.claude/skills/comfyui-apng-motion</code> (or <code>.claude/skills/</code> inside a project; not exercised in this repo's CI)</td>
+<td><code>~/.claude/skills/comfyui-apng-motion</code> (installed automatically when present; or <code>.claude/skills/</code> inside a project; not exercised in this repo's CI)</td>
 </tr>
 <tr>
 <td>Anything else</td>
