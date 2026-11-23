@@ -1,6 +1,6 @@
 site_name: comfyui-apng-motion
 site_url: https://Gg22333.github.io/comfyui-apng-motion/
-site_description: 24-frame coherent APNG/WebP/GIF for ComfyUI
+site_description: Coherent 8–60 frame APNG/WebP/GIF for ComfyUI
 docs_dir: docs
 theme:
   name: material
@@ -18,6 +18,7 @@ nav:
   - 首页: index.md
   - 安装: install.md
   - 用法: usage.md
+  - 动作库: motion-presets.md
   - 成品落盘: output.md
   - 方案对比: synthesis-comparison.md
   - 格式对比: formats.md
@@ -29,6 +30,7 @@ nav:
       - Home: en/index.md
       - Install: en/install.md
       - Usage: en/usage.md
+      - Motion library: en/motion-presets.md
       - Output layout: en/output.md
       - Approach comparison: en/synthesis-comparison.md
       - Formats: en/formats.md

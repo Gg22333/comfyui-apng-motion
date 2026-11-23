@@ -23,7 +23,7 @@
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| 24 frames become 19 | Identical ratios; Pillow merges them | See the curve section in `architecture.md` |
+| N frames become fewer (24 → 19) | Identical ratios; Pillow merges them | See the curve section in `architecture.md` |
 | Only one static PNG | `images` has one entry | `ImageBatchMulti` needs `inputcount=24` and all 24 inputs wired |
 | Artifact lands in `output/APNG/` root | Stale prefix | Confirm all three prefixes, **press F5**, rerun |
 | APNG/WebP but no GIF | VHS missing | Install `ComfyUI-VideoHelperSuite` and restart |

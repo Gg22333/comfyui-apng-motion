@@ -1,25 +1,21 @@
 {
-  "name": "anim24-preview",
+  "name": "anim60-moss",
   "beats": 4,
-  "segs": [
-    7,
-    6,
-    6,
-    5
-  ],
-  "fps": 10,
-  "denoise": 0.35,
+  "frames": 60,
+  "segs": [15, 15, 15, 15],
+  "fps": 30,
+  "denoise": 0.5,
   "seed_mode": "same",
-  "prefix": "APNG/final",
-  "lock": "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform",
-  "style": "anime screencap, clean lineart, flat cel shading",
-  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views, deformed face, cropped face",
+  "prefix": "APNG/preview-moss60",
+  "lock": "masterpiece, best quality, 1girl, solo, upper body, portrait, yellow raincoat, hood up, short black hair, rain, night city bokeh background, neon reflections, cinematic lighting",
+  "style": "anime screencap, clean lineart, flat cel shading, consistent character design",
+  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, photo, photorealistic, 3d render, collage, grid, multiple girls, different outfit, camera move, zoom, cropped head, color banding, color shift, empty face, no eyes, no mouth",
   "actions": [
-    "neutral expression, mouth closed, eyes looking at viewer",
-    "surprised, eyes wide open, eyebrows raised, mouth open, head tilted back slightly",
-    "laughing, eyes closed happily, mouth open wide, blush, head tilted back",
-    "deadpan, eyes half lidded, mouth closed, looking away"
+    "sad expression, eyes lowered, mouth closed",
+    "surprised, eyes wide open, mouth slightly open, rain on her face",
+    "eyes closed, gentle smile",
+    "happy, soft smile, blush, eyes half closed"
   ],
-  "motion": "consistent face shape, stable eye shape, stable lineart, no color shift",
+  "motion": "same camera, same framing, stable lighting, anime screencap, clean lineart",
   "curve": "linear"
 }

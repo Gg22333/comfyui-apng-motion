@@ -6,8 +6,8 @@
 **Why not generate every frame like a video?**
 Frame-by-frame img2img needs 24 samples and accumulates drift (black hair turning cyan). Interpolation needs 3–5 samples; in-between frames come from a mathematical transition.
 
-**Why 24 frames?**
-2.4 s at 10 fps, enough for "start → turn → settle". Below 16 frames looks like a slideshow; above 32 the returns diminish.
+**Why 24 frames by default?**
+24 frames at 10 fps is 2.4 s, enough for "start → turn → settle". Frame count is a budget, not a spec: 8 for a flipbook, 12 for small motion, 24 as the default sweet spot, 30 for five-beat stories, 60 for smooth web/Discord previews. Change it with `--frames`.
 
 **Why 10 fps by default?**
 GIF delay is in 1/100 s; 10 fps = 10cs exactly. 12 fps becomes 8cs (12.5 fps).
@@ -19,7 +19,7 @@ Raise keyframe `denoise` (xl 0.4 → 0.45, Moss 0.5 → 0.55) or increase the di
 No. This route has no real trajectory. Walking and turning need a ControlNet pose sequence or a video model (Wan / LTX).
 
 **Does it support Flux / SD1.5 / other models?**
-Yes. `emit_workflow.py` only cares about structure (one denoise=1 KSampler + ≥2 keyframes + 24 interpolations + 24 decodes + a 24-way merge + 3 outputs); swap the model names.
+Yes. `emit_workflow.py` only cares about structure (one denoise=1 KSampler + ≥2 keyframes + N interpolations + N decodes + an N-way merge + 3 outputs); swap the model names.
 
 **Is a GPU required?**
 For rendering, yes. `detect_env` / `doctor` / `emit_workflow` / `check_anim` / `check_output` are CPU-side tools.

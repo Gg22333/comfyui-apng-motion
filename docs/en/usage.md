@@ -8,6 +8,7 @@ One JSON file describes the whole performance; `emit_workflow.py` compiles it in
 {
   "name": "anim24-4beat",
   "beats": 4,
+  "frames": 24,
   "segs": [6, 7, 6, 5],
   "fps": 10,
   "denoise": 0.4,
@@ -23,7 +24,32 @@ One JSON file describes the whole performance; `emit_workflow.py` compiles it in
 }
 ```
 
-Compile rule: `keyframe_i = lock + style + actions[i]`, fixed order, only the action changes.
+Compile rule: `keyframe_i = lock + actions[i] + style`, fixed order, only the action changes.
+
+`style` last is deliberate: Moss's LLM text encoder weights the tail tokens most, so
+`anime screencap, clean lineart, flat cel shading` placed mid-prompt gets buried by the action words
+and the render falls back to photographic mode (visible as collage frames and colour blotches).
+
+## Choosing a frame count
+
+Frame count is a parameter, not a second workflow. `--frames` (or `"frames"` in the story card) resizes
+`LatentInterpolate` / `VAEDecode` / `ImageBatchMulti` to N.
+
+| Frames | fps | Duration | Best for | 4-beat segs |
+| --- | --- | --- | --- | --- |
+| 8 | 8 | 1.0 s | avatar twitch, chat reaction | `2,2,2,2` |
+| 12 | 12 | 1.0 s | light sticker | `3,3,3,3` |
+| 24 | 12 | 2.0 s | default; expression loop | `6,7,6,5` |
+| 30 | 15 | 2.0 s | five-beat story, half-body action | `8,8,7,7` |
+| 60 | 30 | 2.0 s | smooth web/Discord preview, five-beat story | `15,15,15,15` |
+
+`--segs` must sum to `frames`; omit it and the frames are split evenly across beats (remainder to the
+first beats). At 24 frames the classic presets stay: 3 beats 8/8/8, 4 beats 6/7/6/5, 5 beats 5/6/5/4/4.
+
+```bash
+python scripts/emit_workflow.py --base assets/workflow-moss.json --story assets/story.preview.json \
+  --frames 60 --segs 15,15,15,15 --fps 30 --out my-60f.json
+```
 
 ## Generate a workflow
 
@@ -31,8 +57,8 @@ Compile rule: `keyframe_i = lock + style + actions[i]`, fixed order, only the ac
 python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
 ```
 
-| Beats | Segment split | Node count (xl) |
-| --- | --- | --- |
+| Beats | Segment split (24 frames) | Nodes (xl) | Nodes (moss) |
+| --- | --- | --- | --- |
 | 3 | 8/8/8 | 66 | 68 |
 | 4 | 6/7/6/5 | 69 | 71 |
 | 5 | 5/6/5/4/4 | 72 | 74 |
@@ -55,8 +81,8 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json   --beats 4 --s
 | Whole clip | `CLIPTextEncode` "global motion" | action, camera, lighting, style; one edit affects every keyframe |
 | Per keyframe | `CLIPTextEncode` "K0 / K1 / ..." | expression, pose, gaze |
 | Per keyframe sampling | each `KSampler` | seed, steps, cfg, sampler, scheduler, denoise |
-| Pacing | 24 x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
-| Speed | three save nodes `fps` | same value in all three (10 fps x 24 = 2.4 s) |
+| Pacing | N x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
+| Speed | three save nodes `fps` | same value in all three; `fps x frames` = duration (24 @ 12 fps = 2 s) |
 | Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` |
 | Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | size and playback |
 
@@ -97,7 +123,8 @@ clothes and background, and latent interpolation turns that into colour blotches
 python scripts/emit_workflow.py --validate my.json
 ```
 
-Checks: link integrity, 24 interpolations / 24 decodes, unique ratios within one latent pair, three outputs on the same source, keyframes sharing one latent, no `SaveImage`.
+Checks: link integrity, interpolation count = decode count = `ImageBatchMulti` links, unique ratios
+within one latent pair, three outputs on the same source, keyframes sharing one latent, no `SaveImage`.
 
 ## Run
 
@@ -114,10 +141,12 @@ It submits the API prompt, polls, prints the artifact paths and runs `check_anim
 ## Inspect the artifacts
 
 ```bash
-python scripts/check_anim.py output/APNG/final/apng/anim24_00001_.png --expect 24
+python scripts/check_anim.py output/APNG/final/apng/anim60_00001_.png --expect 60
 ```
 
-Watch four values: `frames=24`, `loop=0`, `identical_pairs=0`, `color_drift` no higher than 6.
+Watch four values: `frames=N` (matching `--frames`), `loop=0`, `identical_pairs=0`, and `color_drift`.
+Moss at denoise 0.5 measures around 18 and still looks fine; SDXL at 0.35 measures about 2.6. Above 20
+means the keyframe redraw is changing too much.
 
 ## Where files land
 

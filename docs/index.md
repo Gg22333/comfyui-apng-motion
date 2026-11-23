@@ -1,12 +1,13 @@
 # comfyui-apng-motion
 
-ComfyUI 里做 **24 帧连贯 APNG / WebP / GIF** 的 skill 与工具箱。
+ComfyUI 里做 **连贯 APNG / WebP / GIF** 的 skill 与工具箱，帧数 8 / 12 / 24 / 30 / 60 可选。
 
 [English](en/index.md) · **简体中文**
 
 ![preview](assets/preview.webp)
 
-> 网页主预览用 WebP（真彩、体积约为 GIF 的 1/5）；`preview.gif` 保留给聊天工具。
+> 预览：60 帧 / 30fps / Moss-DiT，配方是 `assets/story.preview.json`。
+> 网页主预览用 WebP q100（真彩、保住 60 帧；libwebp 在 q90 会把近重复帧并成 58 帧）；`preview.gif` 保留给聊天工具。
 > GIF 用全局固定调色板 + 关抖动重编码，避免 256 色量化造成的色块闪动。细节见[格式对比](formats.md#46-网页预览为什么最终用-webp)。
 
 ## 它解决什么
@@ -17,7 +18,7 @@ ComfyUI 里做 **24 帧连贯 APNG / WebP / GIF** 的 skill 与工具箱。
 | 逐帧继承上一帧 | 动作顺了，但发色/瞳色会累积漂移 |
 | 每帧都存图 | 输出目录被几百张 PNG 塞满 |
 
-本项目的做法：**首帧一次采样 → 关键帧全部从同一份首帧 latent 重绘 → 24 个 latent 插值 → 24 次解码 → 合并 → 三个成品文件。**
+本项目的做法：**首帧一次采样 → 关键帧全部从同一份首帧 latent 重绘 → N 个 latent 插值 → N 次解码 → 合并 → 三个成品文件。**
 
 ## 三步
 
@@ -30,7 +31,8 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 ## 进一步
 
 - [安装](install.md)
-- [用法](usage.md)
+- [用法](usage.md)（含 [帧数怎么选](usage.md)）
+- [动作库：16 组表情包动作](motion-presets.md)
 - [成品落盘](output.md)
 - [方案对比：APNG / GIF / Live2D / 视频](synthesis-comparison.md)
 - [APNG、GIF 与视频转 GIF](formats.md)
@@ -38,4 +40,5 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 - [排错](troubleshooting.md)
 - [FAQ](faq.md)
 - [发布](publishing.md)
+
 

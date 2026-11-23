@@ -7,8 +7,9 @@
 [![License: MIT](https://img.shields.io/github/license/Gg22333/comfyui-apng-motion)](LICENSE)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.9-blue)](pyproject.toml)
 
-在 ComfyUI 里用「3–5 个关键帧 + latent 插值」做 **24 帧连贯 APNG / WebP / GIF**。
-不靠 `batch_size` 堆帧，不逐帧落盘，一次 Queue 出三个成品文件。
+在 ComfyUI 里用「3–5 个关键帧 + latent 插值」做 **连贯 APNG / WebP / GIF**。
+帧数可选 **8 / 12 / 24 / 30 / 60**，同一个工作流改参数即可；不靠 `batch_size` 堆帧，不逐帧落盘，
+一次 Queue 出三个成品文件。
 
 ![预览](docs/assets/preview.webp)
 
@@ -18,6 +19,8 @@
 
 - [一眼看懂](#一眼看懂)
 - [模型支持](#模型支持)
+- [帧数怎么选](#帧数怎么选)
+- [动作库](#动作库)
 - [可调参数](#可调参数)
 - [为什么不用 batch_size](#为什么不用-batch_size)
 - [为什么省算力](#为什么省算力)
@@ -39,8 +42,8 @@
 | | |
 | --- | --- |
 | **输入** | 3–5 个关键帧提示词，写成一张「剧情卡」（主体锁定 + 画风锁定 + 每拍动作） |
-| **引擎** | ComfyUI + `LatentInterpolate` ×24 + `ImageBatchMulti` |
-| **输出** | APNG、WebP、GIF 各一个文件，24 帧，无限循环 |
+| **引擎** | ComfyUI + `LatentInterpolate` ×N + `ImageBatchMulti(N)` |
+| **输出** | APNG、WebP、GIF 各一个文件；8 / 12 / 24 / 30 / 60 帧；无限循环 |
 | **模型** | 不限：SDXL checkpoint 或 Moss/DiT 三件套都可以（只认结构不认模型名） |
 | **脚本** | 纯标准库 + Pillow，工具链不需要 GPU |
 | **平台** | Windows / macOS / Linux，路径全部来自 `profiles/*.json` |
@@ -48,20 +51,54 @@
 ## 模型支持
 
 工作流的结构契约与模型无关：**1 个 `denoise=1.0` 的 KSampler + 2–4 个关键帧 KSampler +
-24 个 `LatentInterpolate` + 24 个 `VAEDecode` + `ImageBatchMulti(24)` + 3 个保存节点**。
-换模型只换加载器，不动结构。
+N 个 `LatentInterpolate` + N 个 `VAEDecode` + `ImageBatchMulti(N)` + 3 个保存节点**，N 就是帧数
+（`--frames`，8–60）。换模型只换加载器，不动结构；`emit_workflow.py` 会自动把插值 / 解码 / 合批
+三件套扩缩到 N。
 
 | 模型族 | 加载器 | 关键帧 denoise | 说明 |
 | --- | --- | --- | --- |
 | SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 | 原生 512×512 |
 | SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 | 原生 1024×1024，512 也能跑 |
 | FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 | 采样器前加 `FluxGuidance` |
-| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.55 | 8 步 DMD，cfg 1.0 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.70 | 8 步 DMD，cfg 1.0；0.5 几乎不动，0.7 有可见头部动作，>0.8 开始漂 |
 | 任意微调模型 | 跟随其基座 | 先 0.35 | 越低越稳，越高越自由 |
 
 denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳定上限约 0.35**：
 超过 0.42 后关键帧重绘会开始改衣服和背景，latent 插值再把两套纹理混成色斑。
 要更大表情就提 denoise 并接受漂移，或者只对面部做局部重绘。
+
+## 帧数怎么选
+
+帧数是参数，不是另一套方法。`--frames 8|12|24|30|60`（或剧情卡里的 `"frames"`）会把
+`LatentInterpolate` / `VAEDecode` / `ImageBatchMulti` 重建成 N 个；`--segs` 决定 N 怎么分到每一拍，
+不给就平均分。
+
+| 帧数 | fps | 时长 | 适合 | 4 拍 segs 示例 |
+| --- | --- | --- | --- | --- |
+| 8 | 8 | 1.0 s | 头像微动、聊天气泡 | `2,2,2,2` |
+| 12 | 12 | 1.0 s | 轻量贴纸 | `3,3,3,3` |
+| 24 | 12 | 2.0 s | 默认；表情循环 | `6,7,6,5` |
+| 30 | 15 | 2.0 s | 五拍故事、半身动作 | `8,8,7,7` |
+| 60 | 30 | 2.0 s | 网页/Discord 顺滑预览、五拍故事 | `15,15,15,15` |
+
+不管选哪一行，采样次数都还是 K 次（每个关键帧一次），只有解码次数和文件体积随 N 线性增长。
+同内容下 60 帧 APNG 约为 24 帧的 2.5 倍；画面细节越多单帧越大，实测雨夜 60 帧 APNG 为 17 MB。见 [docs/formats.md](docs/formats.md)。
+本页顶部的预览就是 **60 帧 / 30fps / Moss-DiT**，配方在 `assets/story.preview.json`。
+
+## 动作库
+
+`assets/motion-presets.json` 带 16 组可直接用的动作节拍：9 组情绪（大笑 / 大哭 / 震惊 / 生气 / 得意 / 无语 / 慌张 / 困 / 比心）、
+5 组动作（打招呼 / 点头 / 摇头 / 点赞 / 思考）、2 组五拍小故事（雨天出门 / 早八续命）。
+`scripts/make_story.py` 把它们和你的角色锁定句拼成剧情卡，再交给 `emit_workflow.py`：
+
+```bash
+python scripts/make_story.py --list
+python scripts/make_story.py --preset laugh --lock "masterpiece, 1girl, silver hair, blue eyes" --out story.laugh.json
+python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --frames 60 --fps 30 --out story.rain.json
+```
+
+动作语法、平台规格（Telegram 512/≤3 秒/60fps、LINE APNG 5–20 帧/≤4 秒/≤1 MB、微信 GIF 240²/≤500 KB）
+与七个常见翻车点见 [docs/motion-presets.md](docs/motion-presets.md)。
 
 ## 可调参数
 
@@ -72,8 +109,8 @@ denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳�
 | 全片 | `CLIPTextEncode`「全局动作指导」 | 动作、镜头、光照、风格；改一处，所有关键帧生效 |
 | 每帧 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线 |
 | 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
-| 节奏 | 24 个 `LatentInterpolate` 的 ratio | 缓动曲线；`linear` 最均匀 |
-| 速度 | 三个保存节点的 `fps` | 三处必须一致（10fps × 24 帧 = 2.4 秒） |
+| 节奏 | N 个 `LatentInterpolate` 的 ratio | 缓动曲线；`linear` 最均匀 |
+| 速度 | 三个保存节点的 `fps` | 三处必须一致；`fps × 帧数` = 时长（24 帧 @12fps = 2.0 秒） |
 | 命名 | `filename_prefix` | `apng/`、`webp/`、`gif/` 子目录 |
 | 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放行为 |
 
@@ -89,7 +126,7 @@ denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳�
    ├─ 关键帧 A（从首帧 latent 重绘，denoise 0.4/0.5）
    ├─ 关键帧 B …（同一份 latent）
    └─ 关键帧 C …（可选，做 4–5 拍）
-24 × LatentInterpolate → 24 × VAEDecode → ImageBatchMulti(24)
+N × LatentInterpolate → N × VAEDecode → ImageBatchMulti(N)
    ├─ SaveAnimatedPNG
    ├─ SaveAnimatedWEBP
    └─ VHS_VideoCombine（GIF）
@@ -97,16 +134,17 @@ denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳�
 
 ## 为什么省算力
 
-24 帧一次只花 **K 次采样，不是 24 次**：
+一次只花 **K 次采样，不是 N 次**——帧数怎么改都不影响这一条：
 
-| 路线 | 采样次数（steps=20） | 相对 24 帧逐帧 |
-| --- | --- | --- |
-| 3 拍 | 3 × 20 = 60 | 少 87.5% |
-| 4 拍 | 4 × 20 = 80 | 少 83.3% |
-| 5 拍 | 5 × 20 = 100 | 少 79.2% |
-| 逐帧 | 24 × 20 = 480 | 基准 |
+| 拍数 | 采样次数（steps=20） | 相对 24 帧逐帧（480 次） | 相对 60 帧逐帧（1200 次） |
+| --- | --- | --- | --- |
+| 3 拍 | 3 × 20 = 60 | 少 87.5% | 少 95.0% |
+| 4 拍 | 4 × 20 = 80 | 少 83.3% | 少 93.3% |
+| 5 拍 | 5 × 20 = 100 | 少 79.2% | 少 91.7% |
 
-解码仍然是 24 次，但插值只是 24 次 `64×64×4` latent 线性混合，不调用模型，占用是几十 MB 级缓冲而不是几 GB。代价是没有真实运动轨迹；换来的是采样成本降到零头、成品到处能播。
+所以从 24 帧加到 60 帧，**采样成本一点没涨**；随 N 增长的只有 VAE 解码次数和文件体积。
+
+解码仍然是 N 次，但插值只是 N 次 `64×64×4` latent 线性混合，不调用模型，占用是几十 MB 级缓冲而不是几 GB。代价是没有真实运动轨迹；换来的是采样成本降到零头、成品到处能播。
 
 和 Live2D / Spine、视频生成、序列帧、Lottie 的完整对比：[docs/synthesis-comparison.md](docs/synthesis-comparison.md)。
 
@@ -158,8 +196,8 @@ pip install -r requirements.txt
 ```
 SKILL.md              完整方法（原理 / 剧情卡 / 多角色 / 排错 / 移植）
 skill.json            版本、依赖、入口、安装目标
-scripts/              探测、体检、生成工作流、校验成品、检查落盘、曲线、安装、打包
-assets/               3 拍 / 4 拍工作流模板（SDXL + Moss）、剧情卡、节点定义兜底
+scripts/              探测、体检、生成工作流、动作库→剧情卡、校验成品、曲线、安装、打包
+assets/               工作流模板（SDXL + Moss）、16 组动作库、剧情卡、节点定义兜底
 docs/                 中文文档；英文在 docs/en/
 tests/                离线单测（不联网、不用 GPU）
 profiles/             每台机器生成（已 gitignore）
@@ -183,6 +221,7 @@ dist/                 打包产物（已 gitignore）
 | 总览 | [docs/index.md](docs/index.md) | [docs/en/index.md](docs/en/index.md) |
 | 安装 | [docs/install.md](docs/install.md) | [docs/en/install.md](docs/en/install.md) |
 | 用法 | [docs/usage.md](docs/usage.md) | [docs/en/usage.md](docs/en/usage.md) |
+| 动作库（16 组） | [docs/motion-presets.md](docs/motion-presets.md) | [docs/en/motion-presets.md](docs/en/motion-presets.md) |
 | 成品落盘 | [docs/output.md](docs/output.md) | [docs/en/output.md](docs/en/output.md) |
 | 方案对比 | [docs/synthesis-comparison.md](docs/synthesis-comparison.md) | [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md) |
 | 格式对比 | [docs/formats.md](docs/formats.md) | [docs/en/formats.md](docs/en/formats.md) |
@@ -208,6 +247,8 @@ dist/                 打包产物（已 gitignore）
 2. 三个节点各用各的前缀：`APNG/final/apng|webp|gif/anim24`。
 3. 改完前缀必须 **F5 刷新**再 Queue。前端会缓存旧值，旧前缀就是成品落到 `output/APNG/` 根目录的原因。
 
+上面名字里的 `anim24` 是剧情卡 `name` 字段，换帧数时改成 `anim60` 之类即可，三个保存节点共用同一个前缀根。
+
 没有同批 WebP/GIF 的单张 PNG，只是半次运行或旧前缀残留，不是成品。
 `check_output.py` 会报 `stray_root`、`incomplete`、`outside_apng`，并识别正常的 `vhs_sidecar`；加 `--fix` 把游离文件移进 `output/APNG/archive/stray-<时间戳>/`。
 
@@ -217,7 +258,8 @@ dist/                 打包产物（已 gitignore）
 
 - latent 插值**没有真实运动轨迹**：适合表情、呼吸、轻微头部动作；不适合走位、转身、镜头运动。
   这类需求要上 ControlNet 骨骼序列或视频模型（Wan / LTX）。
-- 24 帧是刻意定的预算：10fps 下 2.4 秒；帧数越多解码耗时线性增长。
+- 帧数是预算，不是画质旋钮：8–60 帧都能跑，解码耗时随 N 线性增长。24 帧是默认甜点，
+  60 帧用来做 30fps 下 2 秒的叙事节拍。帧数再多也不会变出新姿势——它平滑的是过渡，不是轨迹。
 - APNG 体积偏大（每帧整帧 PNG）。聊天发 GIF，要透明发 WebP。
 
 ## 贡献

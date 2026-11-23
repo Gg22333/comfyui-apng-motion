@@ -16,11 +16,11 @@ EmptyLatentImage(512,512,1)
                      KSampler K1/K2/K3  positive 走合并后的条件
                      denoise 0.35-0.4，与 K0 同 seed、同首帧 latent
                                           │
-        24 × LatentInterpolate（每帧一个 ratio；同一对 latent 内不重复）
+        N × LatentInterpolate（N = frames，8–60；每帧一个 ratio；同一对 latent 内不重复）
                                           │
-        24 × VAEDecode ◄── VAE
+        N × VAEDecode ◄── VAE
                                           │
-        ImageBatchMulti(inputcount=24)
+        ImageBatchMulti(inputcount=N)
                 ├──► SaveAnimatedPNG   → output/APNG/final/apng/
                 ├──► SaveAnimatedWEBP  → output/APNG/final/webp/
                 └──► VHS_VideoCombine  → output/APNG/final/gif/
@@ -33,6 +33,17 @@ EmptyLatentImage(512,512,1)
 2. **同一对 latent 上的 ratio 唯一**。不同段（K0→K1 与 K1→K2）可以同值，样本对不同画面就不同；同一段里撞值才会被 Pillow 合并。
 3. **三个输出接同一个 batch**，否则三种格式的帧序会不一致。
 
+## 帧数不是写死的
+
+`--frames N`（或剧情卡的 `"frames": N`）决定整条链的长度，`--segs` 之和必须等于 N：
+
+- 24 帧保留旧预设：3 拍 `8/8/8`、4 拍 `6/7/6/5`、5 拍 `5/6/5/4/4`；
+- 其它帧数按拍数平均分，余数给前几拍（30 帧 4 拍 → `8/8/7/7`）；
+- `ensure_frames()` 会把 `LatentInterpolate` + `VAEDecode` 克隆到 N 个或删到 N 个，
+  再重建 `ImageBatchMulti` 的 `image_1..image_N` 与 `widgets_values=[N]`，并按 6 列重排画布位置。
+
+校验口径也改了：不再硬编码 24，而是要求「插值数 = 解码数 = batch 接线数」，且 batch 的计数值必须等于实际接线数。
+
 ## 脚本分工
 
 | 脚本 | 输入 | 输出 |
@@ -42,7 +53,8 @@ EmptyLatentImage(512,512,1)
 | `emit_workflow.py` | base 工作流 + 剧情卡 | K 拍工作流 JSON（含校验） |
 | `emit_workflow.py --run` | 上述 + profile | 提交 API、轮询、成品路径、自动校验 |
 | `check_anim.py` | 成品文件 | 帧数/时长/循环/差异/颜色漂移 |
-| `make_curve.py` | 段数 | 24 个 ratio |
+| `make_story.py` | 动作库 + 角色锁定句 | 剧情卡 JSON（frames/segs/fps/actions） |
+| `make_curve.py` | 段数 | N 个 ratio（N = sum(segs)） |
 | `make_preview.py` | 成品 APNG | 全局调色板 GIF + WebP 网页预览 |
 | `package.py` | 仓库目录 | 确定性 zip + SHA256 |
 
@@ -72,7 +84,7 @@ EmptyLatentImage(512,512,1)
 
 ## 为什么不用脚本逐帧生成
 
-逐帧 img2img 需要每帧一次采样，24 帧就是 24 次采样；插值只需要 3–5 次采样 + 24 次解码，
+逐帧 img2img 需要每帧一次采样，N 帧就是 N 次采样；插值只需要 3–5 次采样 + N 次解码，
 显存不变、耗时线性下降，而且中间帧由数学过渡，差异更均匀。
 代价是没有真实运动轨迹，所以只适合微表演。
 

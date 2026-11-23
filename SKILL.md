@@ -1,16 +1,17 @@
 ---
 name: comfyui-apng-motion
 description: >
-  ComfyUI 里用「首帧 + 两个关键帧 latent 插值」做 24 帧连贯 APNG/WebP/GIF 动图（表情包）的完整方法：
-  双环境配置（SDXL / Moss-DiT）、工作流结构、24 帧曲线、提示词写法、只存成品的输出规范、表情包参数、
-  兼容性与排错。Use when 用户提到 ComfyUI、APNG、动图、表情包、24 帧、帧间闪烁、不连贯、LatentInterpolate、
+  ComfyUI 里用「首帧 + 2–4 个关键帧 latent 插值」做 8–60 帧连贯 APNG/WebP/GIF 动图（表情包/微故事）的完整方法：
+  双环境配置（SDXL / Moss-DiT）、工作流结构、任意帧数扩缩、提示词写法、16 组动作库、只存成品的输出规范、
+  兼容性与排错。Use when 用户提到 ComfyUI、APNG、动图、表情包、8/24/30/60 帧、帧间闪烁、不连贯、LatentInterpolate、
   SaveAnimatedPNG、SaveAnimatedWEBP、VHS_VideoCombine、SDXL、Moss、DiT、剧情分镜、多角色、
   表情包定义、画风锁定、瞳色漂移、换机器、移植、profile、环境探测。
 ---
 
-# ComfyUI 24 帧连贯动图 · APNG / WebP / GIF
+# ComfyUI 连贯动图（8–60 帧）· APNG / WebP / GIF
 
-一句话：**三张关键帧（中性 → A → B）→ 24 个 LatentInterpolate 比例 → 24 次 VAE 解码 → ImageBatchMulti → 三个保存节点。**
+一句话：**三张关键帧（中性 → A → B）→ N 个 LatentInterpolate 比例 → N 次 VAE 解码 → ImageBatchMulti → 三个保存节点。**
+N 由 `--frames` 决定（默认 24，支持 8–60 任意值），插值/解码/batch 节点自动扩缩。
 不靠 `batch_size` 堆帧，不靠外部脚本合成，不在中间落盘，一次 Queue 出一个成品文件。
 
 ---
@@ -31,7 +32,7 @@ description: >
 | 关键帧 denoise | 0.4 | 0.5 |
 | 采样 | 20 步 / cfg 6.0 / euler_ancestral / normal | 8 步 / cfg 1.0 / euler / simple |
 
-两套工作流**不是同一份**：加载器和采样参数不同，但节点结构和 24 帧曲线完全一致。
+两套工作流**不是同一份**：加载器和采样参数不同，但节点结构一致；帧数由 `--frames` 决定，曲线长度跟着帧数走。
 依赖插件：`comfyui-kjnodes`（ImageBatchMulti）、`ComfyUI-VideoHelperSuite`（Video Combine 出 GIF），两个环境都已装。
 
 启动验证（不要占用绘世的默认端口）：
@@ -51,6 +52,7 @@ netstat -ano | findstr ":8190 :8191"
 | 新（denoise 0.35 + linear + 全局动作） | xl | 0.12 – 2.35，平均 1.08 | 2.63 | 当前默认，已不闪 |
 | 旧（denoise 0.55 + 幂曲线） | xl | 0.95 – 5.42，平均 2.34 | 3.07 | 中段出现色斑，已弃用 |
 | 历史 | Dit | 0.06 – 3.04，平均 1.43 | — | 结构同步到新默认，未重测成片 |
+| 60 帧展示图（Moss-DiT，denoise 0.5，30fps） | Dit | 0.75 avg / 1.42 max | 7.19 | 当前仓库预览；兜帽遮脸，表情幅度偏小 |
 
 xl 的稳定上限约 **denoise 0.35**：0.42 时颜色漂移升到 8 左右，衣服和背景开始被重绘；0.45 时衣服变蓝。
 要更大表情，优先加帧数或做面部局部重绘，不要直接抬 denoise。
@@ -114,8 +116,8 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 | 全片 | `CLIPTextEncode`「全局动作指导（所有关键帧共享）」 | 动作、镜头、光照、风格；改一处，所有关键帧生效 |
 | 每帧 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线 |
 | 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
-| 节奏 | 24 个 `LatentInterpolate` 的 ratio | `linear` 最均匀，`ease` 两端慢，`snap` 旧行为 |
-| 速度 | 三个保存节点的 `fps` | 三处必须一致（10fps × 24 = 2.4 秒） |
+| 节奏 | N 个 `LatentInterpolate` 的 ratio（N = frames） | `linear` 最均匀，`ease` 两端慢，`snap` 旧行为 |
+| 速度 | 三个保存节点的 `fps` | 三处必须一致（fps × N = 时长；24 @10fps = 2.4 秒） |
 | 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放 |
 
 CLI 对应参数：`--motion` `--curve` `--seed` `--denoise` `--steps` `--cfg`。画布里还有一个 `Note` 节点把这张表写在旁边。
@@ -134,15 +136,17 @@ python scripts/emit_workflow.py --validate my-4beat.json --run --profile profile
 | --- | --- | --- |
 | `detect_env.py` | 扫本机 ComfyUI：版本、Python、模型清单、插件、运行端口、可用工作流 → `profiles/*.json` | 无 |
 | `doctor.py` | 按 profile 体检：文件、模型、插件、节点类型、输出目录可写、端口是否活 | 无（探活要网络） |
-| `emit_workflow.py` | 3 关键帧 → K 拍（3–5）；编译剧情卡提示词；重算曲线；校验连线；可选 `--run` 直接出片 | 无 |
+| `emit_workflow.py` | 3 关键帧 → K 拍（3–5）+ 任意帧数（8–60）；编译剧情卡提示词；重算曲线；校验连线；可选 `--run` 直接出片 | 无 |
+| `make_story.py` | 从 16 组动作库生成剧情卡；校验 frames/segs/beats；自动追加场景提示 | 无 |
 | `check_anim.py` | 帧数、时长、循环、相邻帧差异、重复帧、颜色漂移 | Pillow |
 | `make_curve.py` | 单独出 ratio 曲线，改节奏用 | 无 |
 | `make_preview.py` | 把成品 APNG 重编码成网页预览：全局调色板 + 关抖动 GIF、真彩 WebP | Pillow |
 | `comfy_lib.py` | 共用库：profile、HTTP、曲线、UI→API 转换 | 无 |
 
 本机实测（2026-11-23，新默认）：xl 3 拍 66 节点、4 拍 69 节点；Dit 3 拍 68 节点、4 拍 71 节点。
-`--run` 交出 24 帧三格式成品，`check_anim` 全部 `frames=24 / loop=0 / EXIT=0`；
-denoise 0.35 的预览片相邻帧差异 0.12–2.35（avg 1.08），颜色漂移 2.63。
+`--run` 交出三格式成品并自动验片；8 / 24 / 60 帧都实测过，`check_anim` 全部 `loop=0 / EXIT=0`。
+denoise 0.35 的 24 帧预览相邻帧差异 0.12–2.35（avg 1.08）、漂移 2.63；
+60 帧 Moss 展示片 0.75 avg / 1.42 max、漂移 7.19。
 
 ### 0.7 依赖与分发
 
@@ -204,7 +208,7 @@ python scripts/install.py --link
 | 所有帧都从「首帧 latent」出发 | 逐帧继承上一帧会累积漂移：实测黑发几帧后变青蓝。锚死同一张首帧 latent，脸、发色、构图都不跑。 |
 | 关键帧用 img2img（denoise 0.4 / 0.5） | 小于 1.0 等于「在首帧上按新提示词局部重绘」，只改表情区，不改画风。 |
 | 中间帧用 LatentInterpolate | 在 latent 空间插值比在像素空间交叉淡化干净，不会出现半透明重影。 |
-| 24 帧而不是 8 帧 | 8 帧只够轮播；24 帧 @10fps = 2.4 秒，够放「起 → 高潮 → 收」三段。 |
+| 默认 24 帧，而不是写死 24 | 24 帧 @10fps = 2.4 秒，够放「起 → 高潮 → 收」；8 帧只够轮播，30/60 帧给五拍故事和网页预览。帧数是预算，用 `--frames` 改。 |
 | 三角形曲线 + 关键帧停顿 | 首帧 → A → B → 首帧，关键帧处停留 2 帧，动作才有「呼吸感」。 |
 | 只保存成品 | 每帧都 SaveImage 会把输出目录塞满，用户根本不用单帧。 |
 
@@ -234,21 +238,21 @@ EmptyLatent 512×512×1
         ├──────────────► CLIPTextEncode A ─► KSampler A（denoise 0.4/0.5，同 seed，latent=首帧）
         ├──────────────► CLIPTextEncode B ─► KSampler B（denoise 0.4/0.5，同 seed，latent=首帧）
         │
-   24 × LatentInterpolate（每帧一个 ratio）
+   N × LatentInterpolate（N = frames，8–60；每帧一个 ratio）
         │
-   24 × VAEDecode
+   N × VAEDecode
         │
-   ImageBatchMulti（inputcount = 24，image_1 … image_24）
+   ImageBatchMulti（inputcount = N，image_1 … image_N）
         ├──► SaveAnimatedPNG   → output\APNG\final\apng\anim24_00001_.png
         ├──► SaveAnimatedWEBP  → output\APNG\final\webp\anim24_00001_.webp
         └──► VHS_VideoCombine  → output\APNG\final\gif\anim24_00001.gif
 ```
 
-节点数：xl 61 个，Dit 63 个（多两个加载器，其余完全同构）。
+节点数随拍数和帧数变：3 拍 xl 66 / Dit 68，4 拍 69 / 71，5 拍 72 / 74（含全局动作层与 Note）。
 
 **三路输出必须接在同一个 ImageBatchMulti 输出上**，否则三份文件的帧序会不一致。
 
-### 2.1 24 帧比例表（当前版本，直接抄）
+### 2.1 比例表（以 24 帧为例，直接抄）
 
 | 帧 | samples1 | samples2 | ratio | 段 |
 | --- | --- | --- | --- | --- |
@@ -277,6 +281,9 @@ EmptyLatent 512×512×1
 | 23 | B | 首帧 | 0.02 | |
 | 24 | B | 首帧 | 0.01 | 几乎回到首帧，接第 1 帧无缝 |
 
+其它帧数不要手抄这张表：用 `python scripts/make_curve.py --segs 8,8,7,7`（30 帧 4 拍）生成 N 个值，
+或直接给 `emit_workflow.py --frames 30`，它会按拍平均分并重算曲线。
+
 要点：
 
 1. **同一对 latent 上 ratio 不重复**。不同段之间同值安全（样本对不同，画面必然不同）；同一段里撞值才会产生像素相同的相邻帧。
@@ -293,9 +300,9 @@ Pillow 写 APNG 时，如果两帧像素完全相同，会**丢掉这一帧并�
 
 ### 2.3 从 3 关键帧扩到 K 关键帧（做剧情，不改结构）
 
-24 帧只有三段时，能演的只有"起 → 一个动作 → 回落"。要演完整故事，把关键帧从 3 个加到 4–5 个，段数跟着加，每加一个关键帧只多 2 个节点（一对 `CLIPTextEncode` + `KSampler`）：
+3 个关键帧只有三段时，能演的只有"起 → 一个动作 → 回落"。要演完整故事，把关键帧从 3 个加到 4–5 个，段数跟着加，每加一个关键帧只多 3 个节点（`CLIPTextEncode` + `KSampler` + `ConditioningCombine`）：
 
-| 拍数 | 关键帧链 | 段数 | 24 帧分配 |
+| 拍数 | 关键帧链 | 段数 | 24 帧分配（其它帧数按拍平均分） |
 | --- | --- | --- | --- |
 | 3 | 首帧 → A → B | 3 | 8 / 8 / 8 |
 | 4 | 首帧 → A → B → C | 4 | 6 / 7 / 6 / 5 |
@@ -306,14 +313,14 @@ Pillow 写 APNG 时，如果两帧像素完全相同，会**丢掉这一帧并�
 1. 复制 `CLIPTextEncode`(6) 与 `KSampler`(7) 一整对成新节点；`KSampler` 的 `latent_image` 仍接首帧 `VAEEncode`，`positive` 接新 `CLIPTextEncode`，seed 改 `123456792`、mode 仍 `fixed`。
 2. 把原来 `A→B` 那段 8 个 `LatentInterpolate` 拆成 `A→B` 与 `B→C` 两组，`samples1` / `samples2` 按段改接。
 3. 用 `make_curve.py --segs 6,7,6,5` 重算 24 个 ratio，逐个粘贴。
-4. 单段帧数不要低于 4：低于 4 帧的那段看不出动作，只算一次跳。拍数上去了就减段数，或把总帧数加到 30。
+4. 单段帧数不要低于 4：低于 4 帧的那段看不出动作，只算一次跳。拍数上去了就减段数，或把总帧数加到 30/60（`--frames 30 --segs 6,6,6,6,6`）。
 
 ## 3 · 保存节点参数
 
 | 节点 | 参数 | xl | Dit | 说明 |
 | --- | --- | --- | --- | --- |
 | SaveAnimatedPNG | filename_prefix | `APNG/final/apng/anim24` | 同 | 前缀里的 `/` 会建子目录 |
-| | fps | 10 | 10 | 每帧 `int(1000/fps)` 毫秒，24 帧 = 2.4s |
+| | fps | 10 | 10 | 每帧 `int(1000/fps)` 毫秒；24 帧 @10fps = 2.4s，60 帧 @30fps = 2s |
 | | compress_level | 4 | 4 | 0–9，越高越小越慢 |
 | SaveAnimatedWEBP | filename_prefix | `APNG/final/webp/anim24` | 同 | |
 | | fps | 10 | 10 | |
@@ -329,10 +336,11 @@ Pillow 写 APNG 时，如果两帧像素完全相同，会**丢掉这一帧并�
 
 输出实测（24 帧 512²，2026-11-23 成片）：
 
-| 环境 | APNG | GIF | WebP（lossless=True） |
-| --- | --- | --- | --- |
-| xl | 6.61 MB | 2.41 MB | 0.80 MB |
-| Dit | 4.15 MB | 2.72 MB | 2.88 MB |
+| 环境 / 内容 | 帧数 | APNG | GIF | WebP（lossless=True） |
+| --- | --- | --- | --- | --- |
+| xl / 银发校服 | 24 | 6.61 MB | 2.41 MB | 0.80 MB |
+| Dit / 银发校服 | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
+| Dit / 雨夜霓虹 | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
 
 体积随画面复杂度波动，不是固定比例。**WebP 开了 lossless 不一定比 GIF 小**；要小就关掉 lossless，quality 80–90。
 
@@ -455,6 +463,26 @@ K3 收：  … , flat expression, eyes half lidded, mouth closed, head straight
       different hair color, different eye color, color shift, style change, multiple views
 ```
 
+### 5.3.1 动作库：16 组现成节拍
+
+`assets/motion-presets.json` 把常见表情包动作写成了可复用的节拍卡，`scripts/make_story.py` 直接生成剧情卡：
+
+```bash
+python scripts/make_story.py --list
+python scripts/make_story.py --preset laugh --lock "masterpiece, 1girl, silver hair, blue eyes" --out story.laugh.json
+python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --frames 60 --fps 30 --out story.rain.json
+```
+
+| 组 | id |
+| --- | --- |
+| 情绪 | `laugh` `cry` `shock` `angry` `smug` `sigh` `panic` `sleepy` `love` |
+| 动作 | `wave` `nod` `shake` `thumbsup` `think` |
+| 五拍故事 | `rainy-walk` `morning-coffee` |
+
+动作语法固定为五拍：**K0 静息（循环接点 + 封面）→ K1 预备（反方向蓄力）→ K2 主动作（最大剪影变化）→ K3 余震（回落）→ 回到 K0**。
+每拍只改 1–2 个部位；`style` 必须放在提示词末尾。完整说明与平台规格（Telegram 512/≤3s/60fps、LINE APNG 5–20 帧/≤4s/≤1MB、微信 GIF 240²/≤500KB）
+见 [docs/motion-presets.md](docs/motion-presets.md)。
+
 ### 5.4 不换脸、不换发色、不换瞳色
 
 | 现象 | 根因 | 处理 |
@@ -488,7 +516,7 @@ K3 收：  … , flat expression, eyes half lidded, mouth closed, head straight
 
 ### 6.0 落盘细则（归档会话里踩过的坑）
 
-- 只接三个保存节点，全部接**同一个** `ImageBatchMulti` 输出；中间不接 `SaveImage` / `PreviewImage`。xl 66 节点、Dit 68 节点 = 3 关键帧 + 3 个条件合并 + 1 个全局动作编码 + 1 个 Note + 24 插值 + 24 解码 + 三输出，没有隐藏的落盘节点。
+- 只接三个保存节点，全部接**同一个** `ImageBatchMulti` 输出；中间不接 `SaveImage` / `PreviewImage`。xl 66 节点、Dit 68 节点 = 3 关键帧 + 3 个条件合并 + 1 个全局动作编码 + 1 个 Note + N 插值 + N 解码 + 三输出，没有隐藏的落盘节点。
 - 目录分层（两环境一致）：
 
 ```
@@ -583,10 +611,10 @@ output\APNG\
 
 | 症状 | 根因 | 处理 |
 | --- | --- | --- |
-| 24 张互不相干、一直闪 | 把帧数塞进 `batch_size` | 改成「首帧 latent + 关键帧重绘 + 插值」结构 |
+| N 张互不相干、一直闪 | 把帧数塞进 `batch_size` | 改成「首帧 latent + 关键帧重绘 + 插值」结构 |
 | 颜色越播越跑（黑发变青） | 逐帧继承上一帧 | 所有关键帧的 latent 都接首帧 |
-| 排了 24 帧，导出只有 19 帧 | 有像素完全相同的相邻帧，Pillow 合并 | 曲线不要有重复 ratio；首尾别做成一模一样 |
-| 输出只有一张静态 PNG | `images` 只有 1 张 | 确认 ImageBatchMulti 的 24 个输入都接上 |
+| 排了 N 帧，导出明显变少（24 → 19） | 有像素完全相同的相邻帧，Pillow 合并 | 曲线不要有重复 ratio；首尾别做成一模一样 |
+| 输出只有一张静态 PNG | `images` 只有 1 张 | 确认 ImageBatchMulti 的 N 个输入都接上 |
 | 照片查看器不动 | 它不支持 APNG | 看 GIF/WebP，或用 BandiView / 浏览器 |
 | 只有 APNG，没有 GIF/WebP | 缺 VHS 插件 / 节点爆红 | `custom_nodes` 装 `ComfyUI-VideoHelperSuite`，重启 |
 | 文件落在 `output\APNG\` 根目录 | prefix 被旧值覆盖 | 三个保存节点逐个改前缀，刷新页面重跑 |
@@ -595,6 +623,8 @@ output\APNG\
 | 动作太慢、像卡住 | 停顿帧太多 | 每段保留 1 个停顿帧即可 |
 | 表情变了但脸也变了 | denoise 太高 / A、B 提示词带了构图词 | denoise -0.05，删掉机位、姿势、场景词 |
 | 看不出动作 | A、B 太像 | 加大表情差异（张嘴、挑眉、闭眼） |
+| 画面掉成写实拼贴、脸糊 | 空 `motion` 仍参与 `ConditioningCombine`，稀释了本帧提示 | 1.3.0 起留空会自动旁路；旧工作流删掉合并节点或填一句 `same framing, stable lighting` |
+| 风格被动作词吃掉 | `style` 写在 `action` 前面 | 固定顺序 `lock + action + style`，风格词放末尾 |
 | 前端改了不生效 | 页面还持着旧节点 | F5 刷新后再 Queue |
 
 ---
@@ -605,10 +635,10 @@ output\APNG\
 | --- | --- | --- |
 | 启动刷 ComfyRegistry / GitHub 报错 | Manager 联网 | `user\__manager\config.ini` 里 `network_mode = offline`（两环境已改） |
 | 工作流改了不生效、还落旧目录 | 页面持旧节点 | F5 刷新后重开工作流 |
-| 只有一张静态 png | `images` 只有 1 张 | `ImageBatchMulti` 的 inputcount 必须 24，24 个输入全接 |
+| 只有一张静态 png | `images` 只有 1 张 | `ImageBatchMulti` 的 inputcount 必须等于 frames，输入全接 |
 | 眼睛颜色渐变、像在闪 | `eyes closed` 或光照词变动 | 见 5.4 |
 | 双人一互动就糊 | 用 A 档做 B 档的活 | 见 5.5，上 ControlNet |
-| 24 帧只剩 19 | 曲线里有重复 ratio | 见 2.2 |
+| N 帧只剩更少（24 → 19） | 曲线里有重复 ratio | 见 2.2 |
 | 动作幅度够了但读不出情绪 | 只改了表情词，没给身体动作 | 见 5.3 剧情卡第 3、4 栏 |
 
 ## 10 · 从零复刻 / 换题材的操作顺序
@@ -616,8 +646,8 @@ output\APNG\
 1. 打开对应环境的工作流（xl：`APNG多帧合成-SDXL.json`；Dit：`APNG多帧合成-Moss.json`）。
 2. 改 4 个文本框：首帧、A、B、负向。三句正向共享主体锁定句。
 3. 确认 3 个 KSampler 的 seed 都是 `fixed`（123456789 / +1 / +2），denoise 分别 1.0 / 0.4 或 0.5。
-4. 确认 24 个 ratio 与第 2.1 节一致，且**没有重复值**。
-5. 确认 ImageBatchMulti `inputcount = 24`，24 个输入全接上。
+4. 确认 N 个 ratio 与第 2.1 节一致（或用 `make_curve.py` / `--frames` 重算），且**没有重复值**。
+5. 确认 ImageBatchMulti `inputcount = frames`，N 个输入全接上。
 6. 确认三个保存节点的 prefix 分别是 `APNG/final/apng|webp|gif/anim24`。
 7. Queue，等结束，去 `output\APNG\final\` 取成品。
 8. 跑 `check_anim.py --expect 24` 验证。
@@ -662,7 +692,9 @@ output\APNG\
 | `assets/workflow-moss.json` | Dit 环境工作流副本 |
 | `scripts/check_anim.py` | 帧数 / 时长 / 相邻帧差异 / 颜色漂移校验 |
 | `scripts/make_preview.py` | 成品 APNG → 全局调色板 GIF + WebP 网页预览 |
-| `scripts/make_curve.py` | 生成 ratio 曲线，支持 3–6 段（剧情拍）：`--segs 6,7,6,5` 直接出 24 值 |
+| `scripts/make_story.py` | 从 `assets/motion-presets.json` 生成剧情卡；校验 frames/segs/beats |
+| `assets/motion-presets.json` | 16 组动作节拍（情绪 / 动作 / 五拍故事） |
+| `scripts/make_curve.py` | 生成 ratio 曲线，支持 3–6 段：`--segs 6,7,6,5` 出 24 值 |
 | `scripts/detect_env.py` | 扫本机 ComfyUI → `profiles/*.json`（换机器第一步） |
 | `scripts/doctor.py` | profile 体检：模型、插件、节点、端口、输出目录 |
 | `scripts/emit_workflow.py` | 3 关键帧 → 3–5 拍剧情工作流；编译提示词、重算曲线、校验、可选 `--run` |
@@ -697,7 +729,7 @@ output\APNG\
   "version": "ComfyUI 版本",
   "models": { "checkpoints": [], "diffusion_models": [], "text_encoders": [], "vae": [] },
   "custom_nodes_present": { "comfyui-kjnodes": true, "ComfyUI-VideoHelperSuite": true },
-  "workflow": "<默认打开的 24 帧工作流>",
+  "workflow": "<默认打开的工作流（帧数由剧情卡决定）>",
   "fps": 10,
   "prefix_root": "APNG/final"
 }

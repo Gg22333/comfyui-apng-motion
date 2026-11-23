@@ -6,13 +6,16 @@
 
 用法:
     python emit_workflow.py --base ../assets/workflow-sdxl.json --story ../assets/story.example.json --out out.json
+    python emit_workflow.py --base ../assets/workflow-moss.json --story ../assets/story.example.json \
+        --frames 60 --segs 15,15,15,15 --out out60.json      # 任意帧数
     python emit_workflow.py --base ../assets/workflow-sdxl.json --beats 4 --segs 6,7,6,5 \
         --lock "masterpiece, 1girl, silver hair, blue eyes" --style "anime screencap" \
         --actions "neutral expression|eyes widened|mouth open|flat expression" --out out.json
     python emit_workflow.py --validate out.json                  # 只校验
     python emit_workflow.py --validate out.json --run --profile ../profiles/xl.json
 
-输出结构不变：K 关键帧 -> 24 LatentInterpolate -> 24 VAEDecode -> ImageBatchMulti -> 三格式。
+输出结构：K 关键帧 -> N LatentInterpolate -> N VAEDecode -> ImageBatchMulti -> 三格式。
+N 由 --frames 决定（默认 24，支持 8/12/24/30/60 任意值）；插值、解码、batch 节点会自动扩缩。
 """
 import argparse
 import copy
@@ -77,6 +80,8 @@ def main():
     ap.add_argument("--out", default="")
     ap.add_argument("--beats", type=int, default=0)
     ap.add_argument("--segs", default="")
+    ap.add_argument("--frames", type=int, default=0,
+                    help="总帧数，默认 24；8/12/24/30/60 都可，脚本自动扩缩插值与解码节点")
     ap.add_argument("--fps", type=float, default=0)
     ap.add_argument("--prefix", default="")
     ap.add_argument("--lock", default="")
@@ -122,17 +127,27 @@ def main():
     if actions and len(actions) != beats:
         print("actions 个数 %d != beats %d" % (len(actions), beats))
         return 2
-    segs = [int(x) for x in (a.segs or ",".join(str(x) for x in story.get("segs", []))).split(",") if x.strip()]
-    if not segs:
-        segs = {3: [8, 8, 8], 4: [6, 7, 6, 5], 5: [5, 6, 5, 4, 4]}.get(beats)
-        if not segs:
-            print("请给 --segs（%d 段，和要为 24）" % beats)
-            return 2
-    if sum(segs) != 24:
-        print("segs 之和必须 24，当前 %d" % sum(segs))
+    frames = a.frames or int(story.get("frames", 0) or 0) or 24
+    if frames < beats or frames < 2:
+        print("--frames %d 太小：必须 >= beats=%d 且 >= 2" % (frames, beats))
         return 2
+    # 剧情卡的 segs 只在帧数没被命令行改写时沿用；--frames 改了帧数就按拍重新平均分。
+    segs_arg = a.segs
+    if not segs_arg and story.get("segs"):
+        story_frames = int(story.get("frames", 0) or 0)
+        if not story_frames or story_frames == frames:
+            segs_arg = ",".join(str(x) for x in story["segs"])
+    segs = [int(x) for x in (segs_arg or "").split(",") if x.strip()]
+    if not segs:
+        segs = {24: {3: [8, 8, 8], 4: [6, 7, 6, 5], 5: [5, 6, 5, 4, 4]}}.get(frames, {}).get(beats)
+        if not segs:  # 其它帧数：按拍平均分，余数给前几拍
+            q, r = divmod(frames, beats)
+            segs = [q + (1 if i < r else 0) for i in range(beats)]
     if len(segs) != beats:
         print("segs 段数 %d != beats %d" % (len(segs), beats))
+        return 2
+    if sum(segs) != frames:
+        print("segs 之和必须等于 frames=%d，当前 %d" % (frames, sum(segs)))
         return 2
 
     lock = a.lock or story.get("lock", "")
@@ -277,7 +292,20 @@ def main():
     genc["title"] = "全局动作指导（所有关键帧共享）"
     genc["widgets_values"] = [motion]
     genc["pos"] = [max_x + 420, 100]
+    empty_motion = not (motion or "").strip()
+    chain_encs = [positive_encoder(wf, k0)] + list(kf_enc)
     for i, s in enumerate(chain):
+        # 全局动作留空时直接旁路：空提示参与 ConditioningCombine 会稀释本帧提示，
+        # 小模型（Moss 8step）会直接掉画质。留空 = 不参与。
+        if empty_motion:
+            enc = chain_encs[i] if i < len(chain_encs) else None
+            if enc is not None:
+                for inp in s["inputs"]:
+                    if inp["name"] == "positive":
+                        if inp.get("link") is not None:
+                            ledger.drop(inp["link"])
+                        inp["link"] = ledger.add(enc["id"], 0, s["id"], 1, "CONDITIONING")
+            continue
         origin = ledger_origin(s, "positive")
         onode = node_by(nodes, origin[0])
         if onode["type"] == "ConditioningCombine":
@@ -321,8 +349,8 @@ def main():
         "每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n"
         "采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n"
         "  关键帧 denoise 建议 0.30-0.40；越低越稳，越高越自由但容易出现色斑。\n"
-        "节奏：24 个 LatentInterpolate 的 ratio 就是缓动曲线。线性最均匀，缓动两端慢。\n"
-        "速度：三个保存节点的 fps 必须改成同一个值。10fps × 24 帧 = 2.4 秒。\n"
+        "节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n"
+        "速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长；24 @10fps = 2.4 秒，60 @30fps = 2 秒。\n"
         "命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n"
         "画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n"
         "避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。"
@@ -342,11 +370,8 @@ def main():
         note["widgets_values"] = [note_text]
         note["pos"] = [max_x + 420, 1080]
 
-    # 24 个插值
-    interps = sorted([n for n in nodes if n["type"] == "LatentInterpolate"], key=lambda n: n.get("order", 0))
-    if len(interps) != 24:
-        print("base 里 LatentInterpolate 是 %d 个，必须是 24" % len(interps))
-        return 2
+    # N 个插值 / 解码（N = frames），不足则克隆补齐，多余则删掉
+    interps, decodes = ensure_frames(wf, ledger, frames)
     ratios = L.build_curve(segs, curve=curve)
     idx = 0
     for seg, cnt in enumerate(segs):
@@ -408,7 +433,7 @@ def main():
     probs = validate(wf)
     L.save_json(a.out, wf)
     print("written:", a.out, "nodes=%d links=%d" % (len(nodes), len(wf["links"])))
-    print("beats=%d segs=%s fps=%s denoise=%s curve=%s" % (beats, segs, fps, base_dn, curve))
+    print("beats=%d frames=%d segs=%s fps=%s denoise=%s curve=%s" % (beats, frames, segs, fps, base_dn, curve))
     print("motion=%r" % motion)
     if probs:
         print("VALIDATE FAIL")
@@ -423,12 +448,105 @@ def main():
     return 0
 
 
+def ensure_frames(wf, ledger, frames):
+    """把插值/解码/batch 三件套扩到或缩到 frames 帧，并重排画布位置。
+
+    返回 (interps, decodes)，顺序即播放顺序。
+    """
+    nodes = wf["nodes"]
+    batch = next(n for n in nodes if n["type"] == "ImageBatchMulti")
+    interps = sorted([n for n in nodes if n["type"] == "LatentInterpolate"], key=lambda n: n.get("order", 0))
+    decodes = sorted([n for n in nodes if n["type"] == "VAEDecode"], key=lambda n: n.get("order", 0))
+    pair = {}
+    for d in decodes:
+        for inp in d.get("inputs") or []:
+            lid = inp.get("link")
+            if inp.get("name") == "samples" and lid in ledger.links:
+                pair[ledger.links[lid][1]] = d
+    cur = len(interps)
+    next_id = max(n["id"] for n in nodes) + 1
+    max_order = max(n.get("order", 0) for n in nodes)
+
+    if frames > cur:
+        tpl_i = interps[-1]
+        tpl_d = pair[tpl_i["id"]]
+        vae_o = None
+        for inp in tpl_d.get("inputs") or []:
+            if inp.get("name") == "vae" and inp.get("link") in ledger.links:
+                l = ledger.links[inp["link"]]
+                vae_o = (l[1], l[2])
+        if vae_o is None:
+            raise KeyError("VAEDecode 没有接 VAE，无法克隆解码节点")
+        for k in range(frames - cur):
+            ni = copy.deepcopy(tpl_i)
+            ni["id"], next_id = next_id, next_id + 1
+            ni["order"], max_order = max_order + 1, max_order + 1
+            ni["title"] = "插值 %d" % (cur + k + 1)
+            ni["inputs"] = [{"name": "samples1", "type": "LATENT", "link": None},
+                            {"name": "samples2", "type": "LATENT", "link": None}]
+            ni["outputs"] = [{"name": "LATENT", "type": "LATENT", "links": []}]
+            nd = copy.deepcopy(tpl_d)
+            nd["id"], next_id = next_id, next_id + 1
+            nd["order"], max_order = max_order + 1, max_order + 1
+            nd["title"] = "解码 %d" % (cur + k + 1)
+            s_link = ledger.add(ni["id"], 0, nd["id"], 0, "LATENT")
+            v_link = ledger.add(vae_o[0], vae_o[1], nd["id"], 1, "VAE")
+            nd["inputs"] = [{"name": "samples", "type": "LATENT", "link": s_link},
+                            {"name": "vae", "type": "VAE", "link": v_link}]
+            nd["outputs"] = [{"name": "IMAGE", "type": "IMAGE", "links": []}]
+            nodes.append(ni)
+            nodes.append(nd)
+            interps.append(ni)
+            pair[ni["id"]] = nd
+    elif frames < cur:
+        gone = set()
+        for ni in interps[frames:]:
+            nd = pair.get(ni["id"])
+            for n in (ni, nd):
+                if n is None:
+                    continue
+                gone.add(n["id"])
+                for inp in n.get("inputs") or []:
+                    if inp.get("link") in ledger.links:
+                        ledger.drop(inp["link"])
+                    inp["link"] = None
+        nodes[:] = [n for n in nodes if n["id"] not in gone]
+        interps = interps[:frames]
+
+    decodes = [pair[n["id"]] for n in interps]
+
+    # batch 输入按播放顺序重建
+    for inp in list(batch.get("inputs") or []):
+        if inp.get("link") is not None:
+            ledger.drop(inp["link"])
+    batch["inputs"] = []
+    for i, nd in enumerate(decodes):
+        lid = ledger.add(nd["id"], 0, batch["id"], i, "IMAGE")
+        batch["inputs"].append({"name": "image_%d" % (i + 1), "type": "IMAGE", "link": lid})
+    batch["widgets_values"] = [len(interps)]
+
+    # 画布排版：6 列一行，插值在上、解码在下
+    for i, ni in enumerate(interps):
+        col, row = i % 6, i // 6
+        ni["pos"] = [1280 + col * 300, 60 + row * 220]
+        decodes[i]["pos"] = [1310 + col * 300, 170 + row * 220]
+    rows = (len(interps) + 5) // 6
+    batch["pos"] = [1280, 60 + rows * 220 + 40]
+    return interps, decodes
+
+
 def name_of(n, i):
     return "K0" if i == 0 else "K%d" % i
 
 
 def compile_prompt(lock, style, action):
-    parts = [p.strip().rstrip(",") for p in (lock, style, action) if p and p.strip()]
+    """顺序固定：人物/场景 -> 本帧动作 -> 风格画质。
+
+    风格必须放最后。Moss 的 LLM 文本编码器对末尾 token 权重最高，
+    anime screencap / clean lineart / flat cel shading 写在中段会被动作词冲掉，
+    出图会直接掉进写实照相模式（实测：拼贴照、色块闪）。
+    """
+    parts = [p.strip().rstrip(",") for p in (lock, action, style) if p and p.strip()]
     return ", ".join(parts)
 
 
@@ -452,11 +570,12 @@ def validate(wf):
             if inp.get("link") is not None and inp["link"] not in links:
                 probs.append("%s 的输入 %s 指向不存在的 link %s" % (n["type"], inp["name"], inp["link"]))
     interps = [n for n in nodes if n["type"] == "LatentInterpolate"]
-    if len(interps) != 24:
-        probs.append("LatentInterpolate 数量 %d != 24" % len(interps))
+    nframes = len(interps)
+    if nframes < 2:
+        probs.append("LatentInterpolate 只有 %d 个，至少 2" % nframes)
     decodes = [n for n in nodes if n["type"] == "VAEDecode"]
-    if len(decodes) != 24:
-        probs.append("VAEDecode 数量 %d != 24" % len(decodes))
+    if len(decodes) != nframes:
+        probs.append("VAEDecode 数量 %d != 插值数 %d" % (len(decodes), nframes))
     ratios = []
     for n in interps:
         w = n.get("widgets_values") or []
@@ -491,8 +610,11 @@ def validate(wf):
     else:
         b = batch[0]
         got = len([i for i in b.get("inputs") or [] if i.get("link") is not None])
-        if got != 24:
-            probs.append("ImageBatchMulti 只接了 %d 路，应为 24" % got)
+        if got != nframes:
+            probs.append("ImageBatchMulti 接了 %d 路，应与插值数 %d 一致" % (got, nframes))
+        wv = b.get("widgets_values") or []
+        if wv and int(wv[0]) != got:
+            probs.append("ImageBatchMulti 计数 %s 与实际接线 %d 不一致" % (wv[0], got))
         outs = [l for o in (b.get("outputs") or []) for l in (o.get("links") or [])]
         saver_types = {"SaveAnimatedPNG", "SaveAnimatedWEBP", "VHS_VideoCombine"}
         hit = set()
@@ -543,6 +665,7 @@ def run_it(wf, profile_path):
         return 2
     hist = L.wait_history(base, pid)
     files = L.outputs_of(hist)
+    nframes = len([n for n in wf["nodes"] if n["type"] == "LatentInterpolate"]) or 24
     print("done. outputs:")
     for f in files:
         print(" ", f)
@@ -552,7 +675,7 @@ def run_it(wf, profile_path):
             if os.path.isfile(p):
                 chk = os.path.join(os.path.dirname(os.path.abspath(__file__)), "check_anim.py")
                 # os.system 在 Windows 上对多段带引号路径会报 "filename syntax is incorrect"
-                subprocess.call([prof.get("python") or sys.executable, chk, p, "--expect", "24"])
+                subprocess.call([prof.get("python") or sys.executable, chk, p, "--expect", str(nframes)])
     return 0
 
 

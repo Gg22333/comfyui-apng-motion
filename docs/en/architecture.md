@@ -16,11 +16,11 @@ EmptyLatentImage(512,512,1)
                      KSampler K1/K2/K3 take the merged conditioning
                      denoise 0.35-0.4, same seed and same first latent
                                           │
-        24 × LatentInterpolate (one ratio per frame; unique within a latent pair)
+        N × LatentInterpolate (N = frames, 8–60; one ratio per frame; unique within a latent pair)
                                           │
-        24 × VAEDecode ◄── VAE
+        N × VAEDecode ◄── VAE
                                           │
-        ImageBatchMulti(inputcount=24)
+        ImageBatchMulti(inputcount=N)
                 ├──► SaveAnimatedPNG   → output/APNG/final/apng/
                 ├──► SaveAnimatedWEBP  → output/APNG/final/webp/
                 └──► VHS_VideoCombine  → output/APNG/final/gif/
@@ -33,6 +33,18 @@ Hard constraints:
 2. **Ratios within one latent pair are unique.** Different segments may reuse a value because the pair of images differs; only a collision inside one segment makes Pillow merge frames.
 3. **All three outputs read the same batch**, otherwise frame order diverges.
 
+## Frame count is not hard-coded
+
+`--frames N` (or `"frames": N` in the story card) sets the chain length, and `--segs` must sum to N:
+
+- 24 frames keeps the legacy presets: 3 beats `8/8/8`, 4 beats `6/7/6/5`, 5 beats `5/6/5/4/4`;
+- other counts are split evenly with the remainder on the first beats (30 frames / 4 beats → `8/8/7/7`);
+- `ensure_frames()` clones or deletes `LatentInterpolate` + `VAEDecode` nodes to reach N,
+  rebuilds `ImageBatchMulti`'s `image_1..image_N` and `widgets_values=[N]`, and re-lays the canvas in six columns.
+
+Validation no longer hard-codes 24: it requires interpolation count = decode count = batch wiring count,
+and the batch counter must match the actual number of connected inputs.
+
 ## Scripts
 
 | Script | Input | Output |
@@ -43,7 +55,8 @@ Hard constraints:
 | `emit_workflow.py --run` | the above + profile | API submit, polling, artifact paths, auto check |
 | `check_anim.py` | artifact file | frames/duration/loop/diff/colour drift |
 | `check_output.py` | output tree | stray files, incomplete trios, archive suggestions |
-| `make_curve.py` | segment counts | 24 ratios |
+| `make_story.py` | motion preset + character lock | story card JSON (frames/segs/fps/actions) |
+| `make_curve.py` | segment counts | N ratios (N = sum(segs)) |
 | `make_preview.py` | finished APNG | global-palette GIF + WebP web preview |
 | `package.py` | repository tree | deterministic zip + SHA256 |
 
@@ -72,5 +85,5 @@ the end, easily read as a jump. Segments keep a 0.004 gap so Pillow never merges
 
 ## Why not generate every frame with a script
 
-Frame-by-frame img2img needs one sample per frame: 24 samples for 24 frames. Interpolation needs 3–5 samples plus 24 decodes; VRAM is unchanged and time grows linearly, while in-between frames come from a mathematical transition and are more evenly spaced.
+Frame-by-frame img2img needs one sample per frame: N samples for N frames. Interpolation needs 3–5 samples plus N decodes; VRAM is unchanged and time grows linearly, while in-between frames come from a mathematical transition and are more evenly spaced.
 The trade-off is no real motion trajectory, which is why this route is for micro-performance only.

@@ -55,6 +55,8 @@ def main():
     ap.add_argument("--out-dir", default="docs/assets")
     ap.add_argument("--width", type=int, default=384)
     ap.add_argument("--fps", type=float, default=10)
+    ap.add_argument("--webp-quality", type=int, default=100,
+                    help="WebP 质量；默认 100，保证帧数不被合并（libwebp 会丢弃近重复帧）")
     ap.add_argument("--prefix", default="preview")
     ap.add_argument("--no-resize", action="store_true")
     a = ap.parse_args()
@@ -75,15 +77,24 @@ def main():
               loop=0, disposal=1, optimize=True)
 
     # --- WebP：真彩，网页主预览 ---
+    # libwebp 的动画编码器会把「近似重复」的帧合并（60 帧常变 58 帧）。
+    # 质量 90 时最容易发生；100 可保住全部帧，仍比 lossless 小得多。
     webp_path = os.path.join(a.out_dir, a.prefix + ".webp")
     frames[0].save(webp_path, save_all=True, append_images=frames[1:], duration=dur,
-                   loop=0, quality=90, method=6)
+                   loop=0, quality=a.webp_quality, method=6)
+    got = Image.open(webp_path).n_frames
+    if got != len(frames):
+        print("WARN webp 帧数 %d != 源 %d，回退 lossless" % (got, len(frames)))
+        frames[0].save(webp_path, save_all=True, append_images=frames[1:], duration=dur,
+                       loop=0, lossless=True, quality=100, method=6)
+        got = Image.open(webp_path).n_frames
 
     d = bbox_diff(frames)
     gd = bbox_diff([x.convert("RGB") for x in q])
     print("frames      : %d  size=%s" % (len(frames), frames[0].size))
     print("gif         : %s  %.0f KB" % (gif_path, os.path.getsize(gif_path) / 1024))
-    print("webp        : %s  %.0f KB" % (webp_path, os.path.getsize(webp_path) / 1024))
+    print("webp        : %s  %.0f KB  frames=%d  q=%d" % (
+        webp_path, os.path.getsize(webp_path) / 1024, got, a.webp_quality))
     print("src diff    : avg %.2f max %.2f" % (sum(d) / len(d), max(d)))
     print("gif diff    : avg %.2f max %.2f" % (sum(gd) / len(gd), max(gd)))
     return 0

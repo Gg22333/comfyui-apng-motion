@@ -73,7 +73,7 @@ The former suits real action, the latter suits **sticker-style micro-performance
 | Lossless | DEFLATE compression, no banding |
 | Browser support 97.39% | Chrome / Edge / Firefox / Safari / Android all pass (caniuse, 2026-11-23) |
 | Desktop viewers vary | Windows Photos does **not** play APNG; BandiView and browsers do |
-| Large | Full PNG per frame; 512² × 24 frames is usually 4–7 MB |
+| Large | Full PNG per frame; 512² × 24 frames is 4–7 MB, 60 frames is 10–18 MB depending on detail |
 | No audio | Image sequence only |
 
 Good for: web pages, documents, Discord (alpha preserved), local high-quality review, anything that needs a still-image fallback.
@@ -117,12 +117,15 @@ Browsers also clamp very short delays, so **8–12 fps** is the practical range 
 ### 4.4 Size: not necessarily larger
 
 GIF is worse in quality, so it feels like it should be bigger, but the opposite is common: LZW plus 256 colours is very kind to flat anime shading.
-Measured here (512² × 24 frames):
+Measured here (512², straight from ComfyUI):
 
-| Stack | APNG | GIF | WebP (lossless) |
-| --- | --- | --- | --- |
-| SDXL | 6.61 MB | 2.41 MB | 0.80 MB |
-| Moss | 4.15 MB | 2.72 MB | 2.88 MB |
+| Stack / content | Frames | APNG | GIF | WebP (lossless) |
+| --- | --- | --- | --- | --- |
+| SDXL / silver hair | 24 | 6.61 MB | 2.41 MB | 0.80 MB |
+| Moss / silver hair | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
+| Moss / rainy neon | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
+
+Size is roughly linear for the same content (60 frames ≈ 2.5× of 24); across different content it is not comparable.
 
 Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is not always smaller than GIF**; for size, turn lossless off and use quality 80–90.
 
@@ -135,11 +138,18 @@ Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is no
 
 `docs/assets/preview.webp` is the primary preview; `preview.gif` is a compatibility copy.
 
-| File | Size | Bytes | Adjacent-frame diff (avg) |
-| --- | --- | --- | --- |
-| Old GIF (VHS direct, 512, `sierra2_4a`) | 512x512 | 3.45 MB | 2.49 |
-| New GIF (global palette + `dither=none`, 384) | 384x384 | 0.76 MB | 1.03 |
-| New WebP (quality 90, 384) | 384x384 | 0.57 MB | 1.07 |
+| File | Size | Frames | Bytes | Adjacent-frame diff (avg) |
+| --- | --- | --- | --- | --- |
+| Old GIF (VHS direct, 512, `sierra2_4a`) | 512x512 | 24 | 3.45 MB | 2.49 |
+| New GIF (global palette + `dither=none`) | 384x384 | 60 | 1.53 MB | 0.72 |
+| New WebP (quality 100, keeps all 60 frames) | 384x384 | 60 | 1.78 MB | 0.78 |
+
+The current preview is 60 frames / 30 fps / Moss-DiT, recipe in `assets/story.preview.json`.
+
+WebP has a frame-count trap: libwebp's animation encoder merges adjacent frames that are nearly identical after compression.
+At quality 90, 60 frames become 58 (same duration, wrong metadata); quality 100 keeps all 60, at the cost of
+growing from ~0.6 MB to 1.8 MB. `make_preview.py` defaults to 100 and verifies the frame count after saving,
+falling back to lossless if needed.
 
 GIF has 256 colours. VHS runs `palettegen` + `paletteuse` per frame with `sierra2_4a` dithering:
 every frame gets its own palette and its own dither grain. On playback that reads as **blocks
@@ -149,7 +159,7 @@ flickering**, independent of whether the artwork moves.
 and downscaling to 384 px. The per-frame quantisation error stays around 2.3/255, but the
 **error becomes consistent between frames**, so the flicker disappears.
 
-## 7 · Two sources of colour flicker
+## 5 · Two sources of colour flicker
 
 Check the APNG first, then the GIF.
 
@@ -168,7 +178,7 @@ diff 1.08 and drift 2.63. Re-encoding the GIF removes another ~0.05.
 > For how this route compares with Live2D, frame-by-frame AI and video generation, including the
 > compute bill, see [Animation approaches compared](synthesis-comparison.md).
 
-## 5 · Which format to ship
+## 6 · Which format to ship
 
 | Scenario | Use | Why |
 | --- | --- | --- |
@@ -179,7 +189,7 @@ diff 1.08 and drift 2.63. Re-encoding the GIF removes another ~0.05.
 
 ---
 
-## 6 · References
+## 7 · References
 
 - APNG specification: <https://wiki.mozilla.org/APNG_Specification>
 - GIF89a Graphic Control Extension (1/100 s delay)

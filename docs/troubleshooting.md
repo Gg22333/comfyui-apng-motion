@@ -23,7 +23,7 @@
 
 | 症状 | 根因 | 处理 |
 | --- | --- | --- |
-| 24 帧只剩 19 帧 | 曲线有完全相同的 ratio，Pillow 合并 | 见 `docs/architecture.md` 曲线一节 |
+| N 帧只剩更少（24 → 19） | 曲线有完全相同的 ratio，Pillow 合并 | 见 `docs/architecture.md` 曲线一节 |
 | 只有一张静态 PNG | `images` 只有 1 张 | `ImageBatchMulti` 的 inputcount 必须 24，24 路全接 |
 | 成品落在 `output/APNG/` 根目录 | prefix 被旧值覆盖 | 改完 prefix 后 **F5 刷新页面**再 Queue |
 | 只有 APNG/WebP，没有 GIF | 没装 VHS | 装 `ComfyUI-VideoHelperSuite` 后重启 |

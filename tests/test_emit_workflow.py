@@ -45,7 +45,9 @@ def test_five_beats_cli(tmp_path):
                      "--out", str(out)])
     assert code == 0, log
     wf = json.loads(out.read_text(encoding="utf-8"))
-    assert len(wf["nodes"]) == 72
+    # motion 留空 -> 不走 ConditioningCombine，只多 1 个全局编码 + 1 个 Note
+    assert len(wf["nodes"]) == 70
+    assert len([n for n in wf["nodes"] if n["type"] == "ConditioningCombine"]) == 3
 
 
 def test_same_seed_and_denoise_written_back(tmp_path):
@@ -147,3 +149,93 @@ def test_linear_curve_has_uniform_steps():
     seg = c[:8]
     steps = [round(seg[i] - seg[i + 1], 3) for i in range(7)]
     assert max(steps) - min(steps) <= 0.002, steps
+
+def test_frames_60_expands_nodes(tmp_path):
+    """--frames 60：插值/解码/batch 三件套自动补齐到 60。"""
+    out = tmp_path / "f60.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-moss.json"),
+                     "--beats", "4", "--frames", "60", "--segs", "15,15,15,15",
+                     "--fps", "30", "--lock", "x", "--actions", "a|b|c|d",
+                     "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    interps = [n for n in wf["nodes"] if n["type"] == "LatentInterpolate"]
+    decodes = [n for n in wf["nodes"] if n["type"] == "VAEDecode"]
+    assert len(interps) == 60 and len(decodes) == 60
+    b = [n for n in wf["nodes"] if n["type"] == "ImageBatchMulti"][0]
+    assert len([i for i in b["inputs"] if i.get("link") is not None]) == 60
+    assert b["widgets_values"] == [60]
+    ratios = [n["widgets_values"][0] for n in
+              sorted(interps, key=lambda n: n.get("order", 0))]
+    assert len(ratios) == 60 and ratios[0] == 1.0
+
+
+def test_frames_auto_split_without_segs(tmp_path):
+    """不给 --segs 时按 beats 平均分 60 帧。"""
+    out = tmp_path / "f60auto.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+                     "--beats", "4", "--frames", "60",
+                     "--lock", "x", "--actions", "a|b|c|d", "--out", str(out)])
+    assert code == 0, log
+    assert "segs=[15, 15, 15, 15]" in log
+
+
+def test_frames_8_shrinks(tmp_path):
+    out = tmp_path / "f8.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+                     "--beats", "4", "--frames", "8",
+                     "--lock", "x", "--actions", "a|b|c|d", "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    assert len([n for n in wf["nodes"] if n["type"] == "LatentInterpolate"]) == 8
+    assert len([n for n in wf["nodes"] if n["type"] == "VAEDecode"]) == 8
+    b = [n for n in wf["nodes"] if n["type"] == "ImageBatchMulti"][0]
+    assert b["widgets_values"] == [8]
+    assert len(b["inputs"]) == 8
+
+
+def test_frames_rejects_bad_sum(tmp_path):
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+                     "--beats", "4", "--frames", "60", "--segs", "15,15,15,10",
+                     "--lock", "x", "--actions", "a|b|c|d",
+                     "--out", str(tmp_path / "x.json")])
+    assert code != 0
+    assert "frames" in log
+
+def test_empty_motion_bypasses_combine(tmp_path):
+    """motion 留空时不能走 ConditioningCombine：空提示会稀释本帧提示，掉画质。"""
+    out = tmp_path / "bypass.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+                     "--beats", "4", "--frames", "8", "--lock", "L",
+                     "--actions", "a0|a1|a2|a3", "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    nodes = {n["id"]: n for n in wf["nodes"]}
+    links = {l[0]: l for l in wf["links"]}
+    ks = [n for n in nodes.values() if n["type"] == "KSampler"]
+    seen = {}
+    for n in ks:
+        title = n.get("title") or ""
+        idx = int(title[1]) if title.startswith("K") and title[1].isdigit() else None
+        if idx is None:
+            continue
+        pos = [i for i in n["inputs"] if i["name"] == "positive"][0]
+        src = nodes[links[pos["link"]][1]]
+        assert src["type"] == "CLIPTextEncode", (idx, src["type"])
+        seen[idx] = src["widgets_values"][0]
+    assert len(seen) == 4
+    for i in range(4):
+        assert "a%d" % i in seen[i], seen
+
+
+def test_story_segs_rescale_when_frames_override(tmp_path):
+    """剧情卡写着 60 帧，命令行改成 30，segs 应重算为 6×5 而不是报错。"""
+    story = tmp_path / "story.json"
+    story.write_text('{"name":"s","beats":5,"frames":60,"segs":[12,12,12,12,12],'
+                     '"lock":"1girl","style":"anime","actions":["a","b","c","d","e"]}',
+                     encoding="utf-8")
+    out = tmp_path / "wf.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"), "--story", str(story),
+                     "--frames", "30", "--out", str(out)])
+    assert code == 0, log
+    assert "segs=[6, 6, 6, 6, 6]" in log

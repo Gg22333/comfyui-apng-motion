@@ -12,7 +12,7 @@ This page answers three questions:
 
 | Approach | How it is made | Interactive | Runtime dependency | Relative cost | Best for |
 | --- | --- | --- | --- | --- | --- |
-| **This project** | 3–5 keyframes → latent interpolation → 24 frames → APNG/WebP/GIF | No | None; browsers and chat apps play it | **Low**: K samples + 24 decodes | Stickers, micro-performance, docs |
+| **This project** | 3–5 keyframes → latent interpolation → N frames (8–60, default 24) → APNG/WebP/GIF | No | None; browsers and chat apps play it | **Low**: K samples + N decodes | Stickers, micro-performance, docs |
 | Frame-by-frame AI | 24 independent img2img runs | No | None | High: 24 samples | Per-frame precision |
 | `batch_size=24` | One sample, 24 independent noise images | No | None | Medium, but always flickers | Not recommended |
 | Video generation → GIF | Video model → MP4/WebM → frame extraction/quantization | No | None (deliverable) | Very high: temporal model + transcode | Walking, turning, real motion |
@@ -122,31 +122,33 @@ ComfyUI's `KSampler` does **not** run only `denoise × steps` iterations when `d
 
 With `steps=20`:
 
-| Route | Sampling passes | Versus 24-frame frame-by-frame |
+| Route | Sampling passes | Versus 24-frame frame-by-frame (baseline 480) |
 | --- | --- | --- |
 | This project, 3 beats | 3 × 20 = **60** | **87.5% fewer** |
 | This project, 4 beats | 4 × 20 = **80** | **83.3% fewer** |
 | This project, 5 beats | 5 × 20 = **100** | **79.2% fewer** |
 | 24-frame frame-by-frame | 24 × 20 = **480** | baseline |
 
-Interpolation itself is 24 linear blends on latents and calls no model. Decoding is still 24 passes; that part is not saved.
+Interpolation itself is N linear blends on latents and calls no model. Decoding is still N passes; that part is not saved.
+Key point: **going from 24 to 60 frames does not add sampling passes** (only beat count matters); only decode time and file size grow.
 
 ### 5.2 VRAM and memory
 
 An SDXL 512×512 latent is `64×64×4`:
 
-- one fp16 latent ≈ 32 KB; 24 ≈ 768 KB;
-- 24 decoded 512×512 RGBA images ≈ 25 MB;
+- one fp16 latent ≈ 32 KB; 24 ≈ 768 KB, 60 ≈ 1.9 MB;
+- 24 decoded 512×512 RGBA images ≈ 25 MB, 60 ≈ 63 MB;
 - interpolation nodes hold latents, not decoded images.
 
 So the added footprint is **tens of megabytes of image buffers, not gigabytes of model or video cache**. The real cost remains one model load plus K sampling passes.
 
-### 5.3 File size (measured here, 512² × 24 frames)
+### 5.3 File size (measured here, 512²)
 
-| Stack | APNG | GIF | WebP (lossless) |
-| --- | --- | --- | --- |
-| SDXL | 6.61 MB | 2.41 MB | 0.80 MB |
-| Moss | 4.15 MB | 2.72 MB | 2.88 MB |
+| Stack / content | Frames | APNG | GIF | WebP (lossless) |
+| --- | --- | --- | --- | --- |
+| SDXL / silver hair | 24 | 6.61 MB | 2.41 MB | 0.80 MB |
+| Moss / silver hair | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
+| Moss / rainy neon | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
 
 GIF is often smaller than lossless APNG because LZW plus 256 colours suits flat anime very well. For smaller files, turn off WebP `lossless` and use quality 80–90.
 
