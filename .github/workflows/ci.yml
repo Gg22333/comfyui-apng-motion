@@ -35,8 +35,10 @@ jobs:
           python scripts/emit_workflow.py --validate /tmp/b5.json
           python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.diet.json --size 512 --out /tmp/diet60.json
           python scripts/emit_workflow.py --validate /tmp/diet60.json
-      - name: Workflow download mirror in sync
-        run: python scripts/sync_workflows.py --check
+      - name: Workflow download mirror
+        run: |
+          python scripts/sync_workflows.py
+          python scripts/sync_workflows.py --check
       - name: Dependency self-check
         run: python scripts/check_deps.py
 

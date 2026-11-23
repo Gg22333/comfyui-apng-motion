@@ -2,7 +2,7 @@
 name: comfyui-apng-motion
 description: >
   ComfyUI 里用「首帧 + 2–4 个关键帧 latent 插值」做 8–60 帧连贯 APNG/WebP/GIF 动图（表情包/微故事）的完整方法：
-  双环境配置（SDXL / Moss-DiT）、工作流结构、任意帧数扩缩、提示词写法、16 组动作库、只存成品的输出规范、
+  双环境配置（SDXL / Moss-DiT）、工作流结构、任意帧数扩缩、提示词写法、17 组动作库、只存成品的输出规范、
   兼容性与排错。Use when 用户提到 ComfyUI、APNG、动图、表情包、8/24/30/60 帧、帧间闪烁、不连贯、LatentInterpolate、
   SaveAnimatedPNG、SaveAnimatedWEBP、VHS_VideoCombine、SDXL、Moss、DiT、剧情分镜、多角色、
   表情包定义、画风锁定、瞳色漂移、换机器、移植、profile、环境探测。
@@ -137,7 +137,7 @@ python scripts/emit_workflow.py --validate my-4beat.json --run --profile profile
 | `detect_env.py` | 扫本机 ComfyUI：版本、Python、模型清单、插件、运行端口、可用工作流 → `profiles/*.json` | 无 |
 | `doctor.py` | 按 profile 体检：文件、模型、插件、节点类型、输出目录可写、端口是否活 | 无（探活要网络） |
 | `emit_workflow.py` | 3 关键帧 → K 拍（3–5）+ 任意帧数（8–60）；编译剧情卡提示词；重算曲线；校验连线；可选 `--run` 直接出片 | 无 |
-| `make_story.py` | 从 16 组动作库生成剧情卡；校验 frames/segs/beats；自动追加场景提示 | 无 |
+| `make_story.py` | 从 17 组动作库生成剧情卡；校验 frames/segs/beats；自动追加场景提示 | 无 |
 | `check_anim.py` | 帧数、时长、循环、相邻帧差异、重复帧、颜色漂移 | Pillow |
 | `make_curve.py` | 单独出 ratio 曲线，改节奏用 | 无 |
 | `make_preview.py` | 把成品 APNG 重编码成网页预览：全局调色板 + 关抖动 GIF、真彩 WebP | Pillow |
