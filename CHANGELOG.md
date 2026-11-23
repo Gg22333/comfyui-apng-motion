@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 1.3.8 — 2026-11-24
+
+**工作流里直接调帧数、看帧差、看接缝。** 新增随包 ComfyUI 自定义节点（`comfyui_nodes/`），
+把「N 个 LatentInterpolate + N 个 VAEDecode」压成「每拍一个插值节点 + 一次解码」。
+
+- **`APNGLatentInterpolateN`**：`samples1/samples2 → LATENT(batch=frames)`。
+  `frames` 是图上的 INT widget（1–240），改数字即改这一拍的帧数；`role`（first/middle/last）
+  与 `curve`（linear/ease/snap）与 `comfy_lib.build_curve` 的单段结果逐值一致。
+- **`APNGLatentConcat`**：把多拍 batch 按顺序拼接，用于一次解码全部帧。
+- **`APNGFrameStats`**：存盘前打印总帧数、`frames/fps` 时长、相邻帧差 min/max/avg、
+  相同帧对数，以及每拍 `K_n→K_n+1` 的 full/lower 差与循环接缝 `K_N→K0`，阈值与
+  `scripts/check_anim.py` 相同。接 `OUTPUT_NODE`，结果显示在节点和 ComfyUI 日志里。
+- **`emit_workflow.py --dynamic`**：输出动态图结构（3 拍 24 帧 = 26 节点 / 39 连线，
+  静态原图 67 节点）。三拍各一个 `frames` widget，一次 `VAEDecode` 后同时接三个保存节点
+  和帧报告；`--validate` 会检查 frames 之和与 `segs` 是否一致、role/curve 是否合法、
+  是否只剩一个解码节点。
+- **`scripts/install_nodes.py`**：读 `profiles/*.json` 的 `comfy_root`，把 `comfyui_nodes`
+  复制到 `<comfy_root>/custom_nodes/apng_motion_nodes/`；支持 `--profile`、`--all`、
+  `--check`、`--dry-run`。装完重启 ComfyUI 生效。
+- **修 bug**：命令行 `--frames` 覆盖剧情卡帧数时，不再照抄剧情卡的 `segs`（否则总和对不上），
+  改为按拍重新平均分。
+- **测试**：新增 `tests/test_dynamic.py`（比例 parity、动态图结构、非法 widget、
+  静态模式回归、install_nodes 拷贝与 `--check`）。
+- **版本号**：1.3.7 → 1.3.8。
+
 ## 1.3.7 — 2026-11-24
 
 - **默认目标再补两家**：`skill.json` 的 `targets` 增加 `~/.dsh/skills/comfyui-apng-motion`

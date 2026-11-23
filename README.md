@@ -25,6 +25,7 @@ Docs site: [gg22333.github.io/comfyui-apng-motion](https://gg22333.github.io/com
 - [At a glance](#at-a-glance)
 - [Model support](#model-support)
 - [Frame count](#frame-count)
+- [Dynamic frame mode](#dynamic-frame-mode-in-graph)
 - [Workflows](#workflows)
 - [How to write prompts](#how-to-write-prompts)
 - [Motion library](#motion-library)
@@ -153,14 +154,48 @@ Everything below is editable inside the workflow, no script required.
 
 The workflow ships with a `Note` node listing the same table, so you can find the knobs on the canvas.
 
+## Dynamic frame mode (in-graph)
+
+Frame count is a node widget, not a graph shape. Install the bundled nodes once:
+
+```bash
+python scripts/install_nodes.py --profile xl   # -> <comfy_root>/custom_nodes/apng_motion_nodes
+```
+
+Then emit a graph with `--dynamic`:
+
+```bash
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
+    --story assets/story.example.json --dynamic --out my-dynamic.json
+```
+
+3 beats / 24 frames becomes **26 nodes / 39 links** instead of 67. Each beat is one
+`APNG Latent Interpolate N` with `frames`, `role`, `curve` widgets; one `VAEDecode` decodes the whole
+batch; `APNG Frame Stats` prints frames, `frames/fps` duration, adjacent-frame diff (min/max/avg and
+identical pairs), per-beat seam checks and the loop seam before anything is written to disk — same
+thresholds as `check_anim.py`.
+
+| Dimension | In-graph control |
+| --- | --- |
+| Frame count | `frames` on each interpolate node |
+| Duration | `fps` on the three savers and the stats node |
+| Adjacent-frame diff | `APNG Frame Stats` output |
+| Seam uniqueness | `segs` on the stats node |
+| Storyboard | the K keyframe KSamplers, unchanged |
+
+Per-frame dwell and per-beat ease still cannot be expressed because ComfyUI savers take one global
+`fps`; use `retime.py` after export. Full page: [docs/en/dynamic.md](docs/en/dynamic.md).
+
 ## Workflows
 
-Five JSON files, drop one into ComfyUI and queue:
+Seven JSON files, drop one into ComfyUI and queue (the two dynamic ones need the bundled `comfyui_nodes` first):
 
 | Environment | 3 beats | 4 beats |
 | --- | --- | --- |
 | UNet family (SDXL) | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |
 | DiT family (MOSS-Image) | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
+| Dynamic frames (UNet, 3 beats / 24f) | [`workflow-sdxl-dynamic.json`](workflows/workflow-sdxl-dynamic.json) | — |
+| Dynamic frames (DiT, 3 beats / 24f) | [`workflow-moss-dynamic.json`](workflows/workflow-moss-dynamic.json) | — |
 
 The `moss` file names are historical; the graph holds any DiT model — swap the three loaders for FLUX,
 SD3, Krea or Anima and keep the structure.
@@ -433,6 +468,7 @@ sidebar.
 - [一眼看懂](#一眼看懂)
 - [模型支持](#模型支持)
 - [帧数怎么选](#帧数怎么选)
+- [动态帧数模式](#动态帧数模式图上直接调)
 - [工作流](#工作流)
 - [提示词怎么写](#提示词怎么写)
 - [动作库](#动作库)
@@ -553,14 +589,47 @@ python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --f
 
 工作流里自带一个 `Note` 节点，把这张表写在画布上，不用翻文档找旋钮。
 
+### 动态帧数模式（图上直接调）
+
+帧数是节点上的数字，不是图的结构。先装一次随包节点：
+
+```bash
+python scripts/install_nodes.py --profile xl   # 装到 <comfy_root>/custom_nodes/apng_motion_nodes
+```
+
+再用 `--dynamic` 出图：
+
+```bash
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
+    --story assets/story.example.json --dynamic --out my-dynamic.json
+```
+
+3 拍 24 帧从 67 个节点变成 **26 个节点 / 39 条连线**。每拍一个 `APNG Latent Interpolate N`，
+`frames` / `role` / `curve` 都是图上的 widget；一个 `VAEDecode` 解完全部帧；`APNG Frame Stats`
+在存盘前打印帧数、`frames/fps` 时长、相邻帧差（min/max/avg、相同帧对数）、每拍接缝和循环接缝，
+阈值与 `check_anim.py` 一致。
+
+| 维度 | 图上位置 |
+| --- | --- |
+| 帧数 | 每个插值节点的 `frames` |
+| 时长 | 三个保存节点 + 报告节点的 `fps` |
+| 相邻帧差 | `APNG Frame Stats` 输出 |
+| 接缝唯一性 | 报告节点的 `segs` |
+| 分镜 / 故事板 | K 个关键帧 KSampler，结构不变 |
+
+逐帧停留和拍内缓动仍不能在工作流里表达（保存节点只有一个全局 `fps`），出片后用 `retime.py`。
+完整页：[docs/dynamic.md](docs/dynamic.md)。
+
 ### 工作流
 
-五份 JSON，拖进 ComfyUI 就能跑：
+七份 JSON，拖进 ComfyUI 就能跑（两份动态帧数的先装 `comfyui_nodes`）：
 
 | 环境 | 3 拍 | 4 拍 |
 | --- | --- | --- |
 | SDXL | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |
 | DiT 系（MOSS-Image） | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
+| 动态帧数（UNet，3 拍 24 帧） | [`workflow-sdxl-dynamic.json`](workflows/workflow-sdxl-dynamic.json) | — |
+| 动态帧数（DiT，3 拍 24 帧） | [`workflow-moss-dynamic.json`](workflows/workflow-moss-dynamic.json) | — |
 
 `moss` 只是历史文件名，图里装的是任何 DiT 模型：换成 FLUX / SD3 / Krea / Anima 只换三个加载器，结构不动。
 

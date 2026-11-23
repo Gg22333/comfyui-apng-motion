@@ -13,6 +13,8 @@
 | DiT 系（MOSS-Image） | [workflow-moss.json](assets/workflows/workflow-moss.json) | [workflow-moss-4beat.json](assets/workflows/workflow-moss-4beat.json) | `UNETLoader` + `CLIPLoader` + `VAELoader`，8 步，cfg 1.0。换 FLUX / SD3 / Krea / Anima 只换三个加载器 |
 | 预览用（SDXL，60 帧 4 拍） | — | [workflow-sdxl-preview.json](assets/workflows/workflow-sdxl-preview.json) | SDXL 预览样例，同 seed、`denoise 0.5`、30fps |
 | 预览用（MOSS，60 帧 11 拍） | — | [workflow-moss-preview.json](assets/workflows/workflow-moss-preview.json) | 生成仓库那张预览图，同 seed、`denoise 0.85`、20fps、3.00 秒 |
+| 动态帧数（UNet，3 拍 24 帧） | [workflow-sdxl-dynamic.json](assets/workflows/workflow-sdxl-dynamic.json) | — | 先跑 `install_nodes.py` 装 `comfyui_nodes`，重启 ComfyUI；每拍 `frames` 是图上 widget |
+| 动态帧数（DiT，3 拍 24 帧） | [workflow-moss-dynamic.json](assets/workflows/workflow-moss-dynamic.json) | — | 同上；换 FLUX / SD3 / Krea / Anima 只换三个加载器 |
 
 24 帧是默认。想要 8 / 30 / 60 帧不用换文件：
 
@@ -22,6 +24,8 @@ python scripts/emit_workflow.py --base workflows/workflow-moss.json \
 ```
 
 `--frames` 会改写插值、解码、合批三件套的节点数量，其它连线不动。
+
+要在图上直接改每拍帧数、并在存盘前看相邻帧差与接缝，用[动态帧数模式](dynamic.md)：每拍一个 `APNG Latent Interpolate N`，`frames` 是 widget。
 
 ## 结构
 

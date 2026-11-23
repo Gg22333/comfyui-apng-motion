@@ -329,6 +329,33 @@ Pillow 写 APNG 时，如果两帧像素完全相同，会**丢掉这一帧并�
 3. 用 `make_curve.py --segs 6,7,6,5` 重算 24 个 ratio，逐个粘贴。
 4. 单段帧数不要低于 4：低于 4 帧的那段看不出动作，只算一次跳。拍数上去了就减段数，或把总帧数加到 30/60（`--frames 30 --segs 6,6,6,6,6`）。
 
+### 2.4 动态帧数模式（帧数变成图上的 widget）
+
+静态结构的帧数 = 节点数量，改帧数要重跑 `emit_workflow.py`。动态模式把这层压成「每拍一个插值节点」：
+
+```
+K 个关键帧 KSampler（不变）
+  → 每拍 1 个 APNGLatentInterpolateN（frames / role / curve 三个 widget）
+  → N-1 个 APNGLatentConcat
+  → 1 个 VAEDecode（一次解码全部帧）
+  → 3 个保存节点 + 1 个 APNGFrameStats
+```
+
+装节点：`python scripts/install_nodes.py --profile xl`（复制到 `<comfy_root>/custom_nodes/apng_motion_nodes/`，重启 ComfyUI）。
+出图：`python scripts/emit_workflow.py --base ... --story ... --dynamic --out ...`。
+
+| 维度 | 图上位置 |
+| --- | --- |
+| 帧数 | 每个插值节点的 `frames`（1–240），总帧数 = 各拍之和 |
+| 时长 | 三个保存节点 + 报告节点的 `fps`，总时长 = 总帧数 / fps |
+| 相邻帧差 | `APNGFrameStats` 打印 min/max/avg 与 identical_pairs |
+| 接缝唯一性 | `APNGFrameStats` 的 `segs` 填各拍帧数，逐拍与循环接缝判 OK/FAIL |
+| 分镜 / 故事板 | K 个关键帧 KSampler，一个关键帧一拍，结构不变 |
+
+阈值与 `check_anim.py` 一致（拍内 `full>=2.0 && lower>=1.0`，循环 `0.3..6.0`）。
+`--validate` 会拦：frames 之和与 `segs` 不一致、role/curve 非法、解码节点不是 1 个。
+**逐帧 dwell / 拍内 ease 仍只能出片后跑 `retime.py`**，ComfyUI 保存节点只有一个全局 fps。
+
 ## 3 · 保存节点参数
 
 | 节点 | 参数 | xl | Dit | 说明 |
@@ -798,6 +825,9 @@ output\APNG\
 | `scripts/detect_env.py` | 扫本机 ComfyUI → `profiles/*.json`（换机器第一步） |
 | `scripts/doctor.py` | profile 体检：模型、插件、节点、端口、输出目录 |
 | `scripts/emit_workflow.py` | 3 关键帧 → 3–8 拍剧情工作流；`--prompt-mode`、`--size`、编译提示词、重算曲线、校验、可选 `--run`、`--notes-only` |
+| `scripts/emit_workflow.py --dynamic` | 动态帧数图：每拍一个 `APNGLatentInterpolateN` + 一次解码 + 帧报告 |
+| `comfyui_nodes/` | 随包 ComfyUI 节点：`APNGLatentInterpolateN` / `APNGLatentConcat` / `APNGFrameStats` |
+| `scripts/install_nodes.py` | 把 `comfyui_nodes` 装进 `<comfy_root>/custom_nodes/apng_motion_nodes/`，支持 `--check` / `--dry-run` |
 | `scripts/comfy_lib.py` | 共用库（profile / HTTP / 曲线 / UI→API） |
 | `profiles/xl.json` `profiles/dit.json` | 本机探测结果，换机器重新生成 |
 | `assets/story.example.json` `assets/story.4beat.json` | 剧情卡样例（3 拍 / 4 拍，tags 模式） |

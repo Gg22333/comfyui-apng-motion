@@ -13,6 +13,8 @@ The download links below are mirrored into `docs/assets/workflows/` by `scripts/
 | DiT family (MOSS-Image) | [workflow-moss.json](../assets/workflows/workflow-moss.json) | [workflow-moss-4beat.json](../assets/workflows/workflow-moss-4beat.json) | `UNETLoader` + `CLIPLoader` + `VAELoader`, 8 steps, cfg 1.0. Swap three loaders for FLUX / SD3 / Krea / Anima |
 | Preview (SDXL, 60f / 4 beats) | — | [workflow-sdxl-preview.json](../assets/workflows/workflow-sdxl-preview.json) | SDXL sample: same seed, `denoise 0.5`, 30fps |
 | Preview (MOSS, 60f / 11 beats) | — | [workflow-moss-preview.json](../assets/workflows/workflow-moss-preview.json) | Builds the repo preview: same seed, `denoise 0.85`, 20fps, 3.00 s |
+| Dynamic frames (UNet, 3 beats / 24f) | [workflow-sdxl-dynamic.json](../assets/workflows/workflow-sdxl-dynamic.json) | — | Run `install_nodes.py` first, restart ComfyUI; `frames` on each interpolate node is a canvas widget |
+| Dynamic frames (DiT, 3 beats / 24f) | [workflow-moss-dynamic.json](../assets/workflows/workflow-moss-dynamic.json) | — | Same install; swap the three loaders for FLUX / SD3 / Krea / Anima |
 
 24 frames is the default. For 8 / 30 / 60 frames you do not switch files:
 
@@ -22,6 +24,8 @@ python scripts/emit_workflow.py --base workflows/workflow-moss.json \
 ```
 
 `--frames` rebuilds the interpolate / decode / batch triplet; nothing else is rewired.
+
+To change per-beat frame counts on the canvas and see adjacent-frame diff / seams before saving, use [dynamic frame mode](dynamic.md): one `APNG Latent Interpolate N` per beat, `frames` as a widget.
 
 ## Structure
 

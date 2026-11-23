@@ -12,6 +12,8 @@
         --lock "masterpiece, 1girl, silver hair, blue eyes" --style "anime screencap" \
         --actions "neutral expression|eyes widened|mouth open|flat expression" --out out.json
     python emit_workflow.py --validate out.json                  # 只校验
+    python emit_workflow.py --base ../workflows/workflow-sdxl.json --story ../assets/story.example.json \
+        --dynamic --out out-dynamic.json      # 每拍一个插值节点，帧数是图里的 widget
     python emit_workflow.py --validate out.json --run --profile ../profiles/xl.json
 
 输出结构：K 关键帧 -> N LatentInterpolate -> N VAEDecode -> ImageBatchMulti -> 三格式。
@@ -74,6 +76,131 @@ def positive_encoder(wf, sampler):
     return n
 
 
+DYN_INTERP = "APNGLatentInterpolateN"
+DYN_CONCAT = "APNGLatentConcat"
+DYN_STATS = "APNGFrameStats"
+
+
+def _new_node(nid, ntype, pos, size, inputs, outputs, widgets, title, order):
+    return {
+        "id": nid, "type": ntype, "pos": pos, "size": size, "flags": {},
+        "order": order, "mode": 0, "inputs": inputs, "outputs": outputs,
+        "properties": {"Node name for S&R": ntype},
+        "widgets_values": widgets, "title": title,
+    }
+
+
+def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o):
+    """静态 N 插值 + N 解码 -> 每拍一个插值节点 + 一次解码 + 帧报告。"""
+    nodes = wf["nodes"]
+    # 也清掉上一次 --dynamic 留下的节点，保证对动态图重复跑是幂等的
+    kill = {n["id"] for n in nodes
+            if n["type"] in ("LatentInterpolate", "VAEDecode", "ImageBatchMulti",
+                             DYN_INTERP, DYN_CONCAT, DYN_STATS)
+            or (n["type"] == "Note"
+                and str((n.get("widgets_values") or [""])[0]).startswith("动态帧数模式"))}
+    keep = []
+    for n in nodes:
+        if n["id"] in kill:
+            for inp in n.get("inputs") or []:
+                if inp.get("link") is not None:
+                    ledger.drop(inp["link"])
+        else:
+            keep.append(n)
+    nodes[:] = keep
+    for lid in list(ledger.links):
+        o, t = ledger.links[lid][1], ledger.links[lid][3]
+        if o in kill or t in kill:
+            ledger.drop(lid)
+
+    nid = max(n["id"] for n in nodes)
+    order = max(n.get("order", 0) for n in nodes)
+    max_x = max((n.get("pos") or [0, 0])[0] for n in nodes)
+
+    def add(ntype, pos, size, inputs, widgets, title,
+            out_name="LATENT", out_type="LATENT"):
+        nonlocal nid, order
+        nid += 1
+        order += 1
+        n = _new_node(nid, ntype, pos, size, inputs,
+                      [{"name": out_name, "type": out_type, "links": []}],
+                      widgets, title, order)
+        nodes.append(n)
+        return n
+
+    segs_n = len(segs)
+    interps = []
+    for i, cnt in enumerate(segs):
+        if segs_n == 1:
+            role = "first"
+        elif i == 0:
+            role = "first"
+        elif i == segs_n - 1:
+            role = "last"
+        else:
+            role = "middle"
+        src = chain[i]
+        dst = chain[i + 1] if i + 1 < len(chain) else chain[0]
+        n = add(DYN_INTERP, [max_x + 420, 60 + i * 240], [320, 150],
+                [{"name": "samples1", "type": "LATENT", "link": None},
+                 {"name": "samples2", "type": "LATENT", "link": None}],
+                [cnt, role, curve],
+                "拍 %d：%s→%s（frames=%d）" % (i, name_of(src, i), name_of(dst, (i + 1) % len(chain)), cnt))
+        n["inputs"][0]["link"] = ledger.add(src["id"], 0, n["id"], 0, "LATENT")
+        n["inputs"][1]["link"] = ledger.add(dst["id"], 0, n["id"], 1, "LATENT")
+        interps.append(n)
+
+    acc = interps[0]
+    for i, nxt in enumerate(interps[1:], start=1):
+        n = add(DYN_CONCAT, [max_x + 800, 60 + segs_n * 240 + i * 110], [280, 60],
+                [{"name": "samples1", "type": "LATENT", "link": None},
+                 {"name": "samples2", "type": "LATENT", "link": None}],
+                [], "拼 batch %d" % i)
+        n["inputs"][0]["link"] = ledger.add(acc["id"], 0, n["id"], 0, "LATENT")
+        n["inputs"][1]["link"] = ledger.add(nxt["id"], 0, n["id"], 1, "LATENT")
+        acc = n
+
+    dec = add("VAEDecode", [max_x + 1140, 60], [240, 46],
+              [{"name": "samples", "type": "LATENT", "link": None},
+               {"name": "vae", "type": "VAE", "link": None}],
+              [], "解码全部帧", out_name="IMAGE", out_type="IMAGE")
+    dec["inputs"][0]["link"] = ledger.add(acc["id"], 0, dec["id"], 0, "LATENT")
+    dec["inputs"][1]["link"] = ledger.add(vae_o[0], vae_o[1], dec["id"], 1, "VAE")
+
+    stats = add(DYN_STATS, [max_x + 1140, 140], [340, 300],
+                [{"name": "images", "type": "IMAGE", "link": None}],
+                [fps, ",".join(str(x) for x in segs)],
+                "帧报告（帧数 / 时长 / 相邻帧差 / 接缝）",
+                out_name="STRING", out_type="STRING")
+    stats["inputs"][0]["link"] = ledger.add(dec["id"], 0, stats["id"], 0, "IMAGE")
+
+    nid += 1
+    order += 1
+    nodes.append({
+        "id": nid, "type": "Note",
+        "pos": [max_x + 800, 60 + segs_n * 240 + (segs_n - 1) * 110 + 140],
+        "size": [460, 240], "flags": {}, "order": order, "mode": 0,
+        "widgets_values": [
+            "动态帧数模式（APNG 节点）\n"
+            "- 每拍一个「APNG Latent Interpolate N」：frames = 这一拍的帧数，改数字即改帧数\n"
+            "- 总帧数 = 各拍 frames 之和；时长 = 总帧数 / fps（fps 在三个保存节点上）\n"
+            "- role 按拍序固定为 first / middle / last，删拍加拍时记得同步\n"
+            "- 「帧报告」节点打印相邻帧差与循环接缝差，阈值与 check_anim.py 一致\n"
+            "- 改完 frames 要同步把 Frame Stats 的 segs 改成新的逗号列表"
+        ],
+    })
+
+    for n in nodes:
+        if n["type"] not in ("SaveAnimatedPNG", "SaveAnimatedWEBP", "VHS_VideoCombine"):
+            continue
+        for inp in n.get("inputs") or []:
+            if inp.get("name") == "images":
+                if inp.get("link") is not None:
+                    ledger.drop(inp["link"])
+                inp["link"] = ledger.add(dec["id"], 0, n["id"], 0, "IMAGE")
+    return interps
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default="")
@@ -92,6 +219,8 @@ def main():
     ap.add_argument("--negative", default="")
     ap.add_argument("--actions", default="")
     ap.add_argument("--denoise", type=float, default=0)
+    ap.add_argument("--dynamic", action="store_true",
+                    help="动态帧数模式：每拍一个 APNG Latent Interpolate N + 一次解码（需要 comfyui_nodes 节点）")
     ap.add_argument("--size", type=int, default=0, help="正方形边长；写 640 就是 640x640")
     ap.add_argument("--width", type=int, default=0)
     ap.add_argument("--height", type=int, default=0)
@@ -156,7 +285,8 @@ def main():
     segs_arg = a.segs
     if not segs_arg and story.get("segs"):
         story_frames = int(story.get("frames", 0) or 0)
-        if not story_frames or story_frames == frames:
+        # --frames 一旦改写总帧数，剧情卡里的 segs 就不能照抄（否则和之和会对不上）
+        if (not a.frames) or (story_frames and story_frames == frames):
             segs_arg = ",".join(str(x) for x in story["segs"])
     segs = [int(x) for x in (segs_arg or "").split(",") if x.strip()]
     if not segs:
@@ -386,25 +516,30 @@ def main():
 
     apply_notes(nodes)
 
-    # N 个插值 / 解码（N = frames），不足则克隆补齐，多余则删掉
-    interps, decodes = ensure_frames(wf, ledger, frames)
-    ratios = L.build_curve(segs, curve=curve)
-    idx = 0
-    for seg, cnt in enumerate(segs):
-        src = chain[seg]
-        dst = chain[seg + 1] if seg + 1 < len(chain) else chain[0]
-        for _ in range(cnt):
-            n = interps[idx]
-            for inp in n.get("inputs") or []:
-                if inp.get("link") is not None:
-                    ledger.drop(inp["link"])
-            l1 = ledger.add(src["id"], 0, n["id"], 0, "LATENT")
-            l2 = ledger.add(dst["id"], 0, n["id"], 1, "LATENT")
-            n["inputs"] = [{"name": "samples1", "type": "LATENT", "link": l1},
-                           {"name": "samples2", "type": "LATENT", "link": l2}]
-            n["widgets_values"] = [ratios[idx]]
-            n["title"] = "插值 %d (%s→%s)" % (idx + 1, name_of(chain[seg], seg), name_of(dst, (seg + 1) % len(chain)))
-            idx += 1
+    if a.dynamic:
+        apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o)
+        print("dynamic: %d 拍 -> %d 个插值节点 + 1 次解码（帧数合计 %d）"
+              % (len(segs), len(segs), sum(segs)))
+    else:
+        # N 个插值 / 解码（N = frames），不足则克隆补齐，多余则删掉
+        interps, decodes = ensure_frames(wf, ledger, frames)
+        ratios = L.build_curve(segs, curve=curve)
+        idx = 0
+        for seg, cnt in enumerate(segs):
+            src = chain[seg]
+            dst = chain[seg + 1] if seg + 1 < len(chain) else chain[0]
+            for _ in range(cnt):
+                n = interps[idx]
+                for inp in n.get("inputs") or []:
+                    if inp.get("link") is not None:
+                        ledger.drop(inp["link"])
+                l1 = ledger.add(src["id"], 0, n["id"], 0, "LATENT")
+                l2 = ledger.add(dst["id"], 0, n["id"], 1, "LATENT")
+                n["inputs"] = [{"name": "samples1", "type": "LATENT", "link": l1},
+                               {"name": "samples2", "type": "LATENT", "link": l2}]
+                n["widgets_values"] = [ratios[idx]]
+                n["title"] = "插值 %d (%s→%s)" % (idx + 1, name_of(chain[seg], seg), name_of(dst, (seg + 1) % len(chain)))
+                idx += 1
 
     # 输出节点
     for n in nodes:
@@ -736,6 +871,122 @@ def compile_prompt(lock, style, action, mode="tags"):
     return ", ".join(parts)
 
 
+def _validate_static(nodes, links, by_id, savers):
+    probs = []
+    interps = [n for n in nodes if n["type"] == "LatentInterpolate"]
+    nframes = len(interps)
+    if nframes < 2:
+        probs.append("LatentInterpolate 只有 %d 个，至少 2" % nframes)
+    decodes = [n for n in nodes if n["type"] == "VAEDecode"]
+    if len(decodes) != nframes:
+        probs.append("VAEDecode 数量 %d != 插值数 %d" % (len(decodes), nframes))
+    for n in interps:
+        w = n.get("widgets_values") or []
+        if not w:
+            probs.append("插值节点 %s 没有 ratio" % n["id"])
+            continue
+        if len([i for i in n.get("inputs") or [] if i.get("link") is not None]) != 2:
+            probs.append("插值节点 %s 输入不足 2 个" % n["id"])
+    # 只有「同一对 latent」上出现重复 ratio 才会产生像素相同的相邻帧。
+    groups = {}
+    for n in interps:
+        w = n.get("widgets_values") or []
+        if not w:
+            continue
+        key = []
+        for inp in n.get("inputs") or []:
+            lid = inp.get("link")
+            if lid in links:
+                key.append(links[lid][1])
+        groups.setdefault(tuple(key), []).append(w[0])
+    for key, vals in groups.items():
+        if len(set(vals)) != len(vals):
+            probs.append("同一对 latent %s 上 ratio 有重复值，Pillow 会合并帧" % (key,))
+    batch = [n for n in nodes if n["type"] == "ImageBatchMulti"]
+    if len(batch) != 1:
+        probs.append("ImageBatchMulti 数量 %d != 1" % len(batch))
+    else:
+        b = batch[0]
+        got = len([i for i in b.get("inputs") or [] if i.get("link") is not None])
+        if got != nframes:
+            probs.append("ImageBatchMulti 接了 %d 路，应与插值数 %d 一致" % (got, nframes))
+        wv = b.get("widgets_values") or []
+        if wv and int(wv[0]) != got:
+            probs.append("ImageBatchMulti 计数 %s 与实际接线 %d 不一致" % (wv[0], got))
+        outs = [l for o in (b.get("outputs") or []) for l in (o.get("links") or [])]
+        hit = set()
+        for lid in outs:
+            l = links.get(lid)
+            if l and by_id.get(l[3], {}).get("type") in ("SaveAnimatedPNG", "SaveAnimatedWEBP", "VHS_VideoCombine"):
+                hit.add(by_id[l[3]]["type"])
+        if len(hit) != 3:
+            probs.append("三个保存节点没有全接在同一个 batch 上: %s" % sorted(hit))
+    if len(savers) != 3:
+        probs.append("保存节点数量 %d != 3" % len(savers))
+    return probs
+
+
+def _validate_dynamic(nodes, links, by_id, savers):
+    probs = []
+    interps = [n for n in nodes if n["type"] == DYN_INTERP]
+    if not interps:
+        probs.append("动态模式没有 %s" % DYN_INTERP)
+    total = 0
+    for n in interps:
+        w = n.get("widgets_values") or []
+        if len(w) < 3:
+            probs.append("插值节点 %s widgets 不全（应为 frames/role/curve）" % n["id"])
+            continue
+        try:
+            cnt = int(w[0])
+        except (TypeError, ValueError):
+            probs.append("插值节点 %s frames=%r 不是整数" % (n["id"], w[0]))
+            continue
+        total += cnt
+        if cnt < 1:
+            probs.append("插值节点 %s frames=%d 必须 >= 1" % (n["id"], cnt))
+        if w[1] not in ("first", "middle", "last"):
+            probs.append("插值节点 %s role=%r 非法" % (n["id"], w[1]))
+        if w[2] not in ("linear", "ease", "snap"):
+            probs.append("插值节点 %s curve=%r 非法" % (n["id"], w[2]))
+        for inp in n.get("inputs") or []:
+            if inp.get("link") is None:
+                probs.append("插值节点 %s 的 %s 没接" % (n["id"], inp["name"]))
+    if any(n["type"] == "LatentInterpolate" for n in nodes):
+        probs.append("动态模式里还留着 LatentInterpolate，两套混用")
+    if any(n["type"] == "ImageBatchMulti" for n in nodes):
+        probs.append("动态模式不需要 ImageBatchMulti")
+    decs = [n for n in nodes if n["type"] == "VAEDecode"]
+    if len(decs) != 1:
+        probs.append("动态模式应该只有 1 个 VAEDecode，当前 %d" % len(decs))
+    if len(savers) != 3:
+        probs.append("保存节点数量 %d != 3" % len(savers))
+    if decs:
+        dec_id = decs[0]["id"]
+        for s_ in savers:
+            src = None
+            for inp in s_.get("inputs") or []:
+                if inp.get("name") == "images" and inp.get("link") in links:
+                    src = links[inp["link"]][1]
+            if src != dec_id:
+                probs.append("%s 没有接在唯一的 VAEDecode 上" % s_["type"])
+    stats = [n for n in nodes if n["type"] == DYN_STATS]
+    if len(stats) != 1:
+        probs.append("%s 数量 %d != 1" % (DYN_STATS, len(stats)))
+    else:
+        w = stats[0].get("widgets_values") or []
+        txt = str(w[1]) if len(w) > 1 else ""
+        segs = [x for x in txt.replace("，", ",").split(",") if x.strip()]
+        if segs:
+            try:
+                ss = sum(int(x) for x in segs)
+            except ValueError:
+                ss = None
+            if ss is not None and ss != total:
+                probs.append("帧报告 segs 之和 %d 与各拍 frames 之和 %d 不一致" % (ss, total))
+    return probs
+
+
 def validate(wf):
     probs = []
     nodes = wf.get("nodes") or []
@@ -755,61 +1006,14 @@ def validate(wf):
         for inp in n.get("inputs") or []:
             if inp.get("link") is not None and inp["link"] not in links:
                 probs.append("%s 的输入 %s 指向不存在的 link %s" % (n["type"], inp["name"], inp["link"]))
-    interps = [n for n in nodes if n["type"] == "LatentInterpolate"]
-    nframes = len(interps)
-    if nframes < 2:
-        probs.append("LatentInterpolate 只有 %d 个，至少 2" % nframes)
-    decodes = [n for n in nodes if n["type"] == "VAEDecode"]
-    if len(decodes) != nframes:
-        probs.append("VAEDecode 数量 %d != 插值数 %d" % (len(decodes), nframes))
-    ratios = []
-    for n in interps:
-        w = n.get("widgets_values") or []
-        if not w:
-            probs.append("插值节点 %s 没有 ratio" % n["id"])
-            continue
-        ratios.append(w[0])
-        if len([i for i in n.get("inputs") or [] if i.get("link") is not None]) != 2:
-            probs.append("插值节点 %s 输入不足 2 个" % n["id"])
-    # 只有「同一对 latent」上出现重复 ratio 才会产生像素相同的相邻帧。
-    # 不同段（K0→A 与 A→B）用同一个数值是安全的：样本对不同，画面必然不同。
-    groups = {}
-    for n in interps:
-        w = n.get("widgets_values") or []
-        if not w:
-            continue
-        key = []
-        for inp in n.get("inputs") or []:
-            lid = inp.get("link")
-            if lid in links:
-                key.append(links[lid][1])
-        groups.setdefault(tuple(key), []).append(w[0])
-    for key, vals in groups.items():
-        if len(set(vals)) != len(vals):
-            probs.append("同一对 latent %s 上 ratio 有重复值，Pillow 会合并帧" % (key,))
     for n in nodes:
         if n["type"] in ("SaveImage", "PreviewImage"):
             probs.append("不该出现 %s（只存成品）" % n["type"])
-    batch = [n for n in nodes if n["type"] == "ImageBatchMulti"]
-    if len(batch) != 1:
-        probs.append("ImageBatchMulti 数量 %d != 1" % len(batch))
+    savers = [n for n in nodes if n["type"] in ("SaveAnimatedPNG", "SaveAnimatedWEBP", "VHS_VideoCombine")]
+    if any(n["type"] == DYN_INTERP for n in nodes):
+        probs.extend(_validate_dynamic(nodes, links, by_id, savers))
     else:
-        b = batch[0]
-        got = len([i for i in b.get("inputs") or [] if i.get("link") is not None])
-        if got != nframes:
-            probs.append("ImageBatchMulti 接了 %d 路，应与插值数 %d 一致" % (got, nframes))
-        wv = b.get("widgets_values") or []
-        if wv and int(wv[0]) != got:
-            probs.append("ImageBatchMulti 计数 %s 与实际接线 %d 不一致" % (wv[0], got))
-        outs = [l for o in (b.get("outputs") or []) for l in (o.get("links") or [])]
-        saver_types = {"SaveAnimatedPNG", "SaveAnimatedWEBP", "VHS_VideoCombine"}
-        hit = set()
-        for lid in outs:
-            l = links.get(lid)
-            if l and by_id.get(l[3], {}).get("type") in saver_types:
-                hit.add(by_id[l[3]]["type"])
-        if len(hit) != 3:
-            probs.append("三个保存节点没有全接在同一个 batch 上: %s" % sorted(hit))
+        probs.extend(_validate_static(nodes, links, by_id, savers))
     ks = [n for n in nodes if n["type"] == "KSampler"]
     if ks:
         base = None
@@ -851,7 +1055,11 @@ def run_it(wf, profile_path, segs=None):
         return 2
     hist = L.wait_history(base, pid)
     files = L.outputs_of(hist)
-    nframes = len([n for n in wf["nodes"] if n["type"] == "LatentInterpolate"]) or 24
+    dyn = [n for n in wf["nodes"] if n["type"] == DYN_INTERP]
+    if dyn:
+        nframes = sum(int((n.get("widgets_values") or [0])[0]) for n in dyn)
+    else:
+        nframes = len([n for n in wf["nodes"] if n["type"] == "LatentInterpolate"]) or 24
     print("done. outputs:")
     for f in files:
         print(" ", f)

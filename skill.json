@@ -1,8 +1,8 @@
 {
   "name": "comfyui-apng-motion",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "schema": 1,
-  "summary": "ComfyUI 连贯 APNG/WebP/GIF：8/24/30/60 帧可变、关键帧 latent 插值、fps + 每拍停留（dwell/ease）、17 组动作库、CLIP/Qwen-VL/T5 三种提示词方言、UNet 系与 DiT 系双环境（MOSS-Image/FLUX/SD3/Krea/Anima）",
+  "summary": "ComfyUI 连贯 APNG/WebP/GIF：8/24/30/60 帧可变、关键帧 latent 插值、fps + 每拍停留（dwell/ease）、17 组动作库、工作流内动态帧数节点（每拍 frames widget）、CLIP/Qwen-VL/T5 三种提示词方言、UNet 系与 DiT 系双环境（MOSS-Image/FLUX/SD3/Krea/Anima）",
   "license": "MIT",
   "requires": {
     "python": ">=3.9",
@@ -19,7 +19,8 @@
         "provides": [
           "ImageBatchMulti"
         ],
-        "install": "https://github.com/kijai/ComfyUI-KJNodes"
+        "install": "https://github.com/kijai/ComfyUI-KJNodes",
+        "note": "仅静态模式（ImageBatchMulti）需要；--dynamic 模式不需要"
       },
       "ComfyUI-VideoHelperSuite": {
         "required": false,
@@ -42,7 +43,8 @@
     "deps": "scripts/check_deps.py",
     "install": "scripts/install.py",
     "package": "scripts/package.py",
-    "retime": "scripts/retime.py"
+    "retime": "scripts/retime.py",
+    "install_nodes": "scripts/install_nodes.py"
   },
   "targets": [
     "~/.codex/skills/comfyui-apng-motion",
@@ -56,5 +58,15 @@
     "**/*.bak*",
     "**/__pycache__/**",
     "dist/**"
-  ]
+  ],
+  "bundled_comfy_nodes": {
+    "dir": "comfyui_nodes",
+    "target": "<comfy_root>/custom_nodes/apng_motion_nodes",
+    "install": "scripts/install_nodes.py",
+    "provides": [
+      "APNGLatentInterpolateN",
+      "APNGLatentConcat",
+      "APNGFrameStats"
+    ]
+  }
 }
