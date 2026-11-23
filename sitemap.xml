@@ -1,95 +1,171 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/architecture/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/architecture/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/architecture/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/faq/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/faq/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/faq/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/faq/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/formats/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/formats/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/formats/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/formats/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/install/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/install/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/install/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/install/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/motion-presets/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/motion-presets/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/motion-presets/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/motion-presets/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/output/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/output/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/output/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/output/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/publishing/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/publishing/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/publishing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/publishing/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/synthesis-comparison/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/synthesis-comparison/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/synthesis-comparison/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/synthesis-comparison/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/troubleshooting/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/troubleshooting/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/troubleshooting/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/troubleshooting/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/usage/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/usage/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/usage/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/usage/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/workflows/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/workflows/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/workflows/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/workflows/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/architecture/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/architecture/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/architecture/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/faq/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/faq/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/faq/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/faq/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/formats/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/formats/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/formats/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/formats/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/install/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/install/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/install/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/install/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/motion-presets/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/motion-presets/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/motion-presets/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/motion-presets/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/output/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/output/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/output/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/output/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/synthesis-comparison/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/publishing/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/publishing/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/publishing/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/troubleshooting/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/synthesis-comparison/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/synthesis-comparison/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/synthesis-comparison/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/usage/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/troubleshooting/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/troubleshooting/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/troubleshooting/"/>
     </url>
     <url>
-         <loc>https://gg22333.github.io/comfyui-apng-motion/en/workflows/</loc>
-         <lastmod>2026-11-23</lastmod>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/usage/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/usage/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/usage/"/>
+    </url>
+    <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/workflows/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/workflows/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/workflows/"/>
     </url>
 </urlset>
