@@ -41,3 +41,14 @@ fix: 修复
 docs: 文档
 chore: 杂项
 ```
+
+## 许可
+
+提交 PR 即表示你同意该贡献按 MIT 许可发布，允许在本仓库中分发与再许可。
+请勿提交来自 GPL 项目的代码片段——KJNodes、VideoHelperSuite 与 ComfyUI 只作为运行依赖，
+通过节点调用使用，源码不进本仓库。
+
+By submitting a pull request you agree that your contribution is licensed under
+the MIT License (see LICENSE), and that you will not paste GPL-licensed source
+code from ComfyUI, KJNodes or VideoHelperSuite into this repository.
+

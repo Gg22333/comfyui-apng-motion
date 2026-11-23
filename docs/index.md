@@ -3,7 +3,7 @@
 # comfyui-apng-motion
 
 <p class="lead">在 ComfyUI 里把 3–8 个关键帧合成<strong>能讲故事</strong>的 APNG / WebP / GIF。
-同一张工作流切 <strong>8 / 24 / 30 / 60 帧</strong>，SDXL 与 Moss-DiT 两套环境都有可直接导入的 JSON。</p>
+同一张工作流切 <strong>8 / 24 / 30 / 60 帧</strong>，UNet 系与 DiT 系两套环境都有可直接导入的 JSON。</p>
 
 </div>
 
@@ -11,7 +11,7 @@
 
 ![十一拍分镜](assets/storyboard-diet.webp)
 
-> **预览**：60 帧 / 30fps / Moss-DiT，十一拍全身故事《减肥破功》。
+> **预览**：60 帧 / 20fps / 3.0 秒 / MOSS-Image（DiT + DMD），十一拍全身故事《减肥破功》。
 > 配方在 `assets/story.diet.json`（`prompt_mode: moss_zh`），节拍 `5/5/4/7/6/7/5/6/5/5/5`。
 > 分镜图是按 `--segs` 从成片里抽出的真实关键拍，不是示意图。
 >

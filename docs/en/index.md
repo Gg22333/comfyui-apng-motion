@@ -3,7 +3,7 @@
 # comfyui-apng-motion
 
 <p class="lead">Story-shaped <strong>APNG / WebP / GIF</strong> from 3–8 keyframes in ComfyUI.
-One graph, <strong>8 / 24 / 30 / 60 frames</strong>, importable JSON for both SDXL and Moss/DiT.</p>
+One graph, <strong>8 / 24 / 30 / 60 frames</strong>, importable JSON for both the UNet family and the DiT family.</p>
 
 </div>
 
@@ -11,7 +11,7 @@ One graph, <strong>8 / 24 / 30 / 60 frames</strong>, importable JSON for both SD
 
 ![eleven-beat storyboard](../assets/storyboard-diet.webp)
 
-> **Preview**: the eleven-beat full-body story *Diet Betrayal*, 60 frames at 30 fps, Moss/DiT.
+> **Preview**: the eleven-beat full-body story *Diet Betrayal*, 60 frames at 20 fps (3.0 s), MOSS-Image (DiT + DMD).
 > Recipe: `assets/story.diet.json` (`prompt_mode: moss_zh`), segments `5/5/4/7/6/7/5/6/5/5/5`.
 > The contact sheet is sampled from the real output by `--segs`, not a mock-up.
 >

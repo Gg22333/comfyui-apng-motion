@@ -44,7 +44,8 @@ def spread(frames, beats):
 
 def build_story(data, preset_id, lock, style=None, name=None, frames=None, fps=None,
                 segs=None, denoise=None, motion=None, negative=None, curve=None,
-                prefix=None, seed_mode=None, use_hint=True, seed=None):
+                prefix=None, seed_mode=None, use_hint=True, seed=None,
+                dwell=None, ease=None):
     p = find_preset(data, preset_id)
     d = data.get("defaults") or {}
     beats = int(p["beats"])
@@ -79,12 +80,23 @@ def build_story(data, preset_id, lock, style=None, name=None, frames=None, fps=N
     if extra:
         neg = (neg.rstrip(", ") + ", " + extra).strip(", ")
 
+    # dwell 只跟随未被改写的 segs；改了帧数就丢，长度对不上会被 emit 警告
+    preset_segs = [int(x) for x in p["segs"]] if p.get("segs") else []
+    if dwell is not None:
+        n_dwell = [float(x) for x in dwell]
+    elif preset_segs and n_segs == preset_segs and p.get("dwell"):
+        n_dwell = [float(x) for x in p["dwell"]]
+    else:
+        n_dwell = None
+    n_ease = float(ease if ease is not None else p.get("ease", 0.3))
+
     story = {
         "name": name or ("anim-%s" % preset_id),
         "beats": beats,
         "frames": n_frames,
         "segs": n_segs,
         "fps": float(fps if fps is not None else p.get("fps", 10)),
+        "ease": n_ease,
         "denoise": float(denoise if denoise is not None else p.get("denoise", 0.45)),
         "seed_mode": seed_mode or "same",
         "prefix": prefix or "APNG/final",
@@ -95,6 +107,8 @@ def build_story(data, preset_id, lock, style=None, name=None, frames=None, fps=N
         "motion": motion if motion is not None else p.get("motion", d.get("motion", "")),
         "curve": curve or p.get("curve", d.get("curve", "linear")),
     }
+    if n_dwell:
+        story["dwell"] = n_dwell
     if seed:
         story["seed"] = int(seed)
     mode = p.get("prompt_mode") or "tags"
@@ -142,6 +156,8 @@ def main(argv=None):
     ap.add_argument("--name", default="")
     ap.add_argument("--frames", type=int, default=0)
     ap.add_argument("--fps", type=float, default=None)
+    ap.add_argument("--dwell", default="", help="每拍停留权重，逗号分隔；缺省取动作库或全 1.0")
+    ap.add_argument("--ease", type=float, default=None, help="拍内缓动 0..0.8，默认 0.3")
     ap.add_argument("--segs", default="", help="逗号分隔，如 6,7,6,5；缺省按拍平均分")
     ap.add_argument("--denoise", type=float, default=None)
     ap.add_argument("--motion", default=None)
@@ -165,6 +181,8 @@ def main(argv=None):
             frames=a.frames or None, fps=a.fps, segs=segs, denoise=a.denoise,
             motion=a.motion, negative=a.negative, curve=a.curve, prefix=a.prefix,
             seed_mode=a.seed_mode, use_hint=not a.no_hint, seed=a.seed or None,
+            dwell=[float(x) for x in a.dwell.split(",") if x.strip()] or None,
+            ease=a.ease,
         )
     except (KeyError, ValueError) as e:
         print(str(e), file=sys.stderr)

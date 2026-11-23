@@ -75,7 +75,7 @@ That is exactly what `compile_prompt()` does. Why:
 
 1. **lock first** pins face, hair, outfit and framing; interpolation cannot swap the character.
 2. **action in the middle** describes only the delta; do not repeat the lock.
-3. **style last** because Moss's text encoder weights trailing tokens most; style at the end survives action words.
+3. **style last** because Qwen-VL-family encoders weight trailing tokens most; style at the end survives action words.
 
 ### 3.1 Change one thing per beat
 
@@ -148,7 +148,10 @@ The structure is unchanged: one step per beat, and the last segment still interp
 
 ### 4.3.1 Eleven-beat full-body story (`moss_zh`)
 
-`diet-betrayal` · Diet Betrayal · 60 frames / 30 fps / 640×640 · `prompt_mode: moss_zh` · `segs = 5,5,4,7,6,7,5,6,5,5,5`
+`diet-betrayal` · Diet Betrayal · 60 frames / 20 fps / 3.0 s / 640×640 · `prompt_mode: moss_zh` · `segs = 5,5,4,7,6,7,5,6,5,5,5`
+
+Per-beat dwell `0.95, 0.95, 1.1, 1.3, 1.0, 1.3, 0.95, 1.0, 0.9, 0.95, 0.95`, `ease = 0.3`: the phone
+reach and the bucket hug hold longer, shoulder-only beats move faster. Total stays 3.0 s.
 
 | Beat | Frame | Action |
 | --- | --- | --- |
@@ -182,7 +185,7 @@ Constraints that matter for this preset:
   makes it much harder for the model to drop the table and the bowl. The background is reduced to wall,
   lamp and table so each redraw has less freedom.
 - **Lower body stays behind the table.** Move the legs and latent interpolation produces double legs.
-- **Keyframe denoise 0.85 (range 0.82–0.90).** Moss is an 8-step DMD distilled model; below 0.80 the
+- **Keyframe denoise 0.85 (range 0.82–0.90).** MOSS-Image is a DiT with 8-step DMD distillation; below 0.80 the
   keyframes barely move (measured whole-film adjacent diff 0.03). Get the motion from the prompt and the
   frame budget, not from pushing denoise further.
 - **Leave `motion` empty.** A negation such as "do not move the camera" is read as "keep everything as is"

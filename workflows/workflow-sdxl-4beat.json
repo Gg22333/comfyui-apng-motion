@@ -2939,7 +2939,7 @@
       "id": 66,
       "type": "Note",
       "pos": [
-        4870,
+        5870,
         1080
       ],
       "size": [
@@ -2950,7 +2950,7 @@
       "order": 65,
       "mode": 0,
       "widgets_values": [
-        "【可调参数清单】\n全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n  SDXL 关键帧 denoise 建议 0.35-0.45；Moss 0.50-0.80。越低越稳，越高越自由但容易出现色斑。\n节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长；24 @10fps = 2.4 秒，60 @30fps = 2 秒。\n命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。\n帧数与 fps 怎么配、提示词怎么写：看右边【提示词写法】这个 Note。"
+        "【可调参数清单】\n全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n  关键帧 denoise 按【架构】给，不按模型名给：\n    UNet 系（SD1.5 / SDXL）        0.35-0.45   steps 20-30   cfg 5-7\n    DiT 系（FLUX / SD3 / Krea）    0.45-0.55   steps 20-28   cfg 1.0\n    DiT + DMD（MOSS-Image）        0.82-0.90   steps 8       cfg 1.0\n  越高越自由，但容易出现色斑。蒸馏模型加 steps 只会更糊，不要加。\n节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长。\n  但 ComfyUI 只能给一个全局 fps，每拍停留表达不出来 —— 出片后跑\n  python scripts/retime.py <apng> --story <剧情卡> 重写逐帧延时，像素一个都不动。\n命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。\n帧数、fps、每拍停留、提示词怎么写：看右边【提示词写法】这个 Note。"
       ]
     },
     {
@@ -3104,7 +3104,7 @@
       "id": 70,
       "type": "Note",
       "pos": [
-        5450,
+        6450,
         1080
       ],
       "size": [
@@ -3115,7 +3115,7 @@
       "order": 69,
       "mode": 0,
       "widgets_values": [
-        "【提示词写法（SDXL / MOSS 两套）】\n\n■ tags 模式 —— SDXL / 传统 CLIP\n  格式：角色与场景标签, 这一拍动作, 画风标签\n  · 英文逗号分隔，重要标签往前放。\n  · 画风必须放最后：anime screencap, clean lineart, flat cel shading。\n  · 写画面不写效果：写「eyes wide, pupils small」不写「shocked」。\n  · 负向单独一个 CLIPTextEncode，不要混进正向。\n  例：1girl, solo, full body, black short hair, blue eyes, beige hoodie,\n      sitting on floor, bedroom at night, warm lamp light /\n      这一拍动作 / anime screencap, clean lineart, flat cel shading\n\n■ moss_zh 模式 —— MOSS-Image / Qwen-VL 文本编码器\n  格式：中文散文，换行分段，每段以「。」结尾\n  · 不堆 quality tag：masterpiece / best quality 对它是噪声。\n  · 场景 → 人物 → 这一拍 → 画风，四件事说全。\n  · 用可测量的身体描述代替形容词：\n      震惊 = 双眼睁大、瞳孔缩小、嘴张开\n      疲惫嫌弃 = 眼半闭、瞳孔偏低、唇压成直线\n  · 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。\n  · 负向同样用中文，放单独的 CLIPTextEncode。\n\n■ 帧数与 fps（三个保存节点的 fps 必须一致）\n   8 帧  @ 8fps = 1.00s   单表情，体积最小\n  24 帧  @10fps = 2.40s   默认，聊天表情包\n  30 帧  @15fps = 2.00s   短动作\n  60 帧  @30fps = 2.00s   完整小故事，最顺\n  改帧数：python scripts/emit_workflow.py --frames N --segs a,b,c,...\n  segs 之和必须等于 N；每拍至少 1 帧。\n\n■ 换故事不改节点\n  只改三个地方：全局动作指导、K0..Kn 各自提示、segs。\n  节点数量、连线、保存路径都不用动。"
+        "【提示词写法（按架构分方言，不按模型名）】\n\n先认清三件事，再决定怎么写：\n  架构：UNet 还是 DiT —— 决定 denoise 区间，不影响文字写法\n  文本编码器：CLIP / T5 / Qwen-VL —— 决定提示词方言\n  步数范式：常规 20-30 步 还是 DMD/Turbo 蒸馏 —— 决定 steps\n  注意：MOSS-Image 是 DiT 的一种，不是 DiT 之外的另一类。\n        SDXL 是 UNet，不是 DiT。\n\n■ 方言 A · CLIP 标签（SD1.5 / SDXL）\n  格式：角色与场景标签, 这一拍动作, 画风标签\n  · 英文逗号分隔，重要标签往前放。\n  · 画风必须放最后：anime screencap, clean lineart, flat cel shading。\n  · 写画面不写效果：写「eyes wide, pupils small」不写「shocked」。\n  · 负向单独一个 CLIPTextEncode，不要混进正向。\n  例：1girl, solo, full body, black short hair, blue eyes, beige hoodie,\n      sitting on floor, bedroom at night, warm lamp light /\n      这一拍动作 /\n      anime screencap, clean lineart, flat cel shading\n\n■ 方言 B · 中文散文（MOSS-Image / Krea 2 / Qwen-Image 的 Qwen-VL 系）\n  格式：中文散文，换行分段，每段以「。」结尾\n  · 不堆 quality tag：masterpiece / best quality 对它是噪声。\n  · 场景 → 人物 → 这一拍 → 画风，四件事说全。\n  · 用可测量的身体描述代替形容词：\n      震惊 = 双眼睁大、瞳孔缩小、嘴张开\n      疲惫嫌弃 = 眼半闭、瞳孔偏低、唇压成直线\n  · 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。\n  · 负向同样用中文，放单独的 CLIPTextEncode。\n\n■ 方言 C · T5 自然语言（FLUX / SD3 / SD3.5）\n  格式：完整英文句子，一段话讲清画面\n  · 不用 (word:1.3) 权重括号，T5 不吃这套。\n  · 一句话一件事：主体、动作、环境、光线、镜头、材质。\n  · 可以长，但不要堆同义词。\n  · FLUX 走 FluxGuidance 3.5 / cfg 1.0；SD3 用 cfg 4-7。\n\n■ 画面里要出现文字时（Layout）\n  · 用绝对像素 bbox [x0,y0,x1,y1]，不要归一化坐标。\n  · 宽高必须是 16 的倍数。\n  · 不要写「headline here」这类占位符，直接写要显示的原文。\n  · 只描述可见内容，不要把「怎么生成」这种工具指令写进画面描述。\n\n■ 逐拍三段式（写剧情卡时照这个来）\n  lock   场景 + 人物 + 机位，全片一个字都不改\n  action 这一拍唯一的变量；每拍只改一个变量\n  style  画风收尾，全片统一\n  改两个变量，插值出来就是两张不同的脸。\n\n■ 帧数、fps、每拍停留\n           慢（叙事）        标准             快（弹幕感）\n   8 帧   6fps / 1.33s    8fps / 1.00s    10fps / 0.80s\n  24 帧   8fps / 3.00s   10fps / 2.40s    12fps / 2.00s\n  30 帧  10fps / 3.00s   15fps / 2.00s    20fps / 1.50s\n  60 帧  20fps / 3.00s   25fps / 2.40s    30fps / 2.00s   ← 本仓库默认 20fps\n  · GIF 的帧延时只能量化到 10ms：24fps 会被写成 40ms，整片变 2.4s 而不是 2.5s。\n    要 GIF 干净就选 20 / 25 / 30fps；APNG / WebP 是毫秒精度，不受限。\n  · 每拍至少 0.20s，低于这个数观感是一闪而过。\n  · 改帧数：python scripts/emit_workflow.py --frames N --segs a,b,c,...\n    segs 之和必须等于 N；每拍至少 1 帧。\n\n■ 换故事不改节点\n  只改三个地方：全局动作指导、K0..Kn 各自提示、segs。\n  节点数量、连线、保存路径都不用动。"
       ]
     }
   ],

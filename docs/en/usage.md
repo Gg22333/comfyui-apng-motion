@@ -26,7 +26,7 @@ One JSON file describes the whole performance; `emit_workflow.py` compiles it in
 
 Compile rule: `keyframe_i = lock + actions[i] + style`, fixed order, only the action changes.
 
-`style` last is deliberate: Moss's LLM text encoder weights the tail tokens most, so
+`style` last is deliberate: Qwen-VL-family encoders weight the tail tokens most, so
 `anime screencap, clean lineart, flat cel shading` placed mid-prompt gets buried by the action words
 and the render falls back to photographic mode (visible as collage frames and colour blotches).
 
@@ -57,7 +57,7 @@ python scripts/emit_workflow.py --base workflows/workflow-moss.json --story asse
 python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json --out my.json
 ```
 
-| Beats | Segment split (24 frames) | Nodes (xl) | Nodes (moss) |
+| Beats | Segment split (24 frames) | Nodes (UNet/SDXL) | Nodes (DiT/MOSS) |
 | --- | --- | --- | --- |
 | 3 | 8/8/8 | 67 | 69 |
 | 4 | 6/7/6/5 | 70 | 72 |
@@ -84,7 +84,7 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json   --beats 4 
 | Pacing | N x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
 | Speed | three save nodes `fps` | same value in all three; `fps x frames` = duration (24 @ 12 fps = 2 s) |
 | Prompt dialect | `--prompt-mode tags|moss_zh` / story-card `prompt_mode` | `tags` = English comma tags; `moss_zh` = Chinese prose |
-| Size | latent width/height or `--size 640` | Moss 512 or 640; SDXL 512–1024 |
+| Size | latent width/height or `--size 640` | MOSS-Image 512 or 640; SDXL 512–1024 |
 | Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` |
 | Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | size and playback |
 
@@ -114,7 +114,7 @@ The contract is loader-agnostic:
 | SD 1.5 | `CheckpointLoaderSimple` | 0.45-0.55 |
 | SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35-0.45 |
 | FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45-0.55 |
-| Moss / DiT | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.82-0.90 |
+| MOSS-Image (DiT + DMD) | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.82-0.90 |
 
 Denoise values are field experience. On SDXL, above ~0.42 the keyframe redraw starts changing
 clothes and background, and latent interpolation turns that into colour blotches.
@@ -147,7 +147,7 @@ python scripts/check_anim.py output/APNG/final/apng/anim60_00001_.png --expect 6
 ```
 
 Watch four values: `frames=N` (matching `--frames`), `loop=0`, `identical_pairs=0`, and `color_drift`.
-Moss at denoise 0.85 measures 9–15; cold screen light or closed-eye keyframes push it higher. SDXL at
+MOSS-Image at denoise 0.85 measures 9–15; cold screen light or closed-eye keyframes push it higher. SDXL at
 0.35 measures about 2.6. Above 20 means the keyframe redraw is changing too much.
 
 ## Where files land

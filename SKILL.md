@@ -2,9 +2,9 @@
 name: comfyui-apng-motion
 description: >
   ComfyUI 里用「首帧 + 2–4 个关键帧 latent 插值」做 8–60 帧连贯 APNG/WebP/GIF 动图（表情包/微故事）的完整方法：
-  双环境配置（SDXL / Moss-DiT）、工作流结构、任意帧数扩缩、提示词写法、17 组动作库、只存成品的输出规范、
+  双环境配置（UNet 系 / DiT 系）、工作流结构、任意帧数扩缩、提示词写法、17 组动作库、只存成品的输出规范、
   兼容性与排错。Use when 用户提到 ComfyUI、APNG、动图、表情包、8/24/30/60 帧、帧间闪烁、不连贯、LatentInterpolate、
-  SaveAnimatedPNG、SaveAnimatedWEBP、VHS_VideoCombine、SDXL、Moss、DiT、剧情分镜、多角色、
+  SaveAnimatedPNG、SaveAnimatedWEBP、VHS_VideoCombine、SDXL、MOSS-Image、DiT 架构、FLUX、剧情分镜、多角色、
   表情包定义、画风锁定、瞳色漂移、换机器、移植、profile、环境探测。
 ---
 
@@ -18,7 +18,7 @@ N 由 `--frames` 决定（默认 24，支持 8–60 任意值），插值/解码
 
 ## 0 · 先看这张表
 
-| 项 | xl 环境 | Dit 环境 |
+| 项 | UNet 系环境（`-xl`） | DiT 系环境（`-Dit`） |
 | --- | --- | --- |
 | ComfyUI 根 | `D:\ComfyUI-aki-v3.2-xl\ComfyUI` | `D:\ComfyUI-aki-v3.2-Dit\ComfyUI` |
 | Python | `D:\ComfyUI-aki-v3.2-xl\python\python.exe` | `D:\ComfyUI-aki-v3.2-Dit\python\python.exe` |
@@ -52,7 +52,7 @@ netstat -ano | findstr ":8190 :8191"
 | 新（denoise 0.35 + linear + 全局动作） | xl | 0.12 – 2.35，平均 1.08 | 2.63 | 当前默认，已不闪 |
 | 旧（denoise 0.55 + 幂曲线） | xl | 0.95 – 5.42，平均 2.34 | 3.07 | 中段出现色斑，已弃用 |
 | 历史 | Dit | 0.06 – 3.04，平均 1.43 | — | 结构同步到新默认，未重测成片 |
-| 60 帧展示图（Moss-DiT，denoise 0.85，30fps，十一拍） | Dit | 1.72 – 5.00，平均 2.78 | 14.75 | 当前仓库预览；接缝无停顿，桌子与白碗全程在画面里；漂移来自手机冷光和闭眼拍 |
+| 60 帧展示图（MOSS-Image，DiT，denoise 0.85，20fps，十一拍） | Dit | 1.72 – 5.00，平均 2.78 | 14.75 | 当前仓库预览；接缝无停顿，桌子与白碗全程在画面里；漂移来自手机冷光和闭眼拍 |
 
 xl 的稳定上限约 **denoise 0.35**：0.42 时颜色漂移升到 8 左右，衣服和背景开始被重绘；0.45 时衣服变蓝。
 要更大表情，优先加帧数或做面部局部重绘，不要直接抬 denoise。
@@ -98,14 +98,22 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story asse
 
 `emit_workflow.py` 认的是**结构**，不是模型名：只要 base 里有「1 个 denoise=1 的 KSampler + ≥2 个关键帧 KSampler + 24 个 LatentInterpolate + 24 个 VAEDecode + ImageBatchMulti(24) + 三个输出」，就能扩成 3–5 拍。换模型只需要把 base 里的 loader 换成你自己的（`CheckpointLoaderSimple` 或 `UNETLoader`+`CLIPLoader`+`VAELoader` 都行），其余别动。
 
-模型与 denoise 的对应（经验值，同 seed 下测出来的稳定上限）：
+模型与 denoise 的对应（经验值，同 seed 下测出来的稳定上限）。
 
-| 模型族 | 加载器 | 关键帧 denoise |
-| --- | --- | --- |
-| SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 |
-| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 |
-| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55（前面加 `FluxGuidance`） |
-| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 |
+**先记住分类：DiT 是架构，MOSS 是模型。** DiT（Diffusion Transformer，arXiv:2212.09748）是把 U-Net 主干
+换成 transformer 的那一族。SDXL 是 UNet，不是 DiT；MOSS-Image / FLUX / SD3 / Krea / Anima 是 DiT。
+配置时真正独立的是三层：**架构**（决定 denoise 区间）、**文本编码器**（决定提示词方言）、
+**步数范式**（常规 20–30 步 vs DMD/Turbo 蒸馏）。
+
+| 模型族 | 架构 | 文本编码器 | 加载器 | 关键帧 denoise |
+| --- | --- | --- | --- | --- |
+| SD 1.5 | UNet | CLIP | `CheckpointLoaderSimple` | 0.45–0.55 |
+| SDXL / Illustrious / NoobAI | UNet | CLIP-L + CLIP-G | `CheckpointLoaderSimple` | 0.35–0.45 |
+| FLUX.1 | DiT | CLIP-L + T5-XXL | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55（前面加 `FluxGuidance` 3.5，cfg 1.0） |
+| SD3 / SD3.5 | MMDiT | CLIP-L + CLIP-G + T5-XXL | `CheckpointLoaderSimple` 或三件套 | 0.40–0.50（cfg 4–7） |
+| MOSS-Image | DiT + 8 步 DMD | Qwen3.5-9B | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 |
+| Krea 2 | DiT | Qwen3-VL 4B | `UNETLoader` + `CLIPLoader` + `VAELoader` | 0.45–0.55 |
+| Anima 2B | DiT | Qwen3-0.6B | `UNETLoader` + `CLIPLoader` + `VAELoader` | 0.45–0.55 |
 
 ### 0.5.1 工作流里能改什么
 
@@ -140,13 +148,15 @@ python scripts/emit_workflow.py --validate my-4beat.json --run --profile profile
 | `make_story.py` | 从 17 组动作库生成剧情卡；校验 frames/segs/beats；自动追加场景提示 | 无 |
 | `check_anim.py` | 帧数、时长、循环、相邻帧差异、重复帧、颜色漂移 | Pillow |
 | `make_curve.py` | 单独出 ratio 曲线，改节奏用 | 无 |
-| `make_preview.py` | 把成品 APNG 重编码成网页预览：全局调色板 + 关抖动 GIF、真彩 WebP | Pillow |
+| `make_preview.py` | 把成品 APNG 重编码成网页预览：全局调色板 + 关抖动 GIF、真彩 WebP；`--story` 时写逐帧延时 | Pillow |
+| `retime.py` | 出片后重写 APNG 的逐帧延时（`fps` / `dwell` / `ease`）：像素不动、不重跑采样 | Pillow |
+| `timing.py` | 帧延时计算唯一真相源：`frame_delays()` 保证总时长恒等于 `frames / fps` | 无 |
 | `comfy_lib.py` | 共用库：profile、HTTP、曲线、UI→API 转换 | 无 |
 
-本机实测（2026-11-23，新默认）：xl 3 拍 66 节点、4 拍 69 节点；Dit 3 拍 68 节点、4 拍 71 节点。
+本机实测（2026-11-24，新默认）：UNet 系 3 拍 67 节点、4 拍 70 节点；DiT 系 3 拍 69 节点、4 拍 72 节点。
 `--run` 交出三格式成品并自动验片；8 / 24 / 60 帧都实测过，`check_anim` 全部 `loop=0 / EXIT=0`。
 denoise 0.35 的 24 帧预览相邻帧差异 0.12–2.35（avg 1.08）、漂移 2.63；
-60 帧 Moss 展示片 0.75 avg / 1.42 max、漂移 7.19。
+60 帧 MOSS-Image 展示片：1.72–5.00（avg 2.78），漂移 14.75，60 帧 @20fps = 3.00 s。
 
 ### 0.7 依赖与分发
 
@@ -348,24 +358,71 @@ Pillow 写 APNG 时，如果两帧像素完全相同，会**丢掉这一帧并�
 
 ## 4 · 节奏怎么调（不要靠减帧）
 
-优先级从上到下：
+节奏分三层，**互不干扰**，调的时候一次只动一层：
 
-1. **整体快慢 → 改 fps**。10 偏稳，9 更慢，12 更利落。24 帧 @10fps = 2.4s，@12fps = 2s。
-2. **某一段太快 → 改那一段的比例密度**。让相邻 ratio 差值变小 = 该段变慢。
-3. **要停顿 → 加"贴着关键帧"的帧**。例如 0.08 之后再来一个 0.04，再切到 0.92。
-4. **要动作更明显 → 先加 A/B 的提示词差异，再加 denoise**（xl 0.4→0.45；Dit 0.85→0.90 上限）。
-5. **不要用降帧数换慢**。12 帧放慢只会变成幻灯片。
+| 层 | 在哪改 | 影响 |
+| --- | --- | --- |
+| 总时长 | 三个保存节点的 `fps`（剧情卡 `fps`） | `frames / fps`。60 帧 @20fps = 3 秒 |
+| 每拍停留 | 剧情卡 `dwell`（每拍一个权重） | 关键帧多停、过渡快过；总时长不变 |
+| 拍内缓动 | 剧情卡 `ease`（0–0.8，默认 0.3） | 每拍首尾帧延时加长，中段加速 |
+
+**ComfyUI 的保存节点只接受一个全局 fps**，逐帧停留表达不出来。所以 `dwell` / `ease` 是
+**导出后重定时**，不是采样参数：
+
+```bash
+python scripts/retime.py <apng> --story <剧情卡>        # 只改 fcTL 的 delay，像素一个不动
+python scripts/make_preview.py <apng> --story <剧情卡> --out-dir docs/assets
+```
+
+三步顺序固定：`emit_workflow.py` 出图 → `retime.py` 改节奏 → `make_preview.py` 出网页预览。
+
+### 4.1 帧数 × 帧率
+
+| 帧数 | 慢（叙事） | 标准 | 快（弹幕感） |
+| --- | --- | --- | --- |
+| 8 | 6fps / 1.33s | 8fps / 1.00s | 10fps / 0.80s |
+| 24 | 8fps / 3.00s | 10fps / 2.40s | 12fps / 2.00s |
+| 30 | 10fps / 3.00s | 15fps / 2.00s | 20fps / 1.50s |
+| 60 | **20fps / 3.00s（默认）** | 25fps / 2.40s | 30fps / 2.00s |
+
+**GIF 的帧延时只能量化到 10ms（1 厘秒）**。这是硬限制，不是可选优化：
+
+| fps | 每帧 | GIF 实际写入 | 60 帧实际时长 |
+| --- | --- | --- | --- |
+| 8 | 125ms | 120ms | 7.2s（24 帧时 2.9s） |
+| 10 | 100ms | 100ms ✓ | 6.0s（24 帧时 2.4s） |
+| 20 | 50ms | 50ms ✓ | 3.00s |
+| 25 | 40ms | 40ms ✓ | 2.40s |
+| 24 | 41.7ms | 40ms | **2.40s，不是 2.5s** |
+| 30 | 33.3ms | 30ms | **1.80s，不是 2.0s** |
+
+打 ✓ 的整除档 GIF 不会悄悄改速。APNG / WebP 是毫秒精度，任何 fps 都准。
+要 GIF 干净就把 fps 限定在 8 / 10 / 20 / 25。
+
+### 4.2 每拍至少 0.20 秒
+
+十一拍 60 帧 @20fps，平均每拍 0.27 秒。只动肩头的拍可以给 4 帧（0.20 秒），再少就是一闪而过。
+`retime.py` 和 `check_anim.py --story` 都会把低于 200ms 的拍标成 WARN。
+
+### 4.3 优先级
+
+1. **整体太快 → 先降 fps**。帧数不动，插值步长不变，只是整体变慢，最省事。
+2. **某几拍要看清楚 → 调 `dwell`**。动作跨度大的拍给 1.3，只动肩头的给 0.9。
+3. **每拍内部要"起—停" → 调 `ease`**。0.3 够用，超过 0.5 会显得黏。
+4. **动作幅度不够 → 先加 A/B 提示词差异，再加 denoise**（UNet 0.4→0.45；MOSS-Image 0.85→0.90 上限）。
+5. **不要用加帧数换"慢"**。加帧只会让过渡更细，不会让每一拍停留更久。
 
 手感基准（实测可接受区间）：
 
 | 指标 | 合适范围 | 说明 |
 | --- | --- | --- |
 | 相邻帧平均像素差 | 0.3–3.0 | xl 偏小（0.4 左右）属正常，超过 0 就行 |
-| 总时长 | 1.6–3.0 s | 表情包超过 3s 会显得拖 |
+| 总时长 | 表情包 1.6–3.0 s；故事片 3–4 s | 单表情超过 3s 会显得拖 |
+| 单拍时长 | ≥ 0.20 s | 再短就是一闪而过 |
 | 停顿帧 | 每个关键帧 1–2 帧 | 再多就像卡住 |
 
 xl 现在偏"细腻"，想要更明显：A 的 `blush` 保留、加 `mouth open` 或 `closed eyes`→`squint`，denoise 提到 0.45。
-Dit 现在差异 0.06–3.04、平均 1.43，动作幅度已经够，不要再加大。
+DiT 侧 MOSS-Image 的差异已到 1.72–5.00（v1.3.2 实测），动作幅度够，不要再加大。
 
 ---
 
@@ -378,9 +435,12 @@ Dit 现在差异 0.06–3.04、平均 1.43，动作幅度已经够，不要再�
 | 模式 | 拼接结果 | 给谁用 |
 | --- | --- | --- |
 | `tags`（默认） | `lock, 动作, style` 英文逗号 | SDXL / 传统 CLIP |
-| `moss_zh` | `lock。\n 动作。\n style。` 中文散文 | MOSS / Qwen-VL 文本编码器 |
+| `moss_zh` | `lock。\n 动作。\n style。` 中文散文 | MOSS-Image / Krea 2 / Qwen-Image / Anima（Qwen-VL 系） |
 
-MOSS 读的是自然语言语义，不读逗号标签权重。堆 `masterpiece, best quality` 只会让它退回通用图库风格。
+方言跟**文本编码器**走，不跟模型名走。第三种方言是 T5（FLUX / SD3）：完整英文句子，不用 `(word:1.3)`
+权重括号。三种方言的完整规则在仓库 `docs/prompting.md`，画布上的 Note 也写了一份。
+
+MOSS-Image 读的是自然语言语义，不读逗号标签权重。堆 `masterpiece, best quality` 只会让它退回通用图库风格。
 用**可测量的身体描述**代替形容词：
 
 - 震惊 = 双眼睁大、瞳孔缩小、嘴张开
@@ -390,8 +450,8 @@ MOSS 读的是自然语言语义，不读逗号标签权重。堆 `masterpiece, 
 构图必须写死：固定机位、平视、全身镜头、从头到脚完整入画、双手双脚留在画框内。
 负向也用中文，放在单独的 `CLIPTextEncode`。
 
-完整范例 `assets/story.diet.json`：十一拍 / 60 帧 / 30fps / 640×640，节拍 `5,5,4,7,6,7,5,6,5,5,5`，
-denoise 0.85。生成命令：
+完整范例 `assets/story.diet.json`：十一拍 / 60 帧 / 20fps / 3.0 秒 / 640×640，节拍 `5,5,4,7,6,7,5,6,5,5,5`，
+denoise 0.85，每拍停留 `dwell = 0.95, 0.95, 1.1, 1.3, 1.0, 1.3, 0.95, 1.0, 0.9, 0.95, 0.95`。生成命令：
 
 ```bash
 python scripts/emit_workflow.py --base workflows/workflow-moss.json \
@@ -415,7 +475,7 @@ masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple ba
 1. **只改 1–2 个动作标签**。加 `arms up`、`turn head`、`from side` 会连构图一起变，帧间就割裂。
 2. **A 和 B 要有梯度**：A 是"小笑"，B 是"大笑张嘴"。两帧太像就看不出动。
 3. **SDXL 不要用 `eyes closed`**。实测虹膜从灰蓝渐变到青绿，播放像闪；用 `eyes half closed` 或 `squint`。
-4. Moss 对表情控制弱一些，A/B 用词差异可以更大（`eyes closed` 在 Dit 上是稳的）。
+4. MOSS-Image 对表情控制弱一些，A/B 用词差异可以更大（`eyes closed` 在 DiT 上是稳的）。
 5. 负向保持固定，不要逐帧改。
 6. 换角色只改主体句里的角色描述，A/B 的表情词原样保留。
 
@@ -522,7 +582,7 @@ python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --f
 | 画风变了 | 每个框各写一套画风 | 画风锁定句逐字复制，不许同义替换（`anime` ≠ `anime style`） |
 | 服装细节变了 | 动作词带了 `arms up` / `turn around` | 大动作走 5.5 的 B/C 档，别靠加 denoise 硬顶 |
 
-实测口径：xl 关键帧 denoise ≤ 0.45 主体稳定，0.55 起五官漂；闭眼是 xl 最典型的翻车点，Dit 的 Moss 对闭眼宽容（可用 `eyes closed`）。
+实测口径：xl 关键帧 denoise ≤ 0.45 主体稳定，0.55 起五官漂；闭眼是 xl 最典型的翻车点，DiT 的 MOSS-Image 对闭眼宽容（可用 `eyes closed`）。
 
 ### 5.5 多角色与任意动作：三档能力
 
@@ -689,7 +749,7 @@ output\APNG\
 - 没有真正的"运动轨迹"：这是三关键帧之间的 latent 插值，适合表情、呼吸、轻微头部动作，不适合走路、转身、镜头运动。
 - 帧数多了耗时线性增加（每帧一次 VAE 解码；采样只跑 3 次）。
 - 512 以下 APNG 体积仍然偏大（每帧全尺寸 PNG），发聊天软件优先 GIF。
-- Dit 的 Moss 对表情服从度弱于 SDXL，极限表情需要更大 denoise，但超过 0.55 开始换脸。
+- DiT 的 MOSS-Image 对表情服从度弱于 SDXL，极限表情需要更大 denoise；DMD 模型的上限在 0.90，超过就开始漂。
 - 工作流是 24 个独立插值节点，改曲线要逐个数；这是"一体化、不依赖脚本"的代价。批量改曲线可以用 `scripts/make_curve.py` 生成值再粘贴。
 
 ---
@@ -712,15 +772,20 @@ output\APNG\
 14. 三格式输出必须接同一个 `ImageBatchMulti`，各接各的 batch 会让 APNG/WebP/GIF 帧序不一致。
 15. 只加提示词、不加拍数，做不出剧情：三关键帧最多演"起 → 一个动作 → 回落"。
 16. 瞳色/发色漂移不只 `eyes closed`：任何改变光照或材质的词（`night`、`rim light`、`wet`、`glowing`）都会在插值里变成逐帧渐变。
+17. 60 帧十一拍按 30fps 播完只要 2 秒，11 拍挤在 2 秒里根本没有衔接——节奏要靠 `fps` + `dwell` 显式写出来，不能只写在文档里一句话。
+18. GIF 的帧延时是厘秒：24fps 会被悄悄写成 40ms，整片变 2.4 秒。要 GIF 干净就选 20 / 25fps。
+19. 把「MOSS」和「DiT」并列写成两类，是把模型当架构。**DiT 是架构，MOSS 是模型**；这个错曾扩散到 README、SKILL 和九个文档页。
 
 ## 13 · 文件清单
 
 | 路径 | 用途 |
 | --- | --- |
 | `workflows/workflow-sdxl.json` | xl 环境工作流副本（与线上一致） |
-| `workflows/workflow-moss.json` | Dit 环境工作流副本 |
+| `workflows/workflow-moss.json` | DiT 系环境工作流副本（装任何 DiT 模型，换三个加载器即可） |
 | `scripts/check_anim.py` | 帧数 / 时长 / 相邻帧差异 / 颜色漂移校验 |
-| `scripts/make_preview.py` | 成品 APNG → 全局调色板 GIF + WebP 网页预览 |
+| `scripts/make_preview.py` | 成品 APNG → 全局调色板 GIF + WebP 网页预览；`--story` 写逐帧延时 |
+| `scripts/retime.py` | 出片后重写逐帧停留（fps / dwell / ease），像素不动 |
+| `scripts/timing.py` | 帧延时计算唯一真相源（被 retime / make_preview / check_anim / emit 共用） |
 | `scripts/make_storyboard.py` | 按 segs 抽关键拍拼联系表 → `docs/assets/storyboard-*.webp` |
 | `scripts/sync_workflows.py` | `workflows/` 与 `assets/` → `docs/assets/` 同步，`--check` 查漂移 |
 | `scripts/make_story.py` | 从 `assets/motion-presets.json` 生成剧情卡；校验 frames/segs/beats |
@@ -732,7 +797,7 @@ output\APNG\
 | `scripts/comfy_lib.py` | 共用库（profile / HTTP / 曲线 / UI→API） |
 | `profiles/xl.json` `profiles/dit.json` | 本机探测结果，换机器重新生成 |
 | `assets/story.example.json` `assets/story.4beat.json` | 剧情卡样例（3 拍 / 4 拍，tags 模式） |
-| `assets/story.diet.json` | 十一拍全身故事（`moss_zh` 中文散文，60 帧） |
+| `assets/story.diet.json` | 十一拍全身故事（`moss_zh` 中文散文，60 帧 / 20fps / 带 dwell） |
 | `workflows/workflow-sdxl-4beat.json` `workflows/workflow-moss-4beat.json` | 已扩好的 4 拍工作流 |
 | `assets/node_schema.json` | 节点定义兜底（服务器 `/object_info` 取不到时用） |
 | `scripts/check_deps.py` | 依赖自检：Python / Pillow / curl / profiles 里的 ComfyUI 与插件 |
@@ -777,7 +842,7 @@ output\APNG\
 | 2 | 装 `ComfyUI-VideoHelperSuite`（GIF） | 只有 APNG/WebP，没有 GIF |
 | 3 | ComfyUI ≥ 0.3（有 `SaveAnimatedPNG` / `SaveAnimatedWEBP`） | 保存节点不存在 |
 | 4 | Pillow ≥ 9（`check_anim.py` 要用） | 校验脚本跑不起来 |
-| 5 | 模型放对目录：SDXL 进 `models/checkpoints`；Moss 三件套进 `diffusion_models` / `text_encoders` / `vae` | loader 报找不到文件 |
+| 5 | 模型放对目录：SDXL 进 `models/checkpoints`；MOSS-Image 三件套进 `diffusion_models` / `text_encoders` / `vae` | loader 报找不到文件 |
 | 6 | 跑 `detect_env.py` + `doctor.py` | 不知道自己缺什么 |
 | 7 | 用 `emit_workflow.py` 生成自己的 K 拍工作流 | 只能用 3 拍 |
 

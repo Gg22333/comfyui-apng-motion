@@ -148,8 +148,8 @@ SDXL 512×512 的 latent 是 `64×64×4`：
 | 环境 / 内容 | 帧数 | APNG | GIF | WebP（lossless） |
 | --- | --- | --- | --- | --- |
 | SDXL / 银发校服 | 24 | 6.61 MB | 2.41 MB | 0.80 MB |
-| Moss / 银发校服 | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
-| Moss / 雨夜霓虹 | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
+| MOSS-Image / 银发校服 | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
+| MOSS-Image / 雨夜霓虹 | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
 
 GIF 常常比无损 APNG 小，是因为 LZW + 256 色对平涂动漫非常友好；要更小就把 WebP 的 `lossless` 关掉，quality 80–90。
 

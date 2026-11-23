@@ -1,0 +1,20 @@
+comfyui-apng-motion
+Copyright (c) 2026 Gg22333
+https://github.com/Gg22333/comfyui-apng-motion
+
+Licensed under the MIT License. See LICENSE.
+
+Runtime dependencies (not bundled, not relicensed):
+  ComfyUI                      GPL-3.0  https://github.com/Comfy-Org/ComfyUI
+  ComfyUI-KJNodes              GPL-3.0  https://github.com/kijai/ComfyUI-KJNodes
+  ComfyUI-VideoHelperSuite     GPL-3.0  https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
+
+No GPL source code is copied into this repository. Everything in scripts/, tests/,
+workflows/, assets/ and docs/ is original work, MIT-licensed.
+
+Third-party names and licenses referenced above remain the property of their
+respective owners and are listed for attribution only.
+
+The names "comfyui-apng-motion" and "Gg22333", and the project logo, are not
+covered by the MIT License. Forks may not present themselves as the official
+repository or imply endorsement by the original author.

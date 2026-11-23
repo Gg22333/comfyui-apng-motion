@@ -8,8 +8,9 @@
 [![Python](https://img.shields.io/badge/python-%3E%3D3.9-blue)](pyproject.toml)
 
 Make **coherent APNG / WebP / GIF** animations in ComfyUI from **3–8 keyframes** — story-shaped, not
-just a face wiggling. One graph, **8 / 24 / 30 / 60 frames**, ready-to-import JSON for both SDXL and
-Moss/DiT. No frame-by-frame scripts, no per-frame image dumps, one queue → three files.
+just a face wiggling. One graph, **8 / 24 / 30 / 60 frames**, ready-to-import JSON for both the UNet
+family (SDXL) and the DiT family (MOSS-Image, FLUX, SD3, Krea, Anima). No frame-by-frame scripts, no
+per-frame image dumps, one queue → three files.
 
 Docs site: [gg22333.github.io/comfyui-apng-motion](https://gg22333.github.io/comfyui-apng-motion/) — the header language selector switches zh/en in place.
 
@@ -50,7 +51,7 @@ Docs site: [gg22333.github.io/comfyui-apng-motion](https://gg22333.github.io/com
 | **Input** | 3–5 keyframe prompts (a "story card": lock + style + per-beat actions) |
 | **Engine** | ComfyUI + `LatentInterpolate` ×N + `ImageBatchMulti(N)` |
 | **Output** | APNG, WebP and GIF — one file each; 8 / 12 / 24 / 30 / 60 frames; loop infinite |
-| **Models** | any: SDXL checkpoint or Moss/DiT stack (loader-agnostic) |
+| **Models** | any: SDXL checkpoint (UNet) or a DiT stack — MOSS-Image, FLUX, SD3, Krea, Anima (loader-agnostic) |
 | **Scripts** | pure stdlib + Pillow, no GPU needed for tooling |
 | **Runs on** | Windows / macOS / Linux; paths come from `profiles/*.json` |
 
@@ -61,13 +62,24 @@ N `LatentInterpolate`, N `VAEDecode`, `ImageBatchMulti(N)`, three savers**, wher
 (`--frames`, 8-60). Swapping the loader is the only structural change; `emit_workflow.py` resizes the
 interpolation / decoder / batch trio to match N automatically.
 
-| Family | Loader nodes | Keyframe denoise | Notes |
-| --- | --- | --- | --- |
-| SD 1.5 | `CheckpointLoaderSimple` | 0.45-0.55 | 512x512 native |
-| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35-0.45 | 1024x1024 native; 512 also fine |
-| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45-0.55 | add `FluxGuidance` before the sampler |
-| Moss / DiT | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.50-0.70 | 8-step DMD, cfg 1.0; 0.5 is nearly static, 0.7 gives visible head motion, >0.8 drifts |
-| Any fine-tune | same as its base | start 0.35 | lower = stable, higher = expressive |
+**DiT is an architecture; MOSS is a model.** DiT (Diffusion Transformer, arXiv:2212.09748) is the
+family that replaces the U-Net backbone with a transformer. SDXL is UNet; MOSS-Image, FLUX, SD3, Krea
+and Anima are DiT. Three independent layers decide what you configure: architecture (denoise range),
+text encoder (how you write), step paradigm (steps/cfg).
+
+| Family | Architecture | Text encoder | Loader nodes | Keyframe denoise | Notes |
+| --- | --- | --- | --- | --- | --- |
+| SD 1.5 | UNet | CLIP | `CheckpointLoaderSimple` | 0.45-0.55 | 512x512 native |
+| SDXL / Illustrious / NoobAI | UNet | CLIP-L + CLIP-G | `CheckpointLoaderSimple` | 0.35-0.45 | 1024x1024 native; 512 also fine |
+| FLUX.1 | DiT | CLIP-L + T5-XXL | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45-0.55 | add `FluxGuidance` (3.5) before the sampler, cfg 1.0 |
+| SD3 / SD3.5 | MMDiT | CLIP-L + CLIP-G + T5-XXL | `CheckpointLoaderSimple` or three-piece | 0.40-0.50 | cfg 4-7 |
+| MOSS-Image | DiT + 8-step DMD | Qwen3.5-9B | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.82-0.90 | steps 8, cfg 1.0; below 0.80 nearly static, above 0.90 drifts |
+| Krea 2 | DiT | Qwen3-VL 4B | `UNETLoader` + `CLIPLoader` + `VAELoader` | 0.45-0.55 | Raw 20-30 steps / Turbo 4-8 |
+| Anima 2B | DiT | Qwen3-0.6B | `UNETLoader` + `CLIPLoader` + `VAELoader` | 0.45-0.55 | Base 30-50 steps / Turbo 8-12 |
+| Any fine-tune | same as its base | same as its base | same as its base | start 0.35 | lower = stable, higher = expressive |
+
+Full per-model breakdown, loaders and citations: [docs/en/models.md](docs/en/models.md) ·
+[中文](docs/models.md).
 
 Denoise ranges are field experience, not hard rules. For the same seed, **0.35 is the stability
 ceiling on SDXL**: above ~0.42 the keyframe redraw starts changing clothes and background, and latent
@@ -80,21 +92,27 @@ Frame count is a parameter, not a fork of the method. `--frames 8|12|24|30|60` (
 story card) rewires `LatentInterpolate` / `VAEDecode` / `ImageBatchMulti` to N; `--segs` splits N across
 the beats, and if you omit it the split is even.
 
-| Frames | fps | Duration | Best for | 4-beat `segs` |
+`fps` sets the total length (`frames / fps`); `dwell` distributes that time across beats. GIF frame
+delay quantises to 10 ms, so 24 fps becomes 40 ms per frame and a "2.5 s" GIF actually runs 2.4 s.
+20 / 25 fps divide evenly and do not drift.
+
+| Frames | Slow (narrative) | Standard | Fast (chat) | 4-beat `segs` |
 | --- | --- | --- | --- | --- |
-| 8 | 8 | 1.0 s | avatar twitch, chat reaction | `2,2,2,2` |
-| 12 | 12 | 1.0 s | light sticker | `3,3,3,3` |
-| 24 | 10 | 2.4 s | default; expression loop | `6,7,6,5` |
-| 30 | 15 | 2.0 s | five-beat story, half-body action | `8,8,7,7` |
-| 60 | 30 | 2.0 s | smooth web/Discord preview, eleven-beat mini story | `5,5,4,7,6,7,5,6,5,5,5` |
+| 8 | 6 fps / 1.33 s | 8 fps / 1.00 s | 10 fps / 0.80 s | `2,2,2,2` |
+| 24 | 8 fps / 3.00 s | 10 fps / 2.40 s | 12 fps / 2.00 s | `6,7,6,5` |
+| 30 | 10 fps / 3.00 s | 15 fps / 2.00 s | 20 fps / 1.50 s | `8,8,7,7` |
+| 60 | **20 fps / 3.00 s** (default) | 25 fps / 2.40 s | 30 fps / 2.00 s | `5,5,4,7,6,7,5,6,5,5,5` |
 
 Sampling cost stays at K passes (one per keyframe) no matter which row you pick — only decode count and
 file size scale with N. For the same content a 60-frame APNG is roughly 2.5x the size of 24; see [docs/formats.md](docs/formats.md).
-The preview above is the eleven-beat story *Diet Betrayal* — 60 frames, 30 fps, Moss/DiT: sits up
+The preview above is the eleven-beat story *Diet Betrayal* — 60 frames, 20 fps, 3.0 s, MOSS-Image
+(DiT + DMD): sits up
 determined → shoulders drop → face down on the table → looks at the floor → reaches for the phone →
 stares at the screen → hugs the chicken bucket → reaches inside → sneaks a bite → puts it down → holds
 the salad bowl, fist raised, "tomorrow for sure". Recipe: `assets/story.diet.json`,
 `prompt_mode: moss_zh`, segments `5,5,4,7,6,7,5,6,5,5,5`, denoise 0.85, 640×640.
+Per-beat dwell is `0.95, 0.95, 1.1, 1.3, 1.0, 1.3, 0.95, 1.0, 0.9, 0.95, 0.95` with `ease: 0.3`:
+the two big reaches (phone, chicken bucket) hold longer, shoulder-only beats move faster.
 `LatentInterpolate` fills the in-betweens; each keyframe appears once on the timeline, so no seam holds
 the same frame twice. Frame budgeting: [docs/en/workflows.md](docs/en/workflows.md#how-to-lay-out-transition-frames).
 The contact sheet below it is sampled from the real output by `--segs`, not a mock-up.
@@ -125,9 +143,10 @@ Everything below is editable inside the workflow, no script required.
 | Per keyframe | `CLIPTextEncode` "K0 / K1 / ..." | expression, pose, gaze |
 | Per keyframe sampling | each `KSampler` | seed, steps, cfg, sampler, scheduler, denoise |
 | Pacing | N x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
-| Speed | three save nodes `fps` | set the same value in all three; `fps x frames` = duration (24 @ 12 fps = 2.0 s) |
-| Prompt dialect | `--prompt-mode tags|moss_zh` | `tags` = SDXL comma tags; `moss_zh` = MOSS Chinese prose |
-| Size | latent width/height or `--size 640` | Moss 512 or 640; SDXL 512–1024 |
+| Speed | three save nodes `fps` | same value in all three; `fps x frames` = duration. ComfyUI only takes one global fps — apply per-beat dwell after export with `retime.py` |
+| Per-beat dwell | story card `dwell` + `ease` | how long each beat holds; applied by `retime.py` / `make_preview.py`, pixels untouched |
+| Prompt dialect | `--prompt-mode tags|moss_zh` | `tags` = CLIP comma tags; `moss_zh` = Qwen-VL Chinese prose |
+| Size | latent width/height or `--size 640` | MOSS-Image 512 or 640; SDXL 512–1024 |
 | Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` subfolders |
 | Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | file size and playback behaviour |
 
@@ -139,32 +158,39 @@ Five JSON files, drop one into ComfyUI and queue:
 
 | Environment | 3 beats | 4 beats |
 | --- | --- | --- |
-| SDXL | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |
-| Moss / DiT | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
+| UNet family (SDXL) | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |
+| DiT family (MOSS-Image) | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
 
-Each graph carries two `Note` nodes on the canvas: "tunable parameters" and "prompt dialect (SDXL / MOSS)",
-so the two prompt styles and the frame table are inside the file, not only in the docs.
+The `moss` file names are historical; the graph holds any DiT model — swap the three loaders for FLUX,
+SD3, Krea or Anima and keep the structure.
+
+Each graph carries two `Note` nodes on the canvas: "tunable parameters" and "prompt dialect (by architecture)",
+so the prompt rules and the frame table are inside the file, not only in the docs.
 Download page and import steps: [docs/en/workflows.md](docs/en/workflows.md).
 
 ## How to write prompts
 
-The two text encoders behave differently. Do not mix them.
+The dialect follows the **text encoder**, not the model name. Three of them cover everything in the
+table above; the full rules live in [docs/en/prompting.md](docs/en/prompting.md) ·
+[中文](docs/prompting.md).
 
-**SDXL / classic CLIP (`tags`)**
+| Encoder | Models | Dialect | One-line rule |
+| --- | --- | --- | --- |
+| CLIP | SD 1.5, SDXL, Illustrious, NoobAI | `tags` | comma tags, style last |
+| Qwen-VL | MOSS-Image, Krea 2, Qwen-Image, Anima | `moss_zh` | paragraphs, every one ends with a full stop |
+| T5 | FLUX.1, SD3 / SD3.5 | prose | full English sentences, no `(word:1.3)` |
+
+**CLIP tags**
 
 ```
-1girl, solo, full body, black short hair, blue eyes, beige hoodie,
-dark shorts, barefoot, bedroom at night, warm lamp light,
-〈this beat〉,
+1girl, solo, full body, black short hair, blue eyes, beige hoodie, dark shorts,
+barefoot, bedroom at night, warm lamp light, 〈this beat〉,
 anime screencap, clean lineart, flat cel shading
 ```
 
-- Comma-separated, important tags first.
-- Style goes last: CLIP weights the tail tokens most; style in the middle gets overwritten by action words.
-- Describe pixels, not feelings: `eyes wide, pupils small`, not `shocked`.
-- Negative prompt in its own `CLIPTextEncode`.
+Describe pixels, not feelings: `eyes wide, pupils small`, not `shocked`.
 
-**MOSS / Qwen-VL (`moss_zh`)**
+**Qwen-VL prose**
 
 ```
 一间温馨的小卧室，深夜。画面右侧有一盏暖色台灯，光从右前方斜照下来，落在木地板上。
@@ -174,11 +200,14 @@ anime screencap, clean lineart, flat cel shading
 动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影。
 ```
 
-- Chinese prose, one paragraph per idea, every paragraph ends with 「。」.
-- No quality tags: `masterpiece` / `best quality` are noise to this encoder.
-- Measurable body language: `震惊 = 双眼睁大、瞳孔缩小、嘴张开`.
-- State framing explicitly: locked camera, eye level, full body, head to toe inside the frame.
-- Chinese negative prompt.
+No quality tags — `masterpiece` / `best quality` are noise to a Qwen-VL encoder. Measure the body
+instead of naming the emotion.
+
+**T5 sentences** — one idea per sentence, no weight brackets.
+
+Every beat changes **exactly one variable**. If you change two, interpolation gives you two different
+people. Need text inside the frame? Use absolute-pixel bboxes on a canvas whose sides are multiples of
+16 — details in the prompting page.
 
 Full eleven-beat example: [`assets/story.diet.json`](assets/story.diet.json);
 `python scripts/make_story.py --preset diet-betrayal --out my.json` regenerates it.
@@ -270,8 +299,8 @@ SKILL.md              the skill itself (principles, story cards, multi-character
 skill.json            version, dependencies, entrypoints, install targets
 scripts/              detect_env · doctor · emit_workflow · make_story · check_anim · check_output
                       make_curve · check_deps · install · package · comfy_lib
-workflows/            importable graphs (SDXL + Moss, 3/4 beats each)
-assets/               17 motion presets, story cards (incl. a moss_zh story), node schema
+workflows/            importable graphs (UNet/SDXL + DiT/MOSS, 3/4 beats each)
+assets/               17 motion presets, story cards (incl. a moss_zh story with dwell), node schema
 docs/                 docs in Chinese, English under docs/en/
 tests/                offline unit tests — no GPU, no network
 profiles/             generated per machine (git-ignored)
@@ -297,6 +326,8 @@ are in [docs/formats.md](docs/formats.md) and [SKILL.md](SKILL.md).
 | Usage | [docs/en/usage.md](docs/en/usage.md) | [docs/usage.md](docs/usage.md) |
 | Motion library (17 presets) | [docs/en/motion-presets.md](docs/en/motion-presets.md) | [docs/motion-presets.md](docs/motion-presets.md) |
 | Output layout | [docs/en/output.md](docs/en/output.md) | [docs/output.md](docs/output.md) |
+| Models and architectures | [docs/en/models.md](docs/en/models.md) | [docs/models.md](docs/models.md) |
+| Prompt writing | [docs/en/prompting.md](docs/en/prompting.md) | [docs/prompting.md](docs/prompting.md) |
 | Approach comparison | [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md) | [docs/synthesis-comparison.md](docs/synthesis-comparison.md) |
 | APNG vs GIF vs video | [docs/en/formats.md](docs/en/formats.md) | [docs/formats.md](docs/formats.md) |
 | Architecture | [docs/en/architecture.md](docs/en/architecture.md) | [docs/architecture.md](docs/architecture.md) |
@@ -335,8 +366,8 @@ Full details: [docs/output.md](docs/output.md) · [English](docs/en/output.md).
   moves; not for walking, turning around or camera moves. For those, use a ControlNet pose sequence or a
   video model (Wan / LTX).
 - Frame count is a budget, not a quality dial: 8-60 frames all work, decode time scales linearly with N.
-  24 is the default sweet spot; 60 is for a 2 s narrative beat at 30 fps. The method still has no real
-  motion trajectory at any frame count — more frames smooth the transition, they do not create new poses.
+  24 is the default sweet spot; 60 frames at 20 fps is a 3 s narrative beat. The method still has no
+  real motion trajectory at any frame count — more frames smooth the transition, they do not create new poses.
 - APNG is large (full-frame PNGs). For chat, ship GIF; for alpha, ship WebP.
 
 ## Contributing
@@ -350,6 +381,23 @@ Built on ComfyUI, [ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes) an
 [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite).
 Repository layout is inspired by [book-to-skill](https://github.com/virgiliojr94/book-to-skill).
 
+KJNodes, VideoHelperSuite and ComfyUI are GPL-3.0 projects. They are used here as
+runtime dependencies through their ComfyUI nodes only; no GPL source code is copied
+into this repository. Everything in `scripts/`, `tests/`, `workflows/`, `assets/` and
+`docs/` is original and MIT-licensed. See [NOTICE](NOTICE) for details.
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+Using the code, workflows or docs in your own project? Keep the copyright and
+permission notice — that is the only condition MIT puts on you — and a link back is
+appreciated but not required. Forking, modifying and commercial use are all allowed.
+
+Two things MIT does **not** grant: the project name (`comfyui-apng-motion`) and the
+logo. Forks must not present themselves as the official repository or imply
+endorsement by the original author.
+
+If you cite this in published work, use the citation metadata in
+[CITATION.cff](CITATION.cff) — GitHub shows a "Cite this repository" button in the
+sidebar.

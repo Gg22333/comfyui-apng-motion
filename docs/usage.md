@@ -29,12 +29,13 @@
 | 模式 | 编译结果 | 用在 |
 | --- | --- | --- |
 | `tags`（默认） | `lock, actions[i], style` 英文逗号拼接 | SDXL / 传统 CLIP |
-| `moss_zh` | `lock。\n action。\n style。` 中文散文，换行分段 | MOSS / Qwen-VL |
+| `moss_zh` | `lock。\n action。\n style。` 中文散文，换行分段 | MOSS-Image / Krea / Qwen-Image（Qwen-VL 系） |
 
 `tags` 模式下 `style` 必须放最后：CLIP 对末尾 token 权重最高，画风写在中段会被动作词挤掉，
 出图会掉进写实照相模式（表现为拼贴照、色块闪）。
 
 `moss_zh` 模式下三段都写中文，每段以「。」结尾；不要混英文标签，也不要堆 `masterpiece`。
+三种方言的完整规则见 [提示词写法](prompting.md)。
 
 `assets/story.diet.json` 是完整范例：
 
@@ -70,7 +71,7 @@ python scripts/emit_workflow.py --base workflows/workflow-moss.json --story asse
 python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json --out my.json
 ```
 
-| 拍数 | 段数分配（24 帧） | 节点数（SDXL） | 节点数（Moss） |
+| 拍数 | 段数分配（24 帧） | 节点数（UNet/SDXL） | 节点数（DiT/MOSS） |
 | --- | --- | --- | --- |
 | 3 | 8/8/8 | 67 | 69 |
 | 4 | 6/7/6/5 | 70 | 72 |
@@ -98,9 +99,10 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
 | 每帧提示 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线，逐帧独立 |
 | 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
 | 节奏 | N 个 `LatentInterpolate` 的 ratio | 缓动曲线。`linear` 每帧步长恒定，最稳 |
-| 速度 | 三个保存节点的 `fps` | 必须改成同一个值；`fps × 帧数` = 时长（24 帧 @10fps = 2.4 秒，60 帧 @30fps = 2 秒） |
-| 提示词方言 | `--prompt-mode tags|moss_zh` / 剧情卡 `prompt_mode` | `tags` = 英文标签；`moss_zh` = 中文散文 |
-| 尺寸 | latent 宽高 / `--size 640` | Moss 512 或 640；SDXL 512–1024 |
+| 速度 | 三个保存节点的 `fps` | 必须改成同一个值；`fps × 帧数` = 时长（24 帧 @10fps = 2.4 秒，60 帧 @20fps = 3 秒） |
+| 每拍停留 | 剧情卡 `dwell` + `ease` | 每拍停多久。ComfyUI 只能给一个全局 fps，停留由 `retime.py` 在导出后施加 |
+| 提示词方言 | `--prompt-mode tags|moss_zh` / 剧情卡 `prompt_mode` | `tags` = CLIP 英文标签；`moss_zh` = Qwen-VL 中文散文 |
+| 尺寸 | latent 宽高 / `--size 640` | MOSS-Image 512 或 640；SDXL 512–1024 |
 | 命名 | `filename_prefix` | 分别落在 `apng/`、`webp/`、`gif/` |
 | 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放行为 |
 
@@ -125,12 +127,18 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-s
 
 结构不变，只换加载器：
 
-| 模型族 | 加载器 | 关键帧 denoise |
-| --- | --- | --- |
-| SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 |
-| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 |
-| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 |
-| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 |
+| 模型族 | 架构 | 文本编码器 | 加载器 | 关键帧 denoise |
+| --- | --- | --- | --- | --- |
+| SD 1.5 | UNet | CLIP | `CheckpointLoaderSimple` | 0.45–0.55 |
+| SDXL / Illustrious / NoobAI | UNet | CLIP-L + CLIP-G | `CheckpointLoaderSimple` | 0.35–0.45 |
+| FLUX.1 | DiT | CLIP-L + T5-XXL | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 |
+| SD3 / SD3.5 | MMDiT | CLIP-L + CLIP-G + T5-XXL | `CheckpointLoaderSimple` 或三件套 | 0.40–0.50 |
+| MOSS-Image | DiT + 8 步 DMD | Qwen3.5-9B | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 |
+| Krea 2 | DiT | Qwen3-VL 4B | `UNETLoader` + `CLIPLoader` + `VAELoader` | 0.45–0.55 |
+| Anima 2B | DiT | Qwen3-0.6B | `UNETLoader` + `CLIPLoader` + `VAELoader` | 0.45–0.55 |
+
+**DiT 是架构，MOSS 是模型**——MOSS-Image 本身就属于 DiT 家族，不是 DiT 之外的另一个选项。
+逐个模型的说明见 [模型与架构](models.md)。
 
 denoise 是经验值。同 seed 下 SDXL 超过 0.42 就开始改衣服和背景，插值时出现色斑；
 要更大表情用 0.45–0.5 并接受漂移，或改用面部局部重绘。
@@ -163,7 +171,7 @@ python check_anim.py output/APNG/final/apng/anim60_00001_.png --expect 60
 ```
 
 关注四项：`frames=N`（与 `--frames` 一致）、`loop=0`、`identical_pairs=0`、`color_drift` 尽量低
-（Moss 0.85 档实测 9–15，换冷光或闭眼关键帧会更高；SDXL 0.35 档约 2.6；超过 20 基本就是关键帧重绘过头）。
+（MOSS-Image 0.85 档实测 9–15，换冷光或闭眼关键帧会更高；SDXL 0.35 档约 2.6；超过 20 基本就是关键帧重绘过头）。
 
 ## 落盘验收
 

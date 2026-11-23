@@ -147,8 +147,8 @@ So the added footprint is **tens of megabytes of image buffers, not gigabytes of
 | Stack / content | Frames | APNG | GIF | WebP (lossless) |
 | --- | --- | --- | --- | --- |
 | SDXL / silver hair | 24 | 6.61 MB | 2.41 MB | 0.80 MB |
-| Moss / silver hair | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
-| Moss / rainy neon | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
+| MOSS-Image / silver hair | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
+| MOSS-Image / rainy neon | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
 
 GIF is often smaller than lossless APNG because LZW plus 256 colours suits flat anime very well. For smaller files, turn off WebP `lossless` and use quality 80–90.
 

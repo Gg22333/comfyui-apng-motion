@@ -53,6 +53,7 @@ def main():
     ap.add_argument("path")
     ap.add_argument("--expect", type=int, default=0, help="期望帧数，不符则退出码 1")
     ap.add_argument("--segs", default="", help="每拍帧数，逗号分隔；给了就逐拍检查")
+    ap.add_argument("--story", default="", help="剧情卡 JSON；从里面读 segs")
     ap.add_argument("--strict", action="store_true", help="拍检查失败也返回退出码 1")
     ap.add_argument("--json", action="store_true", help="只输出 JSON")
     args = ap.parse_args()
@@ -106,7 +107,11 @@ def main():
 
     # ---- 逐拍检查 ----
     beat_rows, beat_fail = [], 0
-    segs = [int(x) for x in args.segs.split(",") if x.strip()] if args.segs else []
+    segs_txt = args.segs
+    if not segs_txt and args.story:
+        with open(args.story, encoding="utf-8") as fh:
+            segs_txt = ",".join(str(x) for x in (json.load(fh).get("segs") or []))
+    segs = [int(x) for x in segs_txt.split(",") if x.strip()] if segs_txt else []
     if segs:
         if sum(segs) != n:
             print("WARN    : segs 之和 %d != 实际帧数 %d，拍检查按实际帧数截断" % (sum(segs), n))
@@ -126,9 +131,11 @@ def main():
             ok = full >= 2.0 and low >= 1.0
             if not ok:
                 beat_fail += 1
+            ms = sum(x for x in durations[st:en + 1] if isinstance(x, (int, float)))
             beat_rows.append({
                 "beat": "K%d->K%d" % (i, (i + 1) % len(segs)),
                 "at_frame": st,
+                "ms": int(ms),
                 "full": round(full, 2),
                 "lower": round(low, 2),
                 "ok": ok,
@@ -139,6 +146,7 @@ def main():
         beat_rows.append({
             "beat": "K%d->K0" % len(segs),
             "at_frame": n - 1,
+            "ms": None,
             "full": round(loop_full, 2),
             "lower": round(loop_low, 2),
             "ok": loop_ok,
@@ -154,7 +162,12 @@ def main():
     else:
         print(f"file    : {res['file']}")
         print(f"format  : {res['format']}  size={res['size']}  frames={res['frames']}  loop={res['loop']}")
-        print(f"timing  : {res['duration_ms']} ms/frame  total={res['total_s']} s")
+        ms_all = [d for d in durations if isinstance(d, (int, float))]
+        if ms_all and min(ms_all) != max(ms_all):
+            print(f"timing  : {max(ms_all)} / {min(ms_all)} ms/frame (per-frame)  "
+                  f"total={res['total_s']} s")
+        else:
+            print(f"timing  : {res['duration_ms']} ms/frame  total={res['total_s']} s")
         print(f"diff    : min={res['diff_min']}  max={res['diff_max']}  avg={res['diff_avg']}")
         print(f"color   : drift={res['color_drift']}（相对第 1 帧的平均 RGB 最大偏移）")
         if drift > 20:
@@ -169,8 +182,14 @@ def main():
             print("beats   :")
             for r in beat_rows:
                 flag = "OK  " if r["ok"] else "FAIL"
-                print("  %s %-7s @f%-3d full=%-7s lower=%-7s" % (
-                    flag, r["beat"], r["at_frame"], r["full"], r["lower"]))
+                ms_cell = "%5dms" % r["ms"] if r.get("ms") is not None else "  wrap"
+                print("  %s %-7s @f%-3d %s full=%-7s lower=%-7s" % (
+                    flag, r["beat"], r["at_frame"], ms_cell,
+                    r["full"], r["lower"]))
+            thin = [r["beat"] for r in beat_rows
+                    if r.get("ms") is not None and r["ms"] < 200]
+            if thin:
+                print("提示    : %s 短于 200 ms，观感是一闪而过；调高对应 dwell 或降 fps" % ", ".join(thin))
             if beat_fail:
                 print("提示    : 表演拍 full<2.0 = 换姿势幅度不够；lower<1.0 = 只动了脸，"
                       "把镜头拉成全身，或把动作写到腿和手。")

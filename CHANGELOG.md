@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## 1.3.3 — 2026-11-24
+
+- **节奏参数化**：新增 `scripts/timing.py` 作为帧延时唯一真相源，导出
+  `frame_delays(frames, segs, fps, dwell, ease, quantum)`。两条不变量有测试守住：
+  列表长度恒等于 `frames`，总延时恒等于 `frames / fps`。
+- **每拍停留（`dwell`）与拍内缓动（`ease`）**：剧情卡新增两个字段。`fps` 决定总时长，
+  `dwell` 决定这段时间怎么分给每一拍，`ease` 让每拍首尾帧多停、中段加速。
+  ComfyUI 的保存节点只接受一个全局 fps，所以这两项由新增的 `scripts/retime.py`
+  在**导出后**写进 APNG 的 fcTL 延时——像素一个字节都不动，不重跑采样。
+- **默认成片放慢到 3 秒**：`story.diet.json` 与 `diet-betrayal` 预设从 `30fps` 改为 `20fps`，
+  60 帧 = 3.00 秒；`dwell = 0.95,0.95,1.1,1.3,1.0,1.3,0.95,1.0,0.9,0.95,0.95`，
+  够手机与抱桶两拍各多停 30%，单拍最短 210 ms（原来 60 帧 11 拍挤在 2 秒里，平均每拍 180 ms）。
+- **GIF 帧延时口径写进文档**：GIF 的延时只能量化到 10 ms（1 厘秒）。24fps 会被写成 40 ms，
+  整片实际 2.4 秒而不是 2.5 秒；30fps 实际 1.8 秒。20 / 25 fps 整除，不会走样。
+  APNG / WebP 是毫秒精度，不受限。
+- **新增 `docs/prompting.md` 提示词权威页**（中英各一份）：三种方言按**文本编码器**分
+  （CLIP 标签 / Qwen-VL 散文 / T5 句子），逐拍三段式，可测量身体描述对照表，常见翻车表。
+  并入 `moss-image-prompt-enhancer` 的四条 Layout 规则：绝对像素 bbox、画布边长取 16 的倍数、
+  不写占位符、只描述可见内容。README、`usage`、`workflows`、`SKILL.md` 与画布 Note 里的写法段
+  全部收敛为摘要 + 链接。
+- **新增 `docs/models.md` 模型与架构页**（中英各一份），修正分类错误：
+  **DiT 是架构，MOSS 是模型**。旧文档把「Moss / DiT」并列，等于把架构当成了 MOSS 之外的另一类。
+  现在按三层组织——架构（UNet / DiT）、文本编码器（CLIP / T5 / Qwen-VL）、步数范式（常规 / DMD·Turbo），
+  覆盖 SD1.5、SDXL、FLUX.1、SD3/3.5、MOSS-Image、Krea 2、Anima 2B、Qwen-Image，每条给加载器与出处。
+  本机目录 `-xl` / `-Dit` 明确写为「跑 UNet 系 / 跑 DiT 系」，不是分类标准。
+- **画布 Note 重写**：标题从「提示词写法（SDXL / MOSS 两套）」改为「提示词写法（按架构分方言）」，
+  内容加三种方言、Layout 四条、fps 与 dwell 分工。Note 复用改为按标题首行匹配，旧标题也能原地更新，
+  不会叠出第三个 Note。
+- **`check_anim.py --story`**：按剧情卡读 `segs`，逐拍打印毫秒数，低于 200 ms 的拍给 WARN。
+  `make_preview.py --story` 用同一份延时写 GIF / WebP。
+- **`make_story.py`**：透传 `dwell` / `ease`；改了帧数导致 `segs` 变化时自动丢弃旧 `dwell`。
+- **测试**：新增 `tests/test_timing.py` 10 项；全仓 69 项通过。
+- **预览重出**：`docs/assets/preview.webp` / `preview.gif` 从重定时后的 APNG 重新编码，
+  60 帧 / 3.00 秒 / 384×384。
+
+
+- **许可与署名加固**：`LICENSE` 的版权主体从 `comfyui-apng-motion contributors` 改为
+  `Gg22333`（此前无可主张的权利人）；新增 `NOTICE`，写明 MIT 授权范围、KJNodes /
+  VideoHelperSuite / ComfyUI 三个 GPL-3.0 运行依赖「只调用节点、未复制源码」、
+  以及项目名与 Logo 不在 MIT 授权内；新增 `CITATION.cff`，GitHub 侧栏会显示
+  "Cite this repository"。README 中英双版补「保留声明即可、回链不强制」与 fork 不得冒充官方。
 ## 1.3.2 — 2026-11-23
 
 - **接缝停顿修复**：`build_curve()` 不再让每段都从 `1.0` 走到 `0.0`。旧排法段尾与下一段段首是

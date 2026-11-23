@@ -9,8 +9,8 @@ The download links below are mirrored into `docs/assets/workflows/` by `scripts/
 
 | Environment | 3 beats | 4 beats | Notes |
 | --- | --- | --- | --- |
-| SDXL | [workflow-sdxl.json](../assets/workflows/workflow-sdxl.json) | [workflow-sdxl-4beat.json](../assets/workflows/workflow-sdxl-4beat.json) | `CheckpointLoaderSimple`, 20–30 steps, cfg 5–7 |
-| Moss / DiT | [workflow-moss.json](../assets/workflows/workflow-moss.json) | [workflow-moss-4beat.json](../assets/workflows/workflow-moss-4beat.json) | `UNETLoader` + `CLIPLoader` + `VAELoader`, 8 steps, cfg 1.0 |
+| UNet family (SDXL) | [workflow-sdxl.json](../assets/workflows/workflow-sdxl.json) | [workflow-sdxl-4beat.json](../assets/workflows/workflow-sdxl-4beat.json) | `CheckpointLoaderSimple`, 20–30 steps, cfg 5–7 |
+| DiT family (MOSS-Image) | [workflow-moss.json](../assets/workflows/workflow-moss.json) | [workflow-moss-4beat.json](../assets/workflows/workflow-moss-4beat.json) | `UNETLoader` + `CLIPLoader` + `VAELoader`, 8 steps, cfg 1.0. Swap three loaders for FLUX / SD3 / Krea / Anima |
 | Preview | — | [workflow-sdxl-preview.json](../assets/workflows/workflow-sdxl-preview.json) | Builds the repo preview; same seed, denoise 0.35 |
 
 24 frames is the default. For 8 / 30 / 60 frames you do not switch files:
@@ -43,7 +43,7 @@ plain tensor ops, so doubling frames does not double compute.
 | `CLIPTextEncode` "K0 首帧提示" / "K1 提示" / … | What happens in this beat |
 | Every `KSampler` | seed / steps / cfg / denoise / sampler / scheduler, per beat |
 | `Note` "可调参数清单" | Cheat sheet written on the canvas |
-| `Note` "提示词写法（SDXL / MOSS 两套）" | Two prompt dialects + frame table |
+| `Note` "提示词写法（按架构分方言）" | Three encoder dialects + Layout rules + frame table |
 
 Beat length follows the `LatentInterpolate` distribution: more interpolation nodes in a segment means
 a slower beat. `emit_workflow.py --segs` lays this out for you.
@@ -91,12 +91,14 @@ The eleven-beat *Diet Betrayal* uses `5,5,4,7,6,7,5,6,5,5,5`: reaching for the p
 lifting the chicken bucket (K5→K6) get 7 frames each; shoulder/head beats get 4–5; the final beat uses 5
 frames to interpolate back to K0.
 
-**To slow the whole film down**, keep the frame count and drop fps on all three save nodes from 30 to 24
-(2.5 s) or 20 (3 s). The in-between count and per-frame step stay the same; only playback speed changes.
+**To slow the whole film down**, keep the frame count and drop fps on all three save nodes from 30 to 20
+(3 s). The in-between count and per-frame step stay the same; only playback speed changes. Once the total
+length is set, use the story card's `dwell` to decide which beats hold longer — see
+[Pace](#pace-fps-and-per-beat-dwell).
 
 ```bash
 python scripts/check_anim.py output/apng/anim60_00001_.png \
-    --segs 5,5,4,7,6,7,5,6,5,5,5 --fps 30
+    --segs 5,5,4,7,6,7,5,6,5,5,5 --fps 20 --story assets/story.diet.json
 ```
 
 | Reading | Meaning | Fix |
@@ -112,55 +114,126 @@ python scripts/check_anim.py output/apng/anim60_00001_.png \
 2. Drag the JSON onto the canvas.
 3. Point the loader at your local models:
    - SDXL: `CheckpointLoaderSimple`
-   - Moss / DiT: `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader`
+   - DiT family: `UNETLoader` + `CLIPLoader` (use `type=moss_image` for MOSS-Image) + `VAELoader`
 4. Confirm the three save nodes use `APNG/final/{apng,webp,gif}/...`.
 5. **Press F5** before queueing, or the frontend may keep the old prefix.
 
 ## Environment differences
 
-| | SDXL | Moss / DiT |
+| | UNet family (SDXL) | DiT family (MOSS-Image) |
 | --- | --- | --- |
 | VRAM | from 6 GB | from 8 GB (512 / 640 verified) |
 | steps | 20–30 | 8 (DMD distilled, do not raise) |
 | cfg | 5–7 | 1.0 |
 | keyframe denoise | 0.35–0.45 | 0.82–0.90 (below 0.80 the keyframes barely move) |
-| text encoder | CLIP (comma tags) | Qwen-VL (Chinese prose) |
+| text encoder | CLIP (comma tags) | Qwen3.5-9B (Chinese prose) |
 | prompt mode | `tags` | `moss_zh` |
 
-Raising Moss steps to 20 or cfg to 6 only makes it muddier. SDXL is the opposite: below 20 steps or
-cfg below 5 it loses detail.
+Raising MOSS-Image steps to 20 or cfg to 6 only makes it muddier. SDXL is the opposite: below 20 steps
+or cfg below 5 it loses detail.
+
+**MOSS-Image is one DiT model; SDXL is not DiT at all.** Writing "Moss / DiT" side by side is a
+categorisation error: DiT is the architecture (arXiv:2212.09748, U-Net backbone replaced by a
+transformer), MOSS is a specific model. Swap in FLUX / SD3 / Krea / Anima and the denoise range is the
+DiT one (0.45–0.55), not 0.85. Per-model detail: [Models](models.md).
 
 ## Prompt dialects
 
-**SDXL (tags)** — comma tags, subject first, style last, describe pixels not feelings:
+The dialect follows the **text encoder**, not the model name. Three dialects cover every model in the
+table; full rules in [Prompting](prompting.md).
 
-```
-1girl, solo, full body, black short hair, blue eyes, beige hoodie,
-〈this beat〉,
-anime screencap, clean lineart, flat cel shading
-```
+| Encoder | Models | Mode | One-line rule |
+| --- | --- | --- | --- |
+| CLIP | SD 1.5, SDXL, Illustrious, NoobAI | `tags` | comma tags, style last |
+| Qwen-VL family | MOSS-Image, Krea 2, Qwen-Image, Anima | `moss_zh` | paragraphs, one full stop each |
+| T5 | FLUX.1, SD3 / SD3.5 | prose | full sentences, no `(word:1.3)` |
 
-**MOSS (moss_zh)** — Chinese prose, one paragraph per idea, every paragraph ends with 「。」,
-no quality tags, framing stated explicitly:
-
-```
-一间温馨的小卧室，深夜。画面右侧有一盏暖色台灯，光从右前方斜照下来，落在木地板上。
-固定机位，平视，全身镜头，人物从头到脚完整入画，双手和双脚都留在画框里。
-小满：黑色短发，蓝色眼睛，身材微胖，穿着宽松的米色连帽卫衣和深色短裤，赤脚。
-小满盘腿坐在矮桌前，背挺得很直，双手叉在腰上，抬起下巴，嘴角只上扬几毫米。
-动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影。
+```text
+CLIP    : 1girl, solo, full body, … , <this beat>, anime screencap, clean lineart
+Qwen-VL : 一间温馨的小卧室，深夜。 / 固定机位，平视，全身镜头…… / 小满：黑色短发……
+T5      : A young woman with short black hair sits upright behind a low wooden table …
 ```
 
-`assets/story.diet.json` is a complete eleven-beat `moss_zh` example (60 frames / 30 fps);
+Three hard rules:
+
+1. **Change exactly one variable per beat.** Change two and the interpolation gives you two people.
+2. **Describe pixels, not feelings.** `shocked` becomes `eyes wide, pupils small, mouth open`.
+3. **Nail the framing.** `fixed camera, eye level, full-body, head to toe inside the frame`, or the
+   model crops to half body on its own.
+
+When text must appear in the frame (sign, poster, speech bubble), use absolute-pixel bboxes on a canvas
+whose sides are multiples of 16 — see [Prompting](prompting.md#when-text-must-appear-in-the-frame).
+
+`assets/story.diet.json` is a complete eleven-beat `moss_zh` example (60 frames / 20 fps / 3 s);
 `python scripts/make_story.py --preset diet-betrayal --out my.json` regenerates it.
 
-## Frame counts
+## Pace: fps and per-beat dwell
 
-| Frames | fps | Duration | Use |
+Pace has three independent layers:
+
+| Layer | Decided by | Effect |
+| --- | --- | --- |
+| **Total length** | `fps` on the save nodes (story card `fps`) | `frames / fps`. 60 frames @20 fps = 3 s |
+| **Per-beat dwell** | story card `dwell` (one weight per beat) | keyframes hold longer, transitions move faster; total unchanged |
+| **In-beat easing** | story card `ease` (0–0.8, default 0.3) | first and last frames of a beat get longer delays |
+
+**ComfyUI's save nodes accept one global fps only** — per-frame dwell cannot be expressed there. So:
+
+```bash
+# 1) render (all three save nodes share one fps)
+python scripts/emit_workflow.py --base workflows/workflow-moss.json \
+    --story assets/story.diet.json --size 640 --out diet60.json
+
+# 2) rewrite per-frame delays after export: pixels untouched, no resampling
+python scripts/retime.py output/apng/anim60_00001_.png --story assets/story.diet.json
+
+# 3) web preview with the same timing
+python scripts/make_preview.py output/apng/anim60_00001_.retimed.png \
+    --story assets/story.diet.json --out-dir docs/assets --width 384
+```
+
+### Frames x frame rate
+
+| Frames | Slow (narrative) | Standard | Fast (chat) |
 | --- | --- | --- | --- |
-| 8 | 8 | 1.00 s | single expression, smallest file |
-| 24 | 10 | 2.40 s | default, chat sticker |
-| 30 | 15 | 2.00 s | short action |
-| 60 | 30 | 2.00 s | full mini story (eleven beats: `5,5,4,7,6,7,5,6,5,5,5`) |
+| 8 | 6 fps / 1.33 s | 8 fps / 1.00 s | 10 fps / 0.80 s |
+| 24 | 8 fps / 3.00 s | 10 fps / 2.40 s | 12 fps / 2.00 s |
+| 30 | 10 fps / 3.00 s | 15 fps / 2.00 s | 20 fps / 1.50 s |
+| 60 | **20 fps / 3.00 s (default)** | 25 fps / 2.40 s | 30 fps / 2.00 s |
 
-All three save nodes must share the same fps. `emit_workflow.py --fps` sets all three at once.
+**GIF frame delay quantises to 10 ms (1 centisecond)**, so:
+
+| fps | Per frame | Written to GIF | Real 60-frame length |
+| --- | --- | --- | --- |
+| 8 | 125 ms | 120 ms | 7.2 s (2.9 s at 24 frames) |
+| 10 | 100 ms | 100 ms ✓ | 6.0 s (2.4 s at 24 frames) |
+| 20 | 50 ms | 50 ms ✓ | 3.00 s |
+| 25 | 40 ms | 40 ms ✓ | 2.40 s |
+| 24 | 41.7 ms | 40 ms | 2.40 s (not 2.5 s) |
+| 30 | 33.3 ms | 30 ms | 1.80 s (not 2.0 s) |
+
+Tick-marked rows divide evenly, so GIF will not silently change speed. APNG and WebP are millisecond
+precise and accept any fps.
+
+### At least 0.20 s per beat
+
+Eleven beats over 60 frames at 20 fps averages 0.27 s per beat. A shoulder-only beat can take 4 frames
+(0.20 s); less than that is a flicker. `retime.py` and `check_anim.py` both flag beats under 200 ms.
+
+*Diet Betrayal* uses:
+
+```
+0.95, 0.95, 1.1, 1.3, 1.0, 1.3, 0.95, 1.0, 0.9, 0.95, 0.95
+```
+
+The phone reach (K3→K4) and the chicken bucket (K5→K6) get 1.3 — the two widest moves — while
+shoulder-and-mouth beats drop to 0.9.
+
+### To slow down, drop fps first, then add dwell
+
+Same frame count, lower fps: the interpolation step per frame is unchanged, the whole clip just plays
+slower. That is the cheapest lever. Then use `dwell` for "these two beats should hold longer". Both are
+export-time only; neither resamples.
+
+**Do not** add frames to fix "too fast": more frames make the transition finer, not each beat longer.
+

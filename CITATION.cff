@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: comfyui-apng-motion
+message: "If you use this software or its workflows in published work, please cite it using the metadata below."
+type: software
+authors:
+  - name: "Gg22333"
+repository-code: "https://github.com/Gg22333/comfyui-apng-motion"
+url: "https://gg22333.github.io/comfyui-apng-motion/"
+license: MIT
+version: 1.3.3
+date-released: "2026-11-24"
+abstract: >-
+  A ComfyUI skill and toolkit that turns 3-8 keyframes into coherent APNG, WebP
+  and GIF animations at 8/12/24/30/60 frames. Uses latent interpolation rather
+  than per-frame generation, ships ready-to-import workflows for SDXL and
+  DiT-family models (MOSS-Image, FLUX, SD3, Krea, Anima), and includes a motion
+  preset library, frame-timing control (fps, per-beat dwell, easing) and
+  three prompt dialects (CLIP tags, Qwen-VL prose, T5 sentences).
+keywords:
+  - comfyui
+  - apng
+  - webp
+  - gif
+  - animation
+  - latent-interpolation
+  - sdxl
+  - moss-image
+  - prompt-engineering
+  - storyboard

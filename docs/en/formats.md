@@ -122,8 +122,8 @@ Measured here (512², straight from ComfyUI):
 | Stack / content | Frames | APNG | GIF | WebP (lossless) |
 | --- | --- | --- | --- | --- |
 | SDXL / silver hair | 24 | 6.61 MB | 2.41 MB | 0.80 MB |
-| Moss / silver hair | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
-| Moss / rainy neon | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
+| MOSS-Image / silver hair | 24 | 4.15 MB | 2.72 MB | 2.88 MB |
+| MOSS-Image / rainy neon | 60 | 17.23 MB | 7.21 MB | 12.76 MB |
 
 Size is roughly linear for the same content (60 frames ≈ 2.5× of 24); across different content it is not comparable.
 
@@ -144,7 +144,7 @@ Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is no
 | New GIF (global palette + `dither=none`) | 384x384 | 60 | 2.62 MB | 2.98 |
 | New WebP (quality 100, keeps all 60 frames) | 384x384 | 60 | 1.53 MB | 2.77 |
 
-The current preview is the eleven-beat story *Diet Betrayal*: 60 frames / 30 fps / Moss-DiT, recipe in
+The current preview is the eleven-beat story *Diet Betrayal*: 60 frames / 20 fps / 3.0 s / MOSS-Image (DiT), recipe in
 `assets/story.diet.json` (`segs = 5,5,4,7,6,7,5,6,5,5,5`, denoise 0.85).
 
 WebP has a frame-count trap: libwebp's animation encoder merges adjacent frames that are nearly identical after compression.
@@ -166,7 +166,7 @@ Check the APNG first, then the GIF.
 
 | Source | How to recognise | Fix |
 | --- | --- | --- |
-| Generation: wrong keyframe denoise | APNG adjacent diff avg > 2 with patchy blotches, or the film barely moves | SDXL 0.35-0.40; Moss 0.82-0.90 (below 0.80 it barely moves). Same seed, same first latent, and check whether lighting words change per beat |
+| Generation: wrong keyframe denoise | APNG adjacent diff avg > 2 with patchy blotches, or the film barely moves | UNet family 0.35-0.40; MOSS-Image 0.82-0.90 (below 0.80 it barely moves). Same seed, same first latent, and check whether lighting words change per beat |
 | Generation: uneven curve | diff series has 4-5 spikes in the middle | `--curve linear`; avoid `snap` |
 | Encoding: per-frame GIF palette | APNG clean, GIF shows blocky noise | global palette + no dither; or use WebP |
 | Loop seam | last frame to first frame diff is large | bring the last beat back to the first pose |
