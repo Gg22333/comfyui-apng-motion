@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Byte-compile
+        run: python -m compileall -q scripts tests
+      - name: Unit tests
+        run: pytest -q
+      - name: Validate 3 / 4 / 5 beats
+        run: |
+          python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.example.json --out /tmp/b3.json
+          python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/b4.json
+          python scripts/emit_workflow.py --base assets/workflow-moss.json --beats 5 --segs 5,6,5,4,4 --lock "masterpiece, 1girl" --style "anime" --actions "neutral|notice|react|peak|settle" --out /tmp/b5.json
+          python scripts/emit_workflow.py --validate /tmp/b3.json
+          python scripts/emit_workflow.py --validate /tmp/b4.json
+          python scripts/emit_workflow.py --validate /tmp/b5.json
+      - name: Dependency self-check
+        run: python scripts/check_deps.py

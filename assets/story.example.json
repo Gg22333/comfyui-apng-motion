@@ -1,0 +1,16 @@
+{
+  "name": "anim24",
+  "beats": 3,
+  "segs": [8, 8, 8],
+  "fps": 10,
+  "denoise": 0.4,
+  "prefix": "APNG/final",
+  "lock": "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform",
+  "style": "anime screencap, clean lineart, flat cel shading",
+  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views",
+  "actions": [
+    "neutral expression, mouth closed, head straight",
+    "big smile, eyes half closed, blush",
+    "laughing, mouth open, blush"
+  ]
+}
