@@ -1,0 +1,1731 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+      
+      
+      
+        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/synthesis-comparison/">
+      
+      
+        <link rel="prev" href="../output/">
+      
+      
+        <link rel="next" href="../formats/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>方案对比 - comfyui-apng-motion</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#apnggiflive2d" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="comfyui-apng-motion" class="md-header__button md-logo" aria-label="comfyui-apng-motion" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            comfyui-apng-motion
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              方案对比
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="暗色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="暗色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="亮色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="亮色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="comfyui-apng-motion" class="md-nav__button md-logo" aria-label="comfyui-apng-motion" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    comfyui-apng-motion
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    成品落盘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    方案对比
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    方案对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · 先给结论
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-apng" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · APNG 的定义
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · APNG 的定义">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apng-gif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APNG 与 GIF 的核心差异
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-live2d-spine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · 和 Live2D / Spine 的区别
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · 和其他动图路线的区别
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · 和其他动图路线的区别">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-ai24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 逐帧 AI（24 次采样）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-batch_size24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 batch_size=24
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-gif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 视频生成 → GIF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-sprite-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 手绘序列帧 / sprite sheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-lottie-rive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Lottie / Rive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · 性能账：到底省在哪
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · 性能账：到底省在哪">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 采样次数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 显存与内存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-5122-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 文件体积（本机实测，512² × 24 帧）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 什么时候不省
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · 选型建议
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 参考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    格式对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    排错
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    发布
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    English
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    English
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output layout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/synthesis-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Approach comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · 先给结论
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-apng" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · APNG 的定义
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · APNG 的定义">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apng-gif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APNG 与 GIF 的核心差异
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-live2d-spine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · 和 Live2D / Spine 的区别
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · 和其他动图路线的区别
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · 和其他动图路线的区别">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-ai24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 逐帧 AI（24 次采样）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-batch_size24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 batch_size=24
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-gif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 视频生成 → GIF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-sprite-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 手绘序列帧 / sprite sheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-lottie-rive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Lottie / Rive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · 性能账：到底省在哪
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 · 性能账：到底省在哪">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 采样次数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 显存与内存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-5122-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 文件体积（本机实测，512² × 24 帧）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 什么时候不省
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · 选型建议
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 参考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="apnggiflive2d">动图合成方案对比：APNG、GIF、Live2D 与视频生成<a class="headerlink" href="#apnggiflive2d" title="Permanent link">&para;</a></h1>
+<p>这一页回答三个问题：</p>
+<ol>
+<li><strong>APNG 到底是什么</strong>，和 GIF 差在哪。</li>
+<li>本项目的「关键帧 + latent 插值」和 <strong>Live2D / Spine</strong>、逐帧 AI、视频生成分别是什么关系。</li>
+<li>为什么这条路线在<strong>算力</strong>上明显更省。</li>
+</ol>
+<hr />
+<h2 id="1">1 · 先给结论<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>生成方式</th>
+<th>可交互</th>
+<th>运行时依赖</th>
+<th>相对成本</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>本项目</strong></td>
+<td>3–5 个关键帧 → latent 插值 → 24 帧 → APNG/WebP/GIF</td>
+<td>否</td>
+<td>无，浏览器/聊天软件直接播</td>
+<td><strong>低</strong>：K 次采样 + 24 次解码</td>
+<td>表情包、微表演、文档插图</td>
+</tr>
+<tr>
+<td>逐帧 AI</td>
+<td>24 次独立 img2img</td>
+<td>否</td>
+<td>无</td>
+<td>高：24 次采样</td>
+<td>每帧都要精确控制</td>
+</tr>
+<tr>
+<td><code>batch_size=24</code></td>
+<td>一次采样出 24 个独立噪声</td>
+<td>否</td>
+<td>无</td>
+<td>中，但必闪</td>
+<td>不推荐</td>
+</tr>
+<tr>
+<td>视频生成 → GIF</td>
+<td>视频模型出 MP4/WebM，再抽帧量化</td>
+<td>否</td>
+<td>无（成品）</td>
+<td>很高：时序模型 + 转码</td>
+<td>走位、转身、真实动作</td>
+</tr>
+<tr>
+<td><strong>Live2D / Spine</strong></td>
+<td>分层原画 + 网格绑定 + 参数曲线，运行时变形</td>
+<td><strong>是</strong></td>
+<td>需要 SDK / 播放器</td>
+<td>美术与绑定成本高，运行时可交互</td>
+<td>VTuber、游戏立绘、可互动角色</td>
+</tr>
+<tr>
+<td>手绘序列帧</td>
+<td>画师逐帧画</td>
+<td>否</td>
+<td>无</td>
+<td>人力成本最高</td>
+<td>高预算动画</td>
+</tr>
+<tr>
+<td>Lottie / Rive</td>
+<td>矢量关键帧 + 运行时插值</td>
+<td>是</td>
+<td>需要运行时</td>
+<td>文件极小，但不适合写实/厚涂</td>
+<td>UI 动效、矢量插画</td>
+</tr>
+</tbody>
+</table>
+<p>一句话：<strong>Live2D 是「让人物活起来并接受输入」，本项目是「把一个微表演烘焙成一张到处能播的图」。</strong></p>
+<hr />
+<h2 id="2-apng">2 · APNG 的定义<a class="headerlink" href="#2-apng" title="Permanent link">&para;</a></h2>
+<p>APNG 不是新格式，是 <strong>PNG 的扩展</strong>。普通 PNG 里插入三类块就变成动画：</p>
+<table>
+<thead>
+<tr>
+<th>块</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>acTL</code></td>
+<td>动画控制：帧数 <code>num_frames</code>、循环次数 <code>num_plays</code>（0 = 无限）</td>
+</tr>
+<tr>
+<td><code>fcTL</code></td>
+<td>每帧控制：宽高、偏移、<code>delay_num</code> / <code>delay_den</code>、<code>dispose_op</code>、<code>blend_op</code></td>
+</tr>
+<tr>
+<td><code>fdAT</code></td>
+<td>第 2 帧及之后的图像数据，带 4 字节序列号</td>
+</tr>
+</tbody>
+</table>
+<p>规范里的几个硬事实（Mozilla APNG Specification）：</p>
+<ul>
+<li><code>acTL</code> 必须出现在第一个 <code>IDAT</code> 之前，才会被识别为 APNG。</li>
+<li>第一帧就是普通 PNG 的 <code>IDAT</code>，叫 <strong>default image</strong>；不支持 APNG 的解码器会显示这张静态图，而不是裂图。</li>
+<li>帧时长 = <code>delay_num / delay_den</code> 秒；<code>delay_den = 0</code> 按 <strong>100</strong> 处理，也就是单位变成 1/100 秒。</li>
+<li><code>num_plays = 0</code> 表示无限循环。</li>
+<li><code>fcTL</code> / <code>fdAT</code> 共用递增序列号，用来检测丢帧或顺序错误。</li>
+</ul>
+<p>MDN 对 APNG 的定位写得很直接：</p>
+<blockquote>
+<p>"Good choice for lossless animation sequences (GIF is less performant). AVIF and WebP have better performance but less broad browser support."</p>
+</blockquote>
+<p>也就是说：<strong>APNG 是无损动画序列的稳妥选择；要更小用 WebP/AVIF，要最大兼容用 GIF。</strong></p>
+<h3 id="apng-gif">APNG 与 GIF 的核心差异<a class="headerlink" href="#apng-gif" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>APNG</th>
+<th>GIF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>颜色</td>
+<td>24 位真彩 + 真 alpha</td>
+<td>每帧 ≤256 色调色板，1-bit 透明</td>
+</tr>
+<tr>
+<td>压缩</td>
+<td>DEFLATE，无损</td>
+<td>LZW，有损量化</td>
+</tr>
+<tr>
+<td>帧延迟</td>
+<td>毫秒级（<code>delay_num/delay_den</code>）</td>
+<td>1/100 秒（GIF89a GCE）</td>
+</tr>
+<tr>
+<td>静态兜底</td>
+<td>第一帧就是普通 PNG</td>
+<td>第一帧就是普通 GIF</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>浏览器广泛支持；Windows 照片不播</td>
+<td>几乎所有平台都播</td>
+</tr>
+<tr>
+<td>体积</td>
+<td>每帧整帧 PNG，偏大</td>
+<td>平涂动漫常常更小</td>
+</tr>
+<tr>
+<td>透明边缘</td>
+<td>半透明平滑</td>
+<td>硬边/白边</td>
+</tr>
+</tbody>
+</table>
+<p>详细的块结构、GIF 的 256 色与 1/100 秒限制、APNG→GIF 的四类损耗，见 <a href="../formats/">APNG、GIF 与视频转 GIF</a>。</p>
+<hr />
+<h2 id="3-live2d-spine">3 · 和 Live2D / Spine 的区别<a class="headerlink" href="#3-live2d-spine" title="Permanent link">&para;</a></h2>
+<p>Live2D 的官方定位（Wikipedia 条目转述）：由 Live2D Ltd. 开发的<strong>专有 2D 动画库</strong>，用分层 2D 贴图建立<strong>绑定模型（rigged model）</strong>，通过 tween / warp 产生 2.5D 运动；通过 SDK 集成进软件，Cubism 是绑定与制作工具。它常用于视觉小说、抽卡手游和 VTube Studio 这类面捕场景。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Live2D / Spine</th>
+<th>本项目</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>分层 PSD/原画 + 网格 + 参数曲线</td>
+<td>3–5 条提示词 + 一张剧情卡</td>
+</tr>
+<tr>
+<td>制作</td>
+<td>需要绑定师，逐部件调权重</td>
+<td>不需要绑定，改提示词即可</td>
+</tr>
+<tr>
+<td>运行时</td>
+<td>需要 SDK / 引擎 / 播放器实时变形</td>
+<td>无，成品图直接播</td>
+</tr>
+<tr>
+<td>交互</td>
+<td>可以眨眼、跟随、口型、面捕</td>
+<td>不能，帧是烘焙死的</td>
+</tr>
+<tr>
+<td>动作范围</td>
+<td>关节级、可组合、可循环</td>
+<td>关键帧之间的插值，只有微表演</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>模型 + 贴图（不是一张图）</td>
+<td>一个 APNG / WebP / GIF 文件</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>美术 + 绑定 + 集成</td>
+<td>一次 Queue，几秒到几十秒</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>VTuber、游戏立绘、可互动角色</td>
+<td>表情包、贴图、文档演示</td>
+</tr>
+</tbody>
+</table>
+<p><strong>边界要讲清楚</strong>：本项目做不出 Live2D 的实时互动，也做不出真正的关节运动。它省掉的是「绑定 + 运行时」，换来的是「一张图到处能播」。</p>
+<hr />
+<h2 id="4">4 · 和其他动图路线的区别<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<h3 id="41-ai24">4.1 逐帧 AI（24 次采样）<a class="headerlink" href="#41-ai24" title="Permanent link">&para;</a></h3>
+<p>每一帧都跑一次 img2img。动作最自由，但：</p>
+<ul>
+<li>采样次数 = 24；</li>
+<li>帧间没有共享 latent，发色/瞳色/线宽会累积漂移；</li>
+<li>需要额外的帧间约束（ControlNet、光流、参考图）才不闪。</li>
+</ul>
+<h3 id="42-batch_size24">4.2 <code>batch_size=24</code><a class="headerlink" href="#42-batch_size24" title="Permanent link">&para;</a></h3>
+<p>一次采样出 24 个<strong>互相独立</strong>的噪声样本。固定 seed 只保证可复现，不会让它们变成连续帧，播放必闪。它不是动画方案，只是批量出图。</p>
+<h3 id="43-gif">4.3 视频生成 → GIF<a class="headerlink" href="#43-gif" title="Permanent link">&para;</a></h3>
+<p>先用 AnimateDiff / SVD / Wan / LTX 之类出视频，再抽帧、量化成 GIF。</p>
+<ul>
+<li>优点是真实运动、镜头运动、复杂交互；</li>
+<li>缺点是时序模型本身很重，生成成本远高于 3–5 次采样；</li>
+<li>转 GIF 还要再过一遍 256 色量化，颜色和透明都会掉。</li>
+</ul>
+<h3 id="44-sprite-sheet">4.4 手绘序列帧 / sprite sheet<a class="headerlink" href="#44-sprite-sheet" title="Permanent link">&para;</a></h3>
+<p>画师逐帧画，质量上限最高，成本也最高；sprite sheet 还需要播放器按格子切帧，不是「一张图直接播」。</p>
+<h3 id="45-lottie-rive">4.5 Lottie / Rive<a class="headerlink" href="#45-lottie-rive" title="Permanent link">&para;</a></h3>
+<p>矢量关键帧 + 运行时插值，文件极小、可交互，但表现的是矢量图形；厚涂、光影、发丝这类栅格细节不适合。</p>
+<hr />
+<h2 id="5">5 · 性能账：到底省在哪<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<h3 id="51">5.1 采样次数<a class="headerlink" href="#51" title="Permanent link">&para;</a></h3>
+<p>ComfyUI 的 <code>KSampler</code> 在 <code>denoise &lt; 1</code> 时并不是「只跑 denoise × steps 步」。源码 <code>comfy/samplers.py</code> 的 <code>set_steps()</code> 会先算 <code>new_steps = int(steps / denoise)</code>，再取最后 <code>steps + 1</code> 个 sigma，所以<strong>每个 KSampler 仍然执行 <code>steps</code> 次模型评估</strong>；denoise 改变的是起始噪声位置，不是迭代次数。</p>
+<p>因此，按 <code>steps=20</code> 计算：</p>
+<table>
+<thead>
+<tr>
+<th>路线</th>
+<th>采样次数</th>
+<th>相对 24 帧逐帧</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本项目 3 拍</td>
+<td>3 × 20 = <strong>60</strong></td>
+<td><strong>少 87.5%</strong></td>
+</tr>
+<tr>
+<td>本项目 4 拍</td>
+<td>4 × 20 = <strong>80</strong></td>
+<td><strong>少 83.3%</strong></td>
+</tr>
+<tr>
+<td>本项目 5 拍</td>
+<td>5 × 20 = <strong>100</strong></td>
+<td><strong>少 79.2%</strong></td>
+</tr>
+<tr>
+<td>24 帧逐帧</td>
+<td>24 × 20 = <strong>480</strong></td>
+<td>基准</td>
+</tr>
+</tbody>
+</table>
+<p>插值本身是 24 次 latent 线性混合，不调用模型；解码仍然是 24 次（这一点和逐帧路线相同，省不掉）。</p>
+<h3 id="52">5.2 显存与内存<a class="headerlink" href="#52" title="Permanent link">&para;</a></h3>
+<p>SDXL 512×512 的 latent 是 <code>64×64×4</code>：</p>
+<ul>
+<li>单个 latent fp16 ≈ 32 KB，24 个 ≈ 768 KB；</li>
+<li>解码后的 24 张 512×512 RGBA ≈ 25 MB；</li>
+<li>插值节点只持有 latent，不持有解码图。</li>
+</ul>
+<p>也就是说，<strong>这条路线增加的是几十 MB 级的图像缓冲，不是几 GB 的模型或视频缓存</strong>。真正的开销仍然是一次模型加载和 K 次采样。</p>
+<h3 id="53-5122-24">5.3 文件体积（本机实测，512² × 24 帧）<a class="headerlink" href="#53-5122-24" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>环境</th>
+<th>APNG</th>
+<th>GIF</th>
+<th>WebP（lossless）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SDXL</td>
+<td>6.61 MB</td>
+<td>2.41 MB</td>
+<td>0.80 MB</td>
+</tr>
+<tr>
+<td>Moss</td>
+<td>4.15 MB</td>
+<td>2.72 MB</td>
+<td>2.88 MB</td>
+</tr>
+</tbody>
+</table>
+<p>GIF 常常比无损 APNG 小，是因为 LZW + 256 色对平涂动漫非常友好；要更小就把 WebP 的 <code>lossless</code> 关掉，quality 80–90。</p>
+<h3 id="54">5.4 什么时候不省<a class="headerlink" href="#54" title="Permanent link">&para;</a></h3>
+<ul>
+<li>你要真实走位、转身、镜头运动：插值做不了，只能上视频模型或 ControlNet 序列，这时本方案不适用。</li>
+<li>你要实时互动、面捕、口型：用 Live2D / Spine，本方案不适用。</li>
+<li>你每帧都要精确构图：逐帧路线更直接，省不了。</li>
+</ul>
+<hr />
+<h2 id="6">6 · 选型建议<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>选哪个</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>聊天表情包、贴图、文档动图</td>
+<td><strong>本项目 → GIF / WebP / APNG</strong></td>
+</tr>
+<tr>
+<td>网页、需要透明、体积敏感</td>
+<td><strong>本项目 → WebP</strong></td>
+</tr>
+<tr>
+<td>文档、需要静态兜底、无损</td>
+<td><strong>本项目 → APNG</strong></td>
+</tr>
+<tr>
+<td>VTuber、可互动立绘、面捕</td>
+<td><strong>Live2D / Spine</strong></td>
+</tr>
+<tr>
+<td>真实动作、镜头运动</td>
+<td><strong>视频模型 → MP4/WebM</strong>（必要时再转 GIF）</td>
+</tr>
+<tr>
+<td>UI 动效、矢量插画</td>
+<td><strong>Lottie / Rive</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7">7 · 参考<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Mozilla APNG Specification：<a href="https://wiki.mozilla.org/APNG_Specification">https://wiki.mozilla.org/APNG_Specification</a></li>
+<li>MDN Image file type and format guide：<a href="https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Image_types">https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Image_types</a></li>
+<li>GIF89a Specification（Graphic Control Extension，1/100 秒延迟）：<a href="https://www.w3.org/Graphics/GIF/spec-gif89a.txt">https://www.w3.org/Graphics/GIF/spec-gif89a.txt</a></li>
+<li>Live2D（Wikipedia）：<a href="https://en.wikipedia.org/wiki/Live2D">https://en.wikipedia.org/wiki/Live2D</a></li>
+<li>Live2D 官方：<a href="https://www.live2d.com/en/">https://www.live2d.com/en/</a></li>
+<li>ComfyUI <code>comfy/samplers.py</code>：<code>KSampler.set_steps()</code> 的 denoise 处理</li>
+<li>本仓库 <a href="../formats/">APNG、GIF 与视频转 GIF</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
