@@ -596,7 +596,7 @@
   <a href="#1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1 · 建仓
+        1 · 改版本号
       
     </span>
   </a>
@@ -604,10 +604,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#2-tag" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2 · 替换占位符
+        2 · 提交与打 tag
       
     </span>
   </a>
@@ -615,10 +615,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-tag" class="md-nav__link">
+  <a href="#3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3 · 打 tag 发版
+        3 · 网页
       
     </span>
   </a>
@@ -626,10 +626,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-pages" class="md-nav__link">
+  <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4 · 打开 Pages（可选）
+        4 · 改完自检
       
     </span>
   </a>
@@ -640,18 +640,7 @@
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · 发版前自检
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6 · 不要提交的东西
+        5 · 不要提交的东西
       
     </span>
   </a>
@@ -1058,7 +1047,7 @@
   <a href="#1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1 · 建仓
+        1 · 改版本号
       
     </span>
   </a>
@@ -1066,10 +1055,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#2-tag" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2 · 替换占位符
+        2 · 提交与打 tag
       
     </span>
   </a>
@@ -1077,10 +1066,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-tag" class="md-nav__link">
+  <a href="#3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3 · 打 tag 发版
+        3 · 网页
       
     </span>
   </a>
@@ -1088,10 +1077,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-pages" class="md-nav__link">
+  <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4 · 打开 Pages（可选）
+        4 · 改完自检
       
     </span>
   </a>
@@ -1102,18 +1091,7 @@
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · 发版前自检
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6 · 不要提交的东西
+        5 · 不要提交的东西
       
     </span>
   </a>
@@ -1138,45 +1116,62 @@
 
 
 <h1 id="_1">发布这个仓库<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<h2 id="1">1 · 建仓<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">git init
-git add .
-git commit -m &quot;feat: comfyui-apng-motion 1.1.0&quot;
-git branch -M main
-gh repo create comfyui-apng-motion --public --source . --remote origin --push
+<p>仓库已经在 <a href="https://github.com/Gg22333/comfyui-apng-motion">https://github.com/Gg22333/comfyui-apng-motion</a>，下面的流程是<strong>改版时</strong>重复用的。</p>
+<h2 id="1">1 · 改版本号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>三个地方必须一起改：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>字段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skill.json</code></td>
+<td><code>"version"</code></td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code></td>
+<td><code>version</code></td>
+</tr>
+<tr>
+<td><code>CHANGELOG.md</code></td>
+<td>顶部新增一节</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-tag">2 · 提交与打 tag<a class="headerlink" href="#2-tag" title="Permanent link">&para;</a></h2>
+<pre><code class="language-bash">git add -A
+git commit -m &quot;feat: 一句话说清这次做了什么 (v1.3.2)&quot;
+git tag v1.3.2
+git push origin main
+git push origin v1.3.2
 </code></pre>
-<p>没有 <code>gh</code> 就在 GitHub 网页建空仓库，然后：</p>
-<pre><code class="language-bash">git remote add origin https://github.com/&lt;你&gt;/comfyui-apng-motion.git
-git push -u origin main
-</code></pre>
-<h2 id="2">2 · 替换占位符<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
-<p>README 与 README.zh-CN 里的徽章地址用了 <code>yourname</code>：</p>
-<pre><code class="language-bash"># Linux / macOS
-grep -rl &quot;yourname/comfyui-apng-motion&quot; . | xargs sed -i &quot;s/yourname\/comfyui-apng-motion/&lt;你&gt;\/comfyui-apng-motion/g&quot;
-</code></pre>
-<p>Windows PowerShell：</p>
-<pre><code class="language-powershell">Get-ChildItem -Recurse -Include *.md | ForEach-Object {
-  (Get-Content $_.FullName -Raw) -replace 'yourname/comfyui-apng-motion', '&lt;你&gt;/comfyui-apng-motion' |
-    Set-Content $_.FullName -NoNewline
-}
-</code></pre>
-<h2 id="3-tag">3 · 打 tag 发版<a class="headerlink" href="#3-tag" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">git tag v1.1.0
-git push origin v1.1.0
-</code></pre>
-<p><code>.github/workflows/release.yml</code> 会自动跑 <code>package.py</code>，把 zip 与 <code>.sha256</code> 附到 Release。</p>
-<h2 id="4-pages">4 · 打开 Pages（可选）<a class="headerlink" href="#4-pages" title="Permanent link">&para;</a></h2>
-<p>仓库 Settings → Pages → Source 选 <strong>GitHub Actions</strong>。
-之后 <code>deploy-docs.yml</code> 每次改 <code>docs/</code> 会把 mkdocs 发到 Pages。</p>
-<h2 id="5">5 · 发版前自检<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<p><code>.github/workflows/release.yml</code> 监听 <code>v*</code> tag，会自动跑 <code>scripts/package.py</code>，
+把 <code>dist/*.zip</code> 和 <code>.sha256</code> 附到 Release。</p>
+<h2 id="3">3 · 网页<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p><code>deploy-docs.yml</code> 在 <code>docs/**</code>、<code>mkdocs.yml</code>、<code>README*.md</code>、<code>workflows/**</code>、<code>assets/**</code>
+任一变动时触发：</p>
+<ol>
+<li>跑 <code>scripts/sync_workflows.py</code>，把 <code>workflows/</code> 与 <code>assets/*.json</code> 镜像到 <code>docs/assets/{workflows,presets}</code>；</li>
+<li><code>mkdocs gh-deploy --force</code> 推到 <code>gh-pages</code>。</li>
+</ol>
+<p>站点：<a href="https://gg22333.github.io/comfyui-apng-motion/">https://gg22333.github.io/comfyui-apng-motion/</a></p>
+<p>Pages 的构建方式是 <strong>legacy / 分支 <code>gh-pages</code> / root</strong>，不是 GitHub Actions 直出。
+所以 <code>docs/assets/workflows/*.json</code> 不进 git（见 <code>.gitignore</code>），只在构建时生成。</p>
+<h2 id="4">4 · 改完自检<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python -m compileall -q scripts tests
 pytest -q
+python scripts/sync_workflows.py --check
 python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
+python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.diet.json --size 512 --out /tmp/diet.json
 python scripts/package.py
 </code></pre>
-<p>最后一条应输出 <code>VALIDATE OK</code> 与 zip 的 sha256。</p>
-<h2 id="6">6 · 不要提交的东西<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
-<p><code>.gitignore</code> 已排除：<code>profiles/</code>（本机路径）、<code>dist/</code>（构建产物）、<code>*.bak*</code>、<code>__pycache__/</code>。</p>
+<p>期望：测试全绿、<code>SAME</code>、两行 <code>VALIDATE OK</code>、zip 与 sha256 生成。</p>
+<h2 id="5">5 · 不要提交的东西<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<p><code>.gitignore</code> 已排除：<code>profiles/</code>（本机路径）、<code>dist/</code>（构建产物）、<code>*.bak*</code>、
+<code>__pycache__/</code>、<code>.pytest_cache/</code>、<code>docs/assets/workflows/</code>、<code>docs/assets/presets/</code>。</p>
 
 
 
