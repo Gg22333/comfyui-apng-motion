@@ -19,7 +19,7 @@ jobs:
       - name: Build zip
         run: python scripts/package.py
       - name: Publish
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/*.zip
