@@ -3,16 +3,16 @@
   "beats": 4,
   "segs": [7, 6, 6, 5],
   "fps": 10,
-  "denoise": 0.5,
+  "denoise": 0.55,
   "seed_mode": "same",
   "prefix": "APNG/final",
-  "lock": "masterpiece, best quality, 1girl, solo, portrait, close-up, face focus, looking at viewer, simple background, silver hair, blue eyes, school uniform",
+  "lock": "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform",
   "style": "anime screencap, clean lineart, flat cel shading",
-  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views, deformed face",
+  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views, deformed face, cropped face",
   "actions": [
-    "neutral expression, mouth closed",
-    "surprised, eyes wide open, eyebrows raised, mouth slightly open",
-    "laughing, eyes closed, mouth open wide, blush, head tilted back",
+    "neutral expression, mouth closed, eyes looking at viewer",
+    "surprised, eyes wide open, eyebrows raised, mouth open, head tilted back slightly",
+    "laughing, eyes closed happily, mouth open wide, blush, head tilted back",
     "deadpan, eyes half lidded, mouth closed, looking away"
   ]
 }

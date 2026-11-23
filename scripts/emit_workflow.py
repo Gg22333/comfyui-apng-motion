@@ -17,6 +17,7 @@
 import argparse
 import copy
 import os
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -433,7 +434,8 @@ def run_it(wf, profile_path):
             p = os.path.join(prof["comfy_root"], "output", f.replace("/", os.sep))
             if os.path.isfile(p):
                 chk = os.path.join(os.path.dirname(os.path.abspath(__file__)), "check_anim.py")
-                os.system('"%s" "%s" "%s" --expect 24' % (prof.get("python") or sys.executable, chk, p))
+                # os.system 在 Windows 上对多段带引号路径会报 "filename syntax is incorrect"
+                subprocess.call([prof.get("python") or sys.executable, chk, p, "--expect", "24"])
     return 0
 
 

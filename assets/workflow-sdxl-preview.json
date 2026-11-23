@@ -114,7 +114,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "masterpiece, best quality, 1girl, solo, portrait, close-up, face focus, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, neutral expression, mouth closed"
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, neutral expression, mouth closed, eyes looking at viewer"
       ],
       "title": "首帧：中性表情"
     },
@@ -155,7 +155,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views, deformed face"
+        "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views, deformed face, cropped face"
       ],
       "title": "负向提示词"
     },
@@ -300,7 +300,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "masterpiece, best quality, 1girl, solo, portrait, close-up, face focus, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, surprised, eyes wide open, eyebrows raised, mouth slightly open"
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, surprised, eyes wide open, eyebrows raised, mouth open, head tilted back slightly"
       ],
       "title": "关键帧 A：大笑"
     },
@@ -371,7 +371,7 @@
         6.0,
         "euler_ancestral",
         "normal",
-        0.5
+        0.55
       ],
       "title": "关键帧 1 重绘"
     },
@@ -409,7 +409,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "masterpiece, best quality, 1girl, solo, portrait, close-up, face focus, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, laughing, eyes closed, mouth open wide, blush, head tilted back"
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, laughing, eyes closed happily, mouth open wide, blush, head tilted back"
       ],
       "title": "关键帧 B：张嘴笑"
     },
@@ -479,7 +479,7 @@
         6.0,
         "euler_ancestral",
         "normal",
-        0.5
+        0.55
       ],
       "title": "关键帧 2 重绘"
     },
@@ -2807,7 +2807,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "masterpiece, best quality, 1girl, solo, portrait, close-up, face focus, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, deadpan, eyes half lidded, mouth closed, looking away"
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, deadpan, eyes half lidded, mouth closed, looking away"
       ],
       "title": "关键帧 A：大笑"
     },
@@ -2876,7 +2876,7 @@
         6.0,
         "euler_ancestral",
         "normal",
-        0.5
+        0.55
       ],
       "title": "关键帧 3 重绘"
     }
