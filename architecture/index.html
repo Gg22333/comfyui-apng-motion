@@ -1011,9 +1011,14 @@
         │
    KSampler K0   denoise 1.0, seed 123456789
         │  LATENT ─────────────────────────┐
-        ├──────────────► CLIPTextEncode K1 ─► KSampler K1  denoise 0.4, seed +1
-        ├──────────────► CLIPTextEncode K2 ─► KSampler K2  denoise 0.4, seed +2
-        └──────────────► CLIPTextEncode K3 ─► KSampler K3  denoise 0.4, seed +3（4 拍时）
+        ├──────────────► CLIPTextEncode K1 ─┐
+        ├──────────────► CLIPTextEncode K2 ─┤
+        ├──────────────► CLIPTextEncode K3 ─┤
+        │                                   │
+   CLIPTextEncode「全局动作指导」──► ConditioningCombine（每帧一个）
+                                          │
+                     KSampler K1/K2/K3  positive 走合并后的条件
+                     denoise 0.35-0.4，与 K0 同 seed、同首帧 latent
                                           │
         24 × LatentInterpolate（每帧一个 ratio；同一对 latent 内不重复）
                                           │
@@ -1026,7 +1031,8 @@
 </code></pre>
 <p>关键约束：</p>
 <ol>
-<li><strong>所有关键帧的 <code>latent_image</code> 都指向 K0 的 LATENT</strong>，不链式继承上一帧，否则颜色会累积漂移。</li>
+<li><strong>所有关键帧的 <code>latent_image</code> 都指向 K0 的 LATENT</strong>，不链式继承上一帧，否则颜色会累积漂移。
+   同时所有 KSampler 共用同一个 seed：seed 不同会带来不同噪声路径，插值时表现为色斑。</li>
 <li><strong>同一对 latent 上的 ratio 唯一</strong>。不同段（K0→K1 与 K1→K2）可以同值，样本对不同画面就不同；同一段里撞值才会被 Pillow 合并。</li>
 <li><strong>三个输出接同一个 batch</strong>，否则三种格式的帧序会不一致。</li>
 </ol>
@@ -1071,6 +1077,11 @@
 <td>24 个 ratio</td>
 </tr>
 <tr>
+<td><code>make_preview.py</code></td>
+<td>成品 APNG</td>
+<td>全局调色板 GIF + WebP 网页预览</td>
+</tr>
+<tr>
 <td><code>package.py</code></td>
 <td>仓库目录</td>
 <td>确定性 zip + SHA256</td>
@@ -1078,11 +1089,14 @@
 </tbody>
 </table>
 <h2 id="_4">曲线<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>每段从「贴着上一个关键帧」走到「贴着下一个关键帧」：</p>
-<pre><code>段1: 1.0 → 0.05   段2: 0.94 → 0.04   段3: 0.92 → 0.03   段4: 0.90 → 0.01
+<p>默认 <code>linear</code>：每段从 1.0 均匀降到 0.0，每帧步长恒定。</p>
+<pre><code>段1: 1.0 0.857 0.714 0.571 0.429 0.286 0.143 0.0
+段2: 0.996 0.861 ... 0.004        （段首与上一段末几乎相接）
+段3: 0.992 0.853 ... 0.008
 </code></pre>
-<p>相邻两段在关节处一个收、一个起，播放时形成 1–2 帧停顿。
-3 段时保留旧默认值（<code>1.0/0.92/0.88</code> → <code>0.08/0.0/0.01</code>），与历史成品一致。</p>
+<p><code>ease</code> 用 smootherstep，两端慢、中间快，单帧最大位移约为线性版的 1.9 倍；
+<code>snap</code> 是旧版幂曲线，前段几乎静止、末段猛冲，容易看成跳帧，只在对比时用。</p>
+<p>段与段之间留 0.004 的微差，避免 Pillow 把相邻的完全同值帧合并。</p>
 <h2 id="ui-api">UI → API<a class="headerlink" href="#ui-api" title="Permanent link">&para;</a></h2>
 <p><code>--run</code> 需要把 UI 工作流转成 API prompt。<code>comfy_lib.ui_to_api</code> 的做法：</p>
 <ol>

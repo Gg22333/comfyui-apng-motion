@@ -693,6 +693,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tunable-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tunable parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tunable parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#curve-choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Curve choice
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#validate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -969,6 +1008,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tunable-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tunable parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tunable parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#curve-choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Curve choice
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#validate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1065,24 +1143,141 @@
 <tr>
 <td>3</td>
 <td>8/8/8</td>
-<td>61</td>
+<td>66</td>
 </tr>
 <tr>
 <td>4</td>
 <td>6/7/6/5</td>
-<td>63</td>
+<td>69</td>
 </tr>
 <tr>
 <td>5</td>
 <td>5/6/5/4/4</td>
-<td>65</td>
+<td>72</td>
 </tr>
 </tbody>
 </table>
+<p>The node count grew with the global-motion layer: one <code>ConditioningCombine</code> per keyframe,
+plus one shared <code>CLIPTextEncode</code> and one <code>Note</code>.</p>
 <p>Straight from the command line:</p>
 <pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json   --beats 4 --segs 6,7,6,5   --lock &quot;masterpiece, 1girl, silver hair&quot; --style &quot;anime&quot;   --actions &quot;neutral|notice|react|settle&quot; --out my.json
 </code></pre>
 <p><code>--seed-mode same</code> (default) pins every keyframe to the same seed. <code>offset</code> adds +1 per keyframe and reintroduces flicker.</p>
+<h2 id="tunable-parameters">Tunable parameters<a class="headerlink" href="#tunable-parameters" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Node</th>
+<th>What it controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Whole clip</td>
+<td><code>CLIPTextEncode</code> "global motion"</td>
+<td>action, camera, lighting, style; one edit affects every keyframe</td>
+</tr>
+<tr>
+<td>Per keyframe</td>
+<td><code>CLIPTextEncode</code> "K0 / K1 / ..."</td>
+<td>expression, pose, gaze</td>
+</tr>
+<tr>
+<td>Per keyframe sampling</td>
+<td>each <code>KSampler</code></td>
+<td>seed, steps, cfg, sampler, scheduler, denoise</td>
+</tr>
+<tr>
+<td>Pacing</td>
+<td>24 x <code>LatentInterpolate</code> ratio</td>
+<td>easing curve; <code>linear</code> is the most even</td>
+</tr>
+<tr>
+<td>Speed</td>
+<td>three save nodes <code>fps</code></td>
+<td>same value in all three (10 fps x 24 = 2.4 s)</td>
+</tr>
+<tr>
+<td>Naming</td>
+<td><code>filename_prefix</code></td>
+<td><code>apng/</code>, <code>webp/</code>, <code>gif/</code></td>
+</tr>
+<tr>
+<td>Quality</td>
+<td>APNG <code>compress_level</code>, WebP <code>lossless</code>/<code>quality</code>, VHS <code>loop</code>/<code>pingpong</code></td>
+<td>size and playback</td>
+</tr>
+</tbody>
+</table>
+<p>From the CLI:</p>
+<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+  --motion &quot;slow head tilt, stable lighting&quot; \
+  --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
+  --curve linear --out my.json
+</code></pre>
+<h3 id="curve-choice">Curve choice<a class="headerlink" href="#curve-choice" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Behaviour</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>linear</code> (default)</td>
+<td>constant per-frame step</td>
+<td>least visible stepping; best for stickers</td>
+</tr>
+<tr>
+<td><code>ease</code></td>
+<td>slow-fast-slow</td>
+<td>when you want anticipation and follow-through</td>
+</tr>
+<tr>
+<td><code>snap</code></td>
+<td>nearly frozen then a rush</td>
+<td>legacy behaviour, comparison only</td>
+</tr>
+</tbody>
+</table>
+<h3 id="switching-models">Switching models<a class="headerlink" href="#switching-models" title="Permanent link">&para;</a></h3>
+<p>The contract is loader-agnostic:</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Loader nodes</th>
+<th>Keyframe denoise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SD 1.5</td>
+<td><code>CheckpointLoaderSimple</code></td>
+<td>0.45-0.55</td>
+</tr>
+<tr>
+<td>SDXL / Illustrious / NoobAI</td>
+<td><code>CheckpointLoaderSimple</code></td>
+<td>0.35-0.45</td>
+</tr>
+<tr>
+<td>FLUX.1</td>
+<td><code>UNETLoader</code> + <code>DualCLIPLoader</code> + <code>VAELoader</code></td>
+<td>0.45-0.55</td>
+</tr>
+<tr>
+<td>Moss / DiT</td>
+<td><code>UNETLoader</code> + <code>CLIPLoader</code> (<code>type=moss_image</code>) + <code>VAELoader</code></td>
+<td>0.50-0.55</td>
+</tr>
+</tbody>
+</table>
+<p>Denoise values are field experience. On SDXL, above ~0.42 the keyframe redraw starts changing
+clothes and background, and latent interpolation turns that into colour blotches.</p>
 <h2 id="validate">Validate<a class="headerlink" href="#validate" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/emit_workflow.py --validate my.json
 </code></pre>

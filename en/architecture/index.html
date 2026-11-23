@@ -1013,9 +1013,14 @@
         │
    KSampler K0   denoise 1.0, seed 123456789
         │  LATENT ─────────────────────────┐
-        ├──────────────► CLIPTextEncode K1 ─► KSampler K1  denoise 0.4, same seed
-        ├──────────────► CLIPTextEncode K2 ─► KSampler K2  denoise 0.4, same seed
-        └──────────────► CLIPTextEncode K3 ─► KSampler K3  denoise 0.4, same seed (4 beats)
+        ├──────────────► CLIPTextEncode K1 ─┐
+        ├──────────────► CLIPTextEncode K2 ─┤
+        ├──────────────► CLIPTextEncode K3 ─┤
+        │                                   │
+   CLIPTextEncode &quot;global motion&quot; ──► ConditioningCombine (one per keyframe)
+                                          │
+                     KSampler K1/K2/K3 take the merged conditioning
+                     denoise 0.35-0.4, same seed and same first latent
                                           │
         24 × LatentInterpolate (one ratio per frame; unique within a latent pair)
                                           │
@@ -1028,7 +1033,8 @@
 </code></pre>
 <p>Hard constraints:</p>
 <ol>
-<li><strong>Every keyframe's <code>latent_image</code> points at K0's LATENT</strong>, never chained from the previous keyframe, or colour drifts cumulatively.</li>
+<li><strong>Every keyframe's <code>latent_image</code> points at K0's LATENT</strong>, never chained from the previous keyframe, or colour drifts cumulatively.
+   All KSamplers also share one seed: different seeds bring different noise paths, which interpolation turns into blotches.</li>
 <li><strong>Ratios within one latent pair are unique.</strong> Different segments may reuse a value because the pair of images differs; only a collision inside one segment makes Pillow merge frames.</li>
 <li><strong>All three outputs read the same batch</strong>, otherwise frame order diverges.</li>
 </ol>
@@ -1078,6 +1084,11 @@
 <td>24 ratios</td>
 </tr>
 <tr>
+<td><code>make_preview.py</code></td>
+<td>finished APNG</td>
+<td>global-palette GIF + WebP web preview</td>
+</tr>
+<tr>
 <td><code>package.py</code></td>
 <td>repository tree</td>
 <td>deterministic zip + SHA256</td>
@@ -1085,11 +1096,14 @@
 </tbody>
 </table>
 <h2 id="curve">Curve<a class="headerlink" href="#curve" title="Permanent link">&para;</a></h2>
-<p>Each segment runs from "hugging the previous keyframe" to "hugging the next":</p>
-<pre><code>segment 1: 1.0 → 0.05   segment 2: 0.94 → 0.04   segment 3: 0.92 → 0.03   segment 4: 0.90 → 0.01
+<p>Default <code>linear</code>: every segment walks from 1.0 down to 0.0 with a constant per-frame step.</p>
+<pre><code>segment 1: 1.0 0.857 0.714 0.571 0.429 0.286 0.143 0.0
+segment 2: 0.996 0.861 ... 0.004      (almost flush with the previous segment)
+segment 3: 0.992 0.853 ... 0.008
 </code></pre>
-<p>Adjacent segments end and start close together, producing a 1–2 frame pause at each keyframe.
-Three-beat cards keep the historical defaults (<code>1.0/0.92/0.88</code> → <code>0.08/0.0/0.01</code>).</p>
+<p><code>ease</code> uses smootherstep: slow at both ends, fast in the middle, with a per-frame peak about
+1.9x the linear version. <code>snap</code> is the legacy power curve: nearly frozen at the start, a rush at
+the end, easily read as a jump. Segments keep a 0.004 gap so Pillow never merges identical frames.</p>
 <h2 id="ui-to-api">UI to API<a class="headerlink" href="#ui-to-api" title="Permanent link">&para;</a></h2>
 <p><code>--run</code> converts a UI workflow into an API prompt. <code>comfy_lib.ui_to_api</code>:</p>
 <ol>

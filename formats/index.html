@@ -530,8 +530,30 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#46-webp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 网页预览：为什么最终用 WebP
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 色块闪动的两个来源
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1105,8 +1127,30 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#46-webp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 网页预览：为什么最终用 WebP
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 色块闪动的两个来源
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1382,6 +1426,83 @@
   GIF 侧不同编码器行为不一致，所以同一对 latent 上的比例不能重复（不同段之间同值是安全的）。</li>
 <li><strong>循环次数</strong>：APNG <code>num_plays=0</code>、GIF 的 NETSCAPE2.0 扩展 <code>loop=0</code>，都是无限循环，语义一致。</li>
 </ul>
+<h3 id="46-webp">4.6 网页预览：为什么最终用 WebP<a class="headerlink" href="#46-webp" title="Permanent link">&para;</a></h3>
+<p>仓库里的 <code>docs/assets/preview.webp</code> 是主预览，<code>preview.gif</code> 只做兼容备份。</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>尺寸</th>
+<th>体积</th>
+<th>相邻帧差（avg）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>旧 GIF（VHS 直出，512，<code>sierra2_4a</code>）</td>
+<td>512×512</td>
+<td>3.45 MB</td>
+<td>2.49</td>
+</tr>
+<tr>
+<td>新 GIF（全局调色板 + <code>dither=none</code>，384）</td>
+<td>384×384</td>
+<td>0.76 MB</td>
+<td>1.03</td>
+</tr>
+<tr>
+<td>新 WebP（quality 90，384）</td>
+<td>384×384</td>
+<td>0.57 MB</td>
+<td>1.07</td>
+</tr>
+</tbody>
+</table>
+<p>GIF 只有 256 色。VHS 默认用 <code>palettegen</code> + <code>paletteuse</code>，抖动算法 <code>sierra2_4a</code>：
+<strong>每一帧单独量化，调色板随帧变化，误差扩散的颗粒也在变</strong>。播放时人眼看到的就是「色块在闪」，
+它和画面本身有没有动是两件事。</p>
+<p><code>scripts/make_preview.py</code> 的做法：</p>
+<ol>
+<li>所有帧共用首帧的 256 色调色板；</li>
+<li><code>dither=Image.NONE</code>，不做误差扩散；</li>
+<li>缩到 384×384，颗粒更细、体积更小。</li>
+</ol>
+<p>单帧量化误差均值仍在 2.3/255 左右，但<strong>帧与帧之间的量化噪声变一致</strong>，所以不再有闪烁感。</p>
+<h2 id="7">7 · 色块闪动的两个来源<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
+<p>排查顺序：先看 APNG，再看 GIF。</p>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>怎么认</th>
+<th>怎么修</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成端：关键帧 denoise 过高</td>
+<td>APNG 相邻帧 diff 平均 &gt; 2，脸上/衣服出现补丁状色斑</td>
+<td>关键帧 denoise 降到 0.35–0.40；同 seed；同首帧 latent</td>
+</tr>
+<tr>
+<td>生成端：曲线不均</td>
+<td>diff 序列中段突然出现 4–5 的尖峰</td>
+<td><code>--curve linear</code>；别用 <code>snap</code></td>
+</tr>
+<tr>
+<td>编码端：GIF 调色板逐帧变化</td>
+<td>APNG 干净，GIF 播放有块状噪点</td>
+<td>固定全局调色板 + 关抖动；或改用 WebP</td>
+</tr>
+<tr>
+<td>循环边界</td>
+<td>最后一帧到第一帧 diff 特别大</td>
+<td>让末拍回到首拍姿势</td>
+</tr>
+</tbody>
+</table>
+<p>实测同一套内容：denoise 0.55 时 APNG diff 2.34、drift 8+；降到 0.35 后 diff 1.08、drift 2.63。
+GIF 重编码后再降约 0.05。</p>
 <hr />
 <blockquote>
 <p>想看这条路线和 Live2D、逐帧 AI、视频生成的定位差异与算力账，见

@@ -854,8 +854,30 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#46-why-the-web-preview-is-webp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 Why the web preview is WebP
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-two-sources-of-colour-flicker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Two sources of colour flicker
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1107,8 +1129,30 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#46-why-the-web-preview-is-webp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 Why the web preview is WebP
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-two-sources-of-colour-flicker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Two sources of colour flicker
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1384,6 +1428,79 @@ Measured here (512² × 24 frames):</p>
 <li><strong>Identical frames get merged</strong>: when Pillow writes APNG, adjacent pixel-identical frames are dropped and their duration is added to the previous frame. GIF encoders differ, so ratios within one latent pair must be unique (equal values across different segments are safe).</li>
 <li><strong>Loop count</strong>: APNG <code>num_plays=0</code> and the GIF NETSCAPE2.0 <code>loop=0</code> both mean infinite, semantically identical.</li>
 </ul>
+<h3 id="46-why-the-web-preview-is-webp">4.6 Why the web preview is WebP<a class="headerlink" href="#46-why-the-web-preview-is-webp" title="Permanent link">&para;</a></h3>
+<p><code>docs/assets/preview.webp</code> is the primary preview; <code>preview.gif</code> is a compatibility copy.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Size</th>
+<th>Bytes</th>
+<th>Adjacent-frame diff (avg)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Old GIF (VHS direct, 512, <code>sierra2_4a</code>)</td>
+<td>512x512</td>
+<td>3.45 MB</td>
+<td>2.49</td>
+</tr>
+<tr>
+<td>New GIF (global palette + <code>dither=none</code>, 384)</td>
+<td>384x384</td>
+<td>0.76 MB</td>
+<td>1.03</td>
+</tr>
+<tr>
+<td>New WebP (quality 90, 384)</td>
+<td>384x384</td>
+<td>0.57 MB</td>
+<td>1.07</td>
+</tr>
+</tbody>
+</table>
+<p>GIF has 256 colours. VHS runs <code>palettegen</code> + <code>paletteuse</code> per frame with <code>sierra2_4a</code> dithering:
+every frame gets its own palette and its own dither grain. On playback that reads as <strong>blocks
+flickering</strong>, independent of whether the artwork moves.</p>
+<p><code>scripts/make_preview.py</code> fixes it by sharing one palette across all frames, disabling dither,
+and downscaling to 384 px. The per-frame quantisation error stays around 2.3/255, but the
+<strong>error becomes consistent between frames</strong>, so the flicker disappears.</p>
+<h2 id="7-two-sources-of-colour-flicker">7 · Two sources of colour flicker<a class="headerlink" href="#7-two-sources-of-colour-flicker" title="Permanent link">&para;</a></h2>
+<p>Check the APNG first, then the GIF.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>How to recognise</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generation: keyframe denoise too high</td>
+<td>APNG adjacent diff avg &gt; 2, patchy blotches on face/clothes</td>
+<td>drop keyframe denoise to 0.35-0.40; same seed; same first latent</td>
+</tr>
+<tr>
+<td>Generation: uneven curve</td>
+<td>diff series has 4-5 spikes in the middle</td>
+<td><code>--curve linear</code>; avoid <code>snap</code></td>
+</tr>
+<tr>
+<td>Encoding: per-frame GIF palette</td>
+<td>APNG clean, GIF shows blocky noise</td>
+<td>global palette + no dither; or use WebP</td>
+</tr>
+<tr>
+<td>Loop seam</td>
+<td>last frame to first frame diff is large</td>
+<td>bring the last beat back to the first pose</td>
+</tr>
+</tbody>
+</table>
+<p>Measured on the same content: denoise 0.55 gave APNG diff 2.34 and drift 8+; 0.35 gives
+diff 1.08 and drift 2.63. Re-encoding the GIF removes another ~0.05.</p>
 <hr />
 <blockquote>
 <p>For how this route compares with Live2D, frame-by-frame AI and video generation, including the

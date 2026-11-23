@@ -375,6 +375,45 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        可调参数
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="可调参数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        曲线怎么选
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        换模型
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         校验
       
     </span>
@@ -383,7 +422,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         跑起来
@@ -394,7 +433,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         校验成品
@@ -405,7 +444,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         落盘验收
@@ -970,6 +1009,45 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        可调参数
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="可调参数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        曲线怎么选
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        换模型
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         校验
       
     </span>
@@ -978,7 +1056,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         跑起来
@@ -989,7 +1067,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         校验成品
@@ -1000,7 +1078,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         落盘验收
@@ -1056,48 +1134,169 @@
 <tr>
 <th>拍数</th>
 <th>段数分配</th>
-<th>节点数（xl）</th>
+<th>节点数（SDXL）</th>
+<th>节点数（Moss）</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>3</td>
 <td>8/8/8</td>
-<td>61</td>
+<td>66</td>
+<td>68</td>
 </tr>
 <tr>
 <td>4</td>
 <td>6/7/6/5</td>
-<td>63</td>
+<td>69</td>
+<td>71</td>
 </tr>
 <tr>
 <td>5</td>
 <td>5/6/5/4/4</td>
-<td>65</td>
+<td>72</td>
+<td>74</td>
 </tr>
 </tbody>
 </table>
+<p>节点数比早期版本多，是因为多了全局动作层：每个关键帧一个 <code>ConditioningCombine</code>，
+加一个共享的 <code>CLIPTextEncode</code> 和一个 <code>Note</code>。</p>
 <p>命令行直接给参数（不写 JSON）：</p>
 <pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json \
   --beats 4 --segs 6,7,6,5 \
   --lock &quot;masterpiece, 1girl, silver hair&quot; --style &quot;anime&quot; \
   --actions &quot;neutral|notice|react|settle&quot; --out my.json
 </code></pre>
-<h2 id="_4">校验<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">可调参数<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th>节点</th>
+<th>控制什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全片动作</td>
+<td><code>CLIPTextEncode</code>「全局动作指导（所有关键帧共享）」</td>
+<td>动作、镜头、光照、风格。改一处，K0..Kn 全部生效；留空即不加额外条件</td>
+</tr>
+<tr>
+<td>每帧提示</td>
+<td><code>CLIPTextEncode</code>「K0 / K1 / … 提示」</td>
+<td>表情、姿态、视线，逐帧独立</td>
+</tr>
+<tr>
+<td>每帧采样</td>
+<td>每个 <code>KSampler</code></td>
+<td>seed、steps、cfg、采样器、调度器、denoise</td>
+</tr>
+<tr>
+<td>节奏</td>
+<td>24 个 <code>LatentInterpolate</code> 的 ratio</td>
+<td>缓动曲线。<code>linear</code> 每帧步长恒定，最稳</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>三个保存节点的 <code>fps</code></td>
+<td>必须改成同一个值；10fps × 24 帧 = 2.4 秒</td>
+</tr>
+<tr>
+<td>命名</td>
+<td><code>filename_prefix</code></td>
+<td>分别落在 <code>apng/</code>、<code>webp/</code>、<code>gif/</code></td>
+</tr>
+<tr>
+<td>画质</td>
+<td>APNG <code>compress_level</code>、WebP <code>lossless</code>/<code>quality</code>、VHS <code>loop</code>/<code>pingpong</code></td>
+<td>体积与播放行为</td>
+</tr>
+</tbody>
+</table>
+<p>命令行也能一次改：</p>
+<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+  --motion &quot;slow head tilt, stable lighting&quot; \
+  --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
+  --curve linear --out my.json
+</code></pre>
+<h3 id="_5">曲线怎么选<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>行为</th>
+<th>什么时候用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>linear</code>（默认）</td>
+<td>每帧步长恒定</td>
+<td>最不容易看出跳帧，适合表情包</td>
+</tr>
+<tr>
+<td><code>ease</code></td>
+<td>两端慢、中间快</td>
+<td>想要「起势—爆发—收住」的动作感</td>
+</tr>
+<tr>
+<td><code>snap</code></td>
+<td>前段几乎静止、末段猛冲</td>
+<td>旧版行为，只在对比时用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">换模型<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>结构不变，只换加载器：</p>
+<table>
+<thead>
+<tr>
+<th>模型族</th>
+<th>加载器</th>
+<th>关键帧 denoise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SD 1.5</td>
+<td><code>CheckpointLoaderSimple</code></td>
+<td>0.45–0.55</td>
+</tr>
+<tr>
+<td>SDXL / Illustrious / NoobAI</td>
+<td><code>CheckpointLoaderSimple</code></td>
+<td>0.35–0.45</td>
+</tr>
+<tr>
+<td>FLUX.1</td>
+<td><code>UNETLoader</code> + <code>DualCLIPLoader</code> + <code>VAELoader</code></td>
+<td>0.45–0.55</td>
+</tr>
+<tr>
+<td>Moss / DiT</td>
+<td><code>UNETLoader</code> + <code>CLIPLoader</code>（<code>type=moss_image</code>）+ <code>VAELoader</code></td>
+<td>0.50–0.55</td>
+</tr>
+</tbody>
+</table>
+<p>denoise 是经验值。同 seed 下 SDXL 超过 0.42 就开始改衣服和背景，插值时出现色斑；
+要更大表情用 0.45–0.5 并接受漂移，或改用面部局部重绘。</p>
+<h2 id="_7">校验<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/emit_workflow.py --validate my.json
 </code></pre>
 <p>检查：连线完整性、24 插值 / 24 解码、同一对 latent 上 ratio 唯一、三个输出同源、关键帧共享同一 latent、无 <code>SaveImage</code>。</p>
-<h2 id="_5">跑起来<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_8">跑起来<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>界面：把 JSON 拖进 ComfyUI，Queue。</p>
 <p>无界面：</p>
 <pre><code class="language-bash">python scripts/emit_workflow.py --validate my.json --run --profile profiles/xl.json
 </code></pre>
 <p>会提交 API、轮询、打印成品路径，并自动跑 <code>check_anim.py</code>。</p>
-<h2 id="_6">校验成品<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_9">校验成品<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python check_anim.py output/APNG/final/apng/anim24_00001_.png --expect 24
 </code></pre>
 <p>关注四项：<code>frames=24</code>、<code>loop=0</code>、<code>identical_pairs=0</code>、<code>color_drift</code> 不超过 6。</p>
-<h2 id="_7">落盘验收<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">落盘验收<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/check_output.py --profile profiles/xl.json
 </code></pre>
 <p>三格式同批、<code>output/APNG/</code> 根目录无游离文件、<code>FAIL 总数: 0</code> 才算完成。细则见 <a href="../output/">成品落盘</a>。</p>
