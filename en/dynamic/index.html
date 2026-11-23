@@ -729,7 +729,7 @@
   <span class="md-ellipsis">
     
   
-    Five importable graphs
+    Workflow files
   
 
     
@@ -843,10 +843,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-node-reference" class="md-nav__link">
+  <a href="#4-camera-motion-whole-sequence-pan--zoom--rotate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Node reference
+        4. Camera motion (whole-sequence pan / zoom / rotate)
       
     </span>
   </a>
@@ -854,10 +854,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-changing-frame-count-end-to-end" class="md-nav__link">
+  <a href="#5-node-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Changing frame count end to end
+        5. Node reference
       
     </span>
   </a>
@@ -865,10 +865,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-boundaries" class="md-nav__link">
+  <a href="#6-changing-frame-count-end-to-end" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Boundaries
+        6. Changing frame count end to end
       
     </span>
   </a>
@@ -876,10 +876,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-troubleshooting" class="md-nav__link">
+  <a href="#7-boundaries" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Troubleshooting
+        7. Boundaries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Troubleshooting
       
     </span>
   </a>
@@ -1304,10 +1315,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-node-reference" class="md-nav__link">
+  <a href="#4-camera-motion-whole-sequence-pan--zoom--rotate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Node reference
+        4. Camera motion (whole-sequence pan / zoom / rotate)
       
     </span>
   </a>
@@ -1315,10 +1326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-changing-frame-count-end-to-end" class="md-nav__link">
+  <a href="#5-node-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Changing frame count end to end
+        5. Node reference
       
     </span>
   </a>
@@ -1326,10 +1337,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-boundaries" class="md-nav__link">
+  <a href="#6-changing-frame-count-end-to-end" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Boundaries
+        6. Changing frame count end to end
       
     </span>
   </a>
@@ -1337,10 +1348,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-troubleshooting" class="md-nav__link">
+  <a href="#7-boundaries" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Troubleshooting
+        7. Boundaries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Troubleshooting
       
     </span>
   </a>
@@ -1378,7 +1400,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--check<span class="w">           </span><span class="c1"># compare only, write nothing</span>
 </code></pre></div>
 <p>The target is always <code>&lt;comfy_root&gt;/custom_nodes/apng_motion_nodes/</code>. You can also copy the whole
-<code>comfyui_nodes</code> folder there and rename it to <code>apng_motion_nodes</code>. <strong>Restart ComfyUI</strong>; the three nodes
+<code>comfyui_nodes</code> folder there and rename it to <code>apng_motion_nodes</code>. <strong>Restart ComfyUI</strong>; the four nodes
 appear under <code>APNG Motion</code>.</p>
 <h2 id="2-emit-a-dynamic-graph">2. Emit a dynamic graph<a class="headerlink" href="#2-emit-a-dynamic-graph" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span><span class="se">\</span>
@@ -1387,12 +1409,20 @@ appear under <code>APNG Motion</code>.</p>
 <span class="w">    </span>--dynamic<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--out<span class="w"> </span>my-dynamic.json
 </code></pre></div>
-<p>3 beats at 24 frames produces <strong>26 nodes / 39 links</strong> (the equivalent static graph is 67 nodes). The
+<p>Add a whole-sequence camera move (pan / zoom / rotate; neutral by default, adjust on the canvas):</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--base<span class="w"> </span>workflows/workflow-sdxl.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--story<span class="w"> </span>assets/story.example.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dynamic<span class="w"> </span>--camera<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out<span class="w"> </span>my-dynamic-camera.json
+</code></pre></div>
+<p>3 beats at 24 frames produces <strong>26 nodes / 39 links</strong>, or 27 with <code>--camera</code> (the equivalent static graph is 67 nodes). The
 keyframe chain is untouched; only the interpolate/decode/batch layer is replaced.</p>
 <div class="highlight"><pre><span></span><code>K keyframe KSamplers (same seed, first-frame latent)
   -&gt; one APNGLatentInterpolateN per beat (frames = that beat's count)
   -&gt; N-1 APNGLatentConcat (concatenate batches in beat order)
   -&gt; one VAEDecode (decode all frames at once)
+  -&gt; [optional] one APNG Camera Move (--camera: whole-sequence pan / zoom / rotate)
   -&gt; SaveAnimatedPNG + SaveAnimatedWEBP + VHS_VideoCombine
   -&gt; APNGFrameStats (prints frames / duration / frame diff / seams)
 </code></pre></div>
@@ -1431,11 +1461,88 @@ keyframe chain is untouched; only the interpolate/decode/batch layer is replaced
 <td>the K <code>KSampler</code> + <code>CLIPTextEncode</code> pairs</td>
 <td>One keyframe is one beat, same as static mode; adding a beat still means copying one pair</td>
 </tr>
+<tr>
+<td><strong>Camera motion</strong></td>
+<td><code>x</code> / <code>y</code> / <code>zoom</code> / <code>angle</code> / <code>easing</code> / <code>loop</code> on <code>APNG Camera Move</code></td>
+<td>One transform for the whole sequence; orthogonal to the storyboard (see next section)</td>
+</tr>
 </tbody>
 </table>
 <p><code>APNGFrameStats</code> uses the same thresholds as <code>scripts/check_anim.py</code>: within a beat <code>full &gt;= 2.0 &amp;&amp; lower &gt;= 1.0</code>,
 loop seam <code>0.3 &lt;= full &lt;= 6.0</code>.</p>
-<h2 id="4-node-reference">4. Node reference<a class="headerlink" href="#4-node-reference" title="Permanent link">&para;</a></h2>
+<h2 id="4-camera-motion-whole-sequence-pan--zoom--rotate">4. Camera motion (whole-sequence pan / zoom / rotate)<a class="headerlink" href="#4-camera-motion-whole-sequence-pan--zoom--rotate" title="Permanent link">&para;</a></h2>
+<p><code>--camera</code> inserts one <code>APNG Camera Move</code> after <code>VAEDecode</code>: <strong>a single camera path applied to every
+frame</strong>. It is a pure pixel affine transform — no re-sampling, no new dependency, no sampler call.
+Defaults are neutral; adjust on the canvas after emitting.</p>
+<table>
+<thead>
+<tr>
+<th>Widget</th>
+<th>Meaning</th>
+<th>Range / values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x</code></td>
+<td>Total horizontal travel in pixels; positive moves right</td>
+<td>-2048…2048</td>
+</tr>
+<tr>
+<td><code>y</code></td>
+<td>Total vertical travel in pixels; positive moves down</td>
+<td>-2048…2048</td>
+</tr>
+<tr>
+<td><code>zoom</code></td>
+<td><strong>Last-frame</strong> scale; <code>&gt;1</code> pushes in, <code>&lt;1</code> pulls out</td>
+<td>0.5…4.0</td>
+</tr>
+<tr>
+<td><code>angle</code></td>
+<td>Total rotation in degrees; positive is counter-clockwise</td>
+<td>-360…360</td>
+</tr>
+<tr>
+<td><code>easing</code></td>
+<td><code>linear</code> <code>sine</code> <code>cubic</code> <code>quint</code> <code>back</code> <code>elastic</code> <code>bounce</code></td>
+<td>default <code>sine</code></td>
+</tr>
+<tr>
+<td><code>loop</code></td>
+<td><code>True</code> runs 0→1→0, so first and last frame match exactly</td>
+<td>default <code>True</code></td>
+</tr>
+<tr>
+<td><code>border</code></td>
+<td>Out-of-range sampling: <code>reflection</code> / <code>border</code> / <code>zeros</code></td>
+<td>default <code>reflection</code></td>
+</tr>
+</tbody>
+</table>
+<p>Semantics:</p>
+<ul>
+<li><strong>Parameters are totals for the whole clip, not per-frame increments.</strong> Frame i advances by
+  <code>p = ease(i / (N-1))</code>; translation, scale and rotation all follow <code>p</code>. <code>x=20</code> means "drift 20 px to
+  the right over the entire clip".</li>
+<li><code>loop=True</code> uses <code>p = ease((1 - cos(2πt)) / 2)</code>, so both ends return to 0 and the loop does not jump.
+  <code>loop=False</code> is a single one-way move.</li>
+<li><code>zoom</code> is the <strong>last-frame</strong> scale (peak scale when <code>loop=True</code>). "Push in then come back" is
+  <code>loop=True</code> with <code>zoom=1.2</code>.</li>
+<li><code>loop=True</code> with only N=2 frames returns to the origin on both frames, i.e. no motion; use
+  <code>loop=False</code> or add frames.</li>
+<li>Camera and storyboard are different layers: the <strong>storyboard</strong> changes keyframe content (K
+  KSamplers with their own prompts); the <strong>camera</strong> transforms already-decoded pixels. They compose.</li>
+<li>Finished output only: with <code>--camera</code>, the three savers and <code>APNGFrameStats</code> all read the camera
+  node, so the diff / seam verdicts describe the final pixels.</li>
+</ul>
+<blockquote>
+<p>The whole-sequence camera + easing idea was inspired by
+<a href="https://github.com/ShmuelRonen/ComfyUI-AstralAnimator">ShmuelRonen/ComfyUI-AstralAnimator</a>.
+That project has no license file and <strong>no code was reused</strong>; this node is an independent
+<code>torch.nn.functional.affine_grid</code> + <code>grid_sample</code> implementation.</p>
+</blockquote>
+<h2 id="5-node-reference">5. Node reference<a class="headerlink" href="#5-node-reference" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1469,7 +1576,7 @@ loop seam <code>0.3 &lt;= full &lt;= 6.0</code>.</p>
 <p><code>segs</code> must match the sum of all <code>frames</code> widgets or <code>--validate</code> fails:</p>
 <div class="highlight"><pre><span></span><code>frame report segs sum 24 != sum of per-beat frames 20
 </code></pre></div>
-<h2 id="5-changing-frame-count-end-to-end">5. Changing frame count end to end<a class="headerlink" href="#5-changing-frame-count-end-to-end" title="Permanent link">&para;</a></h2>
+<h2 id="6-changing-frame-count-end-to-end">6. Changing frame count end to end<a class="headerlink" href="#6-changing-frame-count-end-to-end" title="Permanent link">&para;</a></h2>
 <p>From 3 beats / 24 frames (<code>8,8,8</code>) to 12 frames:</p>
 <ol>
 <li>Set <code>frames</code> to <code>4</code> on all three interpolate nodes.</li>
@@ -1479,7 +1586,7 @@ loop seam <code>0.3 &lt;= full &lt;= 6.0</code>.</p>
 </ol>
 <p>If you change <code>frames</code> but not <code>segs</code>, <code>--validate</code> rejects the graph. Running it directly in ComfyUI
 still prints the real frame count, but the seam checks are skipped because <code>segs</code> no longer sums to it.</p>
-<h2 id="6-boundaries">6. Boundaries<a class="headerlink" href="#6-boundaries" title="Permanent link">&para;</a></h2>
+<h2 id="7-boundaries">7. Boundaries<a class="headerlink" href="#7-boundaries" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Per-frame dwell and per-beat ease stay outside the graph.</strong> ComfyUI save nodes accept one global
   <code>fps</code>, so per-frame delays cannot be expressed. Use <code>scripts/retime.py</code> after export; it only rewrites
@@ -1489,7 +1596,7 @@ still prints the real frame count, but the seam checks are skipped because <code
 <li>The nodes are plain tensor ops; CPU or GPU both work. Peak VRAM scales with the total decoded frames,
   so 60 frames costs more than 24.</li>
 </ul>
-<h2 id="7-troubleshooting">7. Troubleshooting<a class="headerlink" href="#7-troubleshooting" title="Permanent link">&para;</a></h2>
+<h2 id="8-troubleshooting">8. Troubleshooting<a class="headerlink" href="#8-troubleshooting" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1523,6 +1630,21 @@ still prints the real frame count, but the seam checks are skipped because <code
 <td>Output has fewer frames</td>
 <td>Identical adjacent pixels, APNG merged them</td>
 <td>Check <code>identical_pairs</code>, adjust ratio or curve</td>
+</tr>
+<tr>
+<td>Camera moves the wrong way</td>
+<td>Treated a total as a per-frame step</td>
+<td><code>x</code>/<code>y</code> are totals; +x right, +y down</td>
+</tr>
+<tr>
+<td>Loop jumps at the seam</td>
+<td><code>loop=False</code></td>
+<td>Turn on <code>loop=True</code>; first and last frames match</td>
+</tr>
+<tr>
+<td>Black edges appear</td>
+<td><code>border=zeros</code></td>
+<td>Use <code>reflection</code> or <code>border</code></td>
 </tr>
 </tbody>
 </table>
@@ -1561,7 +1683,7 @@ still prints the real frame count, but the seam checks are skipped because <code
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../workflows/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Five importable graphs">
+          <a href="../workflows/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Workflow files">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1571,7 +1693,7 @@ still prints the real frame count, but the seam checks are skipped because <code
                 Previous
               </span>
               <div class="md-ellipsis">
-                Five importable graphs
+                Workflow files
               </div>
             </div>
           </a>

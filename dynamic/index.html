@@ -729,7 +729,7 @@
   <span class="md-ellipsis">
     
   
-    五份工作流
+    工作流文件
   
 
     
@@ -832,10 +832,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3--五个维度分别在哪控制" class="md-nav__link">
+  <a href="#3--六个维度分别在哪控制" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3 · 五个维度分别在哪控制
+        3 · 六个维度分别在哪控制
       
     </span>
   </a>
@@ -843,10 +843,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4--节点参考" class="md-nav__link">
+  <a href="#4--镜头运动整段平移--缩放--旋转" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4 · 节点参考
+        4 · 镜头运动（整段平移 / 缩放 / 旋转）
       
     </span>
   </a>
@@ -854,10 +854,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5--改帧数的完整动作" class="md-nav__link">
+  <a href="#5--节点参考" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · 改帧数的完整动作
+        5 · 节点参考
       
     </span>
   </a>
@@ -865,10 +865,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6--边界" class="md-nav__link">
+  <a href="#6--改帧数的完整动作" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6 · 边界
+        6 · 改帧数的完整动作
       
     </span>
   </a>
@@ -876,10 +876,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7--排错" class="md-nav__link">
+  <a href="#7--边界" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7 · 排错
+        7 · 边界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8--排错" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · 排错
       
     </span>
   </a>
@@ -1293,10 +1304,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3--五个维度分别在哪控制" class="md-nav__link">
+  <a href="#3--六个维度分别在哪控制" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3 · 五个维度分别在哪控制
+        3 · 六个维度分别在哪控制
       
     </span>
   </a>
@@ -1304,10 +1315,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4--节点参考" class="md-nav__link">
+  <a href="#4--镜头运动整段平移--缩放--旋转" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4 · 节点参考
+        4 · 镜头运动（整段平移 / 缩放 / 旋转）
       
     </span>
   </a>
@@ -1315,10 +1326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5--改帧数的完整动作" class="md-nav__link">
+  <a href="#5--节点参考" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · 改帧数的完整动作
+        5 · 节点参考
       
     </span>
   </a>
@@ -1326,10 +1337,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6--边界" class="md-nav__link">
+  <a href="#6--改帧数的完整动作" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6 · 边界
+        6 · 改帧数的完整动作
       
     </span>
   </a>
@@ -1337,10 +1348,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7--排错" class="md-nav__link">
+  <a href="#7--边界" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7 · 排错
+        7 · 边界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8--排错" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · 排错
       
     </span>
   </a>
@@ -1378,7 +1400,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--check<span class="w">           </span><span class="c1"># 只比对，不写</span>
 </code></pre></div>
 <p>目标固定为 <code>&lt;comfy_root&gt;/custom_nodes/apng_motion_nodes/</code>。也可以手动把整个 <code>comfyui_nodes</code>
-目录复制进去并改名 <code>apng_motion_nodes</code>。<strong>装完重启 ComfyUI</strong>，三个节点出现在 <code>APNG Motion</code> 分类下。</p>
+目录复制进去并改名 <code>apng_motion_nodes</code>。<strong>装完重启 ComfyUI</strong>，四个节点出现在 <code>APNG Motion</code> 分类下。</p>
 <h2 id="2--生成动态工作流">2 · 生成动态工作流<a class="headerlink" href="#2--生成动态工作流" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--base<span class="w"> </span>workflows/workflow-sdxl.json<span class="w"> </span><span class="se">\</span>
@@ -1386,16 +1408,24 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <span class="w">    </span>--dynamic<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--out<span class="w"> </span>my-dynamic.json
 </code></pre></div>
-<p>3 拍 24 帧输出 <strong>26 个节点 / 39 条连线</strong>（同样内容的静态图是 67 个节点）。关键帧链完全不动，
+<p>加整段镜头运动（平移 / 缩放 / 旋转，默认中立值，出图后在图上调）：</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--base<span class="w"> </span>workflows/workflow-sdxl.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--story<span class="w"> </span>assets/story.example.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dynamic<span class="w"> </span>--camera<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out<span class="w"> </span>my-dynamic-camera.json
+</code></pre></div>
+<p>3 拍 24 帧输出 <strong>26 个节点 / 39 条连线</strong>，加 <code>--camera</code> 是 27 个节点（同样内容的静态图是 67 个节点）。关键帧链完全不动，
 只替换插值/解码/合批层。</p>
 <div class="highlight"><pre><span></span><code>K 个关键帧 KSampler（同 seed，首帧 latent）
   → 每拍 1 个 APNGLatentInterpolateN（frames = 这一拍的帧数）
   → N-1 个 APNGLatentConcat（按拍序拼 batch）
   → 1 个 VAEDecode（一次解码全部帧）
+  → [可选] 1 个 APNG Camera Move（--camera：整段平移 / 缩放 / 旋转）
   → SaveAnimatedPNG + SaveAnimatedWEBP + VHS_VideoCombine
   → APNGFrameStats（打印帧数 / 时长 / 帧差 / 接缝）
 </code></pre></div>
-<h2 id="3--五个维度分别在哪控制">3 · 五个维度分别在哪控制<a class="headerlink" href="#3--五个维度分别在哪控制" title="Permanent link">&para;</a></h2>
+<h2 id="3--六个维度分别在哪控制">3 · 六个维度分别在哪控制<a class="headerlink" href="#3--六个维度分别在哪控制" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1430,11 +1460,81 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <td>K 个 <code>KSampler</code> + 各自的 <code>CLIPTextEncode</code></td>
 <td>一个关键帧就是一拍，和静态模式完全一致；加拍仍是复制一对节点</td>
 </tr>
+<tr>
+<td><strong>镜头运动</strong></td>
+<td><code>APNG Camera Move</code> 的 <code>x</code>/<code>y</code>/<code>zoom</code>/<code>angle</code>/<code>easing</code>/<code>loop</code></td>
+<td>整段统一运动；与分镜正交，可叠加（见下一节）</td>
+</tr>
 </tbody>
 </table>
 <p><code>APNGFrameStats</code> 的阈值与 <code>scripts/check_anim.py</code> 一致：拍内 <code>full &gt;= 2.0 &amp;&amp; lower &gt;= 1.0</code>，
 循环接缝 <code>0.3 &lt;= full &lt;= 6.0</code>。</p>
-<h2 id="4--节点参考">4 · 节点参考<a class="headerlink" href="#4--节点参考" title="Permanent link">&para;</a></h2>
+<h2 id="4--镜头运动整段平移--缩放--旋转">4 · 镜头运动（整段平移 / 缩放 / 旋转）<a class="headerlink" href="#4--镜头运动整段平移--缩放--旋转" title="Permanent link">&para;</a></h2>
+<p><code>--camera</code> 在 <code>VAEDecode</code> 后插一个 <code>APNG Camera Move</code>：<strong>对整段所有帧施加同一条相机路径</strong>，
+纯像素仿射变换，不重新采样、不加依赖、不碰采样器。默认参数是中立值，出图后在图上调。</p>
+<table>
+<thead>
+<tr>
+<th>widget</th>
+<th>含义</th>
+<th>范围 / 取值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x</code></td>
+<td>整段总横向位移（像素），正数向右</td>
+<td>-2048…2048</td>
+</tr>
+<tr>
+<td><code>y</code></td>
+<td>整段总纵向位移（像素），正数向下</td>
+<td>-2048…2048</td>
+</tr>
+<tr>
+<td><code>zoom</code></td>
+<td><strong>末帧</strong>倍率，<code>&gt;1</code> 推近，<code>&lt;1</code> 拉远</td>
+<td>0.5…4.0</td>
+</tr>
+<tr>
+<td><code>angle</code></td>
+<td>整段总旋转角度（度），正数逆时针</td>
+<td>-360…360</td>
+</tr>
+<tr>
+<td><code>easing</code></td>
+<td>进度曲线：<code>linear</code> <code>sine</code> <code>cubic</code> <code>quint</code> <code>back</code> <code>elastic</code> <code>bounce</code></td>
+<td>默认 <code>sine</code></td>
+</tr>
+<tr>
+<td><code>loop</code></td>
+<td><code>True</code> 走 0→1→0 往返，首尾帧完全一致</td>
+<td>默认 <code>True</code></td>
+</tr>
+<tr>
+<td><code>border</code></td>
+<td>越界取样：<code>reflection</code> 镜像 / <code>border</code> 拉伸边缘 / <code>zeros</code> 黑边</td>
+<td>默认 <code>reflection</code></td>
+</tr>
+</tbody>
+</table>
+<p>语义要点：</p>
+<ul>
+<li><strong>参数是整段总量，不是每帧增量。</strong> 第 i 帧的推进量 <code>p = ease(i / (N-1))</code>，位移、缩放、旋转都按 <code>p</code> 插值，
+  所以 <code>x=20</code> 表示「从头到尾一共右移 20 像素」。</li>
+<li><code>loop=True</code> 时 <code>p = ease((1 - cos(2πt)) / 2)</code>，首尾两帧都回到 0，循环播放不跳；<code>loop=False</code> 是单向推进。</li>
+<li><code>zoom</code> 是<strong>末帧</strong>的倍率（<code>loop=True</code> 时是中点最大）；「推近再回来」用 <code>loop=True</code> + <code>zoom=1.2</code>。</li>
+<li><code>loop=True</code> 且总帧数 N=2 时，首尾都是原位，等于没有运动；要动就关 <code>loop</code> 或加帧。</li>
+<li>镜头和分镜是两件事：<strong>分镜</strong>改的是关键帧内容（K 个 KSampler + 各自的提示词），
+  <strong>镜头</strong>只对已经解码好的像素做统一变换。两者可以叠加。</li>
+<li>只存成品：<code>--camera</code> 的图里三个保存节点和 <code>APNGFrameStats</code> 都接在镜头节点之后，
+  帧差 / 接缝检查看的就是最终像素。</li>
+</ul>
+<blockquote>
+<p>整段镜头 + 缓动的思路参考 <a href="https://github.com/ShmuelRonen/ComfyUI-AstralAnimator">ShmuelRonen/ComfyUI-AstralAnimator</a>。
+该仓库没有许可证文件，<strong>未复用任何代码</strong>；本节点是 <code>torch.nn.functional.affine_grid</code> + <code>grid_sample</code> 的独立实现。</p>
+</blockquote>
+<h2 id="5--节点参考">5 · 节点参考<a class="headerlink" href="#5--节点参考" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1468,7 +1568,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <p><code>segs</code> 必须与各拍 <code>frames</code> 之和一致，否则 <code>--validate</code> 直接报错：</p>
 <div class="highlight"><pre><span></span><code>帧报告 segs 之和 24 与各拍 frames 之和 20 不一致
 </code></pre></div>
-<h2 id="5--改帧数的完整动作">5 · 改帧数的完整动作<a class="headerlink" href="#5--改帧数的完整动作" title="Permanent link">&para;</a></h2>
+<h2 id="6--改帧数的完整动作">6 · 改帧数的完整动作<a class="headerlink" href="#6--改帧数的完整动作" title="Permanent link">&para;</a></h2>
 <p>以 3 拍 24 帧（<code>8,8,8</code>）为例，想改成 12 帧：</p>
 <ol>
 <li>三个插值节点的 <code>frames</code> 都改成 <code>4</code>。</li>
@@ -1478,7 +1578,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 </ol>
 <p>只改 <code>frames</code> 不改 <code>segs</code>，<code>--validate</code> 会拦下来；在 ComfyUI 里直接跑则帧报告仍会打印实际帧数，
 但接缝检查会跳过（因为 <code>segs</code> 之和对不上）。</p>
-<h2 id="6--边界">6 · 边界<a class="headerlink" href="#6--边界" title="Permanent link">&para;</a></h2>
+<h2 id="7--边界">7 · 边界<a class="headerlink" href="#7--边界" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>逐帧停留（dwell）与拍内缓动（ease）仍然不在工作流里。</strong> ComfyUI 的保存节点只有一个全局
   <code>fps</code>，表达不了逐帧不同 delay。要变速仍用 <code>scripts/retime.py</code>，它只改 APNG 的 <code>fcTL</code> delay，像素不动。</li>
@@ -1486,7 +1586,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <li><code>APNGLatentInterpolateN</code> 要求每个关键帧 latent 的 batch=1；关键帧 KSampler 本来就是 1。</li>
 <li>节点是普通 Python 张量运算，CPU/GPU 都行；显存峰值取决于一次解码的总帧数，60 帧比 24 帧高。</li>
 </ul>
-<h2 id="7--排错">7 · 排错<a class="headerlink" href="#7--排错" title="Permanent link">&para;</a></h2>
+<h2 id="8--排错">8 · 排错<a class="headerlink" href="#8--排错" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1520,6 +1620,21 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <td>出片帧数比设置少</td>
 <td>相邻帧像素完全相同，APNG 合并</td>
 <td>看 <code>identical_pairs</code>，调整 ratio 或曲线</td>
+</tr>
+<tr>
+<td>镜头方向反了</td>
+<td>把总量当成了每帧增量</td>
+<td><code>x</code>/<code>y</code> 是整段总位移，正 x 向右、正 y 向下</td>
+</tr>
+<tr>
+<td>循环播放首尾跳一下</td>
+<td><code>loop=False</code></td>
+<td>打开 <code>loop=True</code>，首尾帧像素一致</td>
+</tr>
+<tr>
+<td>画面边缘出现黑边</td>
+<td><code>border=zeros</code></td>
+<td>改 <code>reflection</code> 或 <code>border</code></td>
 </tr>
 </tbody>
 </table>
@@ -1558,7 +1673,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         
           
-          <a href="../workflows/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 五份工作流">
+          <a href="../workflows/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 工作流文件">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1568,7 +1683,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
                 上一页
               </span>
               <div class="md-ellipsis">
-                五份工作流
+                工作流文件
               </div>
             </div>
           </a>
