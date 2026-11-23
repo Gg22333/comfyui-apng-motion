@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.3.5 — 2026-11-24
+
+- **安装说明补通用性**：`SKILL.md` 0.8 与 `docs/install.md`（中英）补上 Claude Code 与任意
+  Agent Skills 目录的安装方式，并写明 `SKILL.md` 只有 `name` / `description`，没有 Codex 私有字段；
+  脚本只依赖 Python ≥3.9 + Pillow，CI 在 `ubuntu-24.04` × 3.9 / 3.12 上跑。
+- **清掉作者本机路径**：`E:\...\comfyui-apng\skill` 与 `C:\Users\...\archived_sessions\*.jsonl`
+  不再出现在 `SKILL.md`，改成「仓库根目录 + 来历记录见 CHANGELOG」，别人 clone 后不会看到对不上的路径。
+- **版本号**：1.3.4 → 1.3.5。
 ## 1.3.4 — 2026-11-24
 
 - **补齐预览工作流**：新增 `workflows/workflow-moss-preview.json`（60 帧 / 11 拍 / 20fps /

@@ -19,6 +19,16 @@ python scripts/install.py
 python scripts/install.py --dest /path/to/skills/comfyui-apng-motion
 ```
 
+`SKILL.md` 是 Agent Skills 格式（`name` + `description` frontmatter），没有 Codex 私有字段。其它客户端放进各自的 skill 目录即可：
+
+| 客户端 | 目标 |
+| --- | --- |
+| Codex | `~/.codex/skills/comfyui-apng-motion` |
+| Claude Code | `~/.claude/skills/comfyui-apng-motion`（或项目内 `.claude/skills/`；未在本仓库 CI 实测） |
+| 任意目录 | `python scripts/install.py --dest <dir>/comfyui-apng-motion` |
+
+脚本只依赖 Python ≥3.9 + Pillow，Windows / Linux 都能跑；ComfyUI 本身按目标机器单独安装。
+
 升级：重新跑一次。旧 `SKILL.md` 自动备份成 `.bak-<时间戳>`。
 
 ## 2 · 校验安装

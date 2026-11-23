@@ -189,12 +189,16 @@ Pillow 装在哪儿有讲究：`check_deps.py` 会顺便列出 profiles 里各�
 
 ### 0.8 只有一个 skill，两处入口
 
-不是两个 skill。唯一源是 `E:\Documents\zezeze\tools\comfyui-apng\skill`，两处安装只是两个加载器的入口：
+不是两个 skill。唯一源是**仓库根目录**（`git clone` 下来的那份），装到哪儿只是不同客户端的入口：
 
-| 路径 | 谁读 |
+| 目标路径 | 谁读 |
 | --- | --- |
 | `~/.codex/skills/comfyui-apng-motion` | Codex 原生 skills |
-| `~/.config/magpie/library/skills/comfyui-apng-motion` | magpie 的 library |
+| `~/.claude/skills/comfyui-apng-motion` | Claude Code（Agent Skills 目录格式；未在 Claude Code 客户端实测） |
+| `~/.config/magpie/library/skills/comfyui-apng-motion` | magpie library |
+| `<任意目录>/comfyui-apng-motion` | `install.py --dest <目录>/comfyui-apng-motion` |
+
+格式就是 Agent Skills：一个目录 + `SKILL.md`（`name` / `description` frontmatter）+ 资源文件，没有 Codex 私有字段段。脚本只依赖 Python ≥3.9 与 Pillow，Windows / Linux 都可跑；CI 在 `ubuntu-24.04` × Python 3.9 / 3.12 上跑单元测试与工作流校验。
 
 防漂移：
 
@@ -801,17 +805,14 @@ output\APNG\
 | `workflows/workflow-sdxl-4beat.json` `workflows/workflow-moss-4beat.json` | 已扩好的 4 拍工作流 |
 | `assets/node_schema.json` | 节点定义兜底（服务器 `/object_info` 取不到时用） |
 | `scripts/check_deps.py` | 依赖自检：Python / Pillow / curl / profiles 里的 ComfyUI 与插件 |
-| `scripts/install.py` | 装到 Codex / magpie 的 skills 目录，覆盖前自动备份 |
+| `scripts/install.py` | 装到任意 skills 目录（`--dest`），覆盖前自动备份 |
 | `scripts/package.py` | 打确定性 zip（固定时间戳）+ SHA256，默认不含 profiles |
 | `skill.json` | 版本、依赖、入口、安装目标、排除项 |
 | `requirements.txt` | 脚本侧依赖（仅 Pillow） |
 | `CHANGELOG.md` `LICENSE` `.gitignore` | 分发用元数据 |
 
 
-| `C:\Users\泽山居士\.codex\archived_sessions\rollout-2026-11-22T15-35-59-*.jsonl` | 原始搭建会话，40 条用户消息 / 18 条助手消息 |
-| `C:\Users\泽山居士\.codex\archived_sessions\rollout-2026-11-23T08-54-56-*.jsonl` | 续修会话，剧情模块需求提出处 |
-| `C:\Users\泽山居士\.codex\archived_sessions\rollout-2026-11-23T11-38-23-*.jsonl` | 交接会话，skill 成稿记录 |
-| `E:\Documents\zezeze\tools\comfyui-apng\anim24.py` | 旧的脚本路线（API 驱动），保留但非首选 |
+> 作者本机的搭建 / 续修会话与旧 `anim24.py` 属于私有来历，不随包分发；同样的演进记录在 `CHANGELOG.md`。
 
 ## 附录 A · profile 字段
 

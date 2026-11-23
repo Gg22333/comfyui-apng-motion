@@ -19,6 +19,16 @@ Custom location:
 python scripts/install.py --dest /path/to/skills/comfyui-apng-motion
 ```
 
+`SKILL.md` uses the Agent Skills layout (`name` + `description` frontmatter) with no Codex-only fields. For other clients, point `--dest` at their skill directory:
+
+| Client | Target |
+| --- | --- |
+| Codex | `~/.codex/skills/comfyui-apng-motion` |
+| Claude Code | `~/.claude/skills/comfyui-apng-motion` (or `.claude/skills/` inside a project; not exercised in this repo's CI) |
+| Anything else | `python scripts/install.py --dest <dir>/comfyui-apng-motion` |
+
+Scripts need only Python ≥3.9 + Pillow and run on Windows and Linux; ComfyUI itself is installed separately on the target machine.
+
 Upgrade: run it again. The previous `SKILL.md` is backed up as `.bak-<timestamp>`.
 
 ## 2 · Verify the install
