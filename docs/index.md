@@ -2,6 +2,8 @@
 
 ComfyUI 里做 **24 帧连贯 APNG / WebP / GIF** 的 skill 与工具箱。
 
+[English](en/index.md) · **简体中文**
+
 ![preview](assets/preview.gif)
 
 ## 它解决什么
@@ -26,6 +28,7 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 
 - [安装](install.md)
 - [用法](usage.md)
+- [成品落盘](output.md)
 - [APNG、GIF 与视频转 GIF](formats.md)
 - [架构](architecture.md)
 - [排错](troubleshooting.md)

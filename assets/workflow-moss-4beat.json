@@ -417,13 +417,13 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        123456790,
+        123456789,
         "fixed",
         8,
         1.0,
         "euler",
         "simple",
-        0.5
+        0.4
       ],
       "title": "关键帧 1 重绘"
     },
@@ -526,13 +526,13 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        123456791,
+        123456789,
         "fixed",
         8,
         1.0,
         "euler",
         "simple",
-        0.5
+        0.4
       ],
       "title": "关键帧 2 重绘"
     },
@@ -2923,7 +2923,7 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        123456792,
+        123456789,
         "fixed",
         8,
         1.0,

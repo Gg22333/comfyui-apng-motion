@@ -200,8 +200,8 @@ EmptyLatent 512×512×1
         │
    KSampler 首帧（denoise 1.0，seed 123456789 fixed）
         │
-        ├──────────────► CLIPTextEncode A ─► KSampler A（denoise 0.4/0.5，seed +1，latent=首帧）
-        ├──────────────► CLIPTextEncode B ─► KSampler B（denoise 0.4/0.5，seed +2，latent=首帧）
+        ├──────────────► CLIPTextEncode A ─► KSampler A（denoise 0.4/0.5，同 seed，latent=首帧）
+        ├──────────────► CLIPTextEncode B ─► KSampler B（denoise 0.4/0.5，同 seed，latent=首帧）
         │
    24 × LatentInterpolate（每帧一个 ratio）
         │
@@ -489,6 +489,7 @@ output\APNG\
 - 计数器每次 Queue 自增，取最新一个看 mtime 就行；想固定名字就把 prefix 改成 `APNG/final/apng/我的表情`。
 - VHS 会在 gif 同目录多写一张同名 `.png`（首帧预览），属插件行为，可以删。
 - 前缀被旧值覆盖过会导致成品落到 `output\APNG\anim24_00001_.png`；改完 prefix 记得**刷新浏览器页面**再 Queue。
+- 结构自查：`python scripts/check_output.py --profile profiles/xl.json`；加 `--fix` 把 `APNG` 根目录和 `output` 根目录的游离文件移进 `APNG/archive/stray-<时间戳>/`。完整规则见 `docs/output.md`。
 
 校验（脚本在 `scripts/check_anim.py`，**必须用 ComfyUI 自带的 Python**，`C:\Python315` 没装 Pillow）：
 

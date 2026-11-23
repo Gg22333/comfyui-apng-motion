@@ -72,6 +72,8 @@ def main():
     ap.add_argument("--negative", default="")
     ap.add_argument("--actions", default="")
     ap.add_argument("--denoise", type=float, default=0)
+    ap.add_argument("--seed-mode", choices=["same", "offset"], default=None,
+                    help="same=所有关键帧同 seed（少抖动，默认）；offset=逐帧 +1")
     ap.add_argument("--validate", default="")
     ap.add_argument("--run", action="store_true")
     ap.add_argument("--profile", default="")
@@ -121,6 +123,7 @@ def main():
     fps = a.fps or story.get("fps", 10)
     prefix = a.prefix or story.get("prefix", "")
     denoise = a.denoise or story.get("denoise", 0)
+    same_seed = (a.seed_mode or story.get("seed_mode", "same")) == "same"
 
     nodes = wf["nodes"]
     ledger = Ledger(wf["links"])
@@ -180,7 +183,7 @@ def main():
         s["order"] = max_order + 1
         max_order += 1
         s["pos"] = [max_x + 800, y]
-        seed = int(tmpl["widgets_values"][0]) + idx
+        seed = int(tmpl["widgets_values"][0]) if same_seed else int(tmpl["widgets_values"][0]) + idx
         s["widgets_values"] = [seed, "fixed"] + list(tmpl["widgets_values"][2:-1]) + [base_dn]
         m = ledger.add(model_o[0], model_o[1], s["id"], 0, "MODEL")
         p = ledger.add(enc["id"], 0, s["id"], 1, "CONDITIONING")
@@ -204,6 +207,14 @@ def main():
         kf_enc.append(enc)
     if len(chain) > beats:
         chain = chain[:beats]
+    # 已有节点也要回写：关键帧共用首帧 latent，同 seed、同 denoise，否则帧间抖动
+    base_seed = int(k0["widgets_values"][0])
+    for i, s in enumerate(chain):
+        w = list(s["widgets_values"])
+        w[0] = base_seed if same_seed else base_seed + i
+        if i:
+            w[-1] = base_dn
+        s["widgets_values"] = w
     if not actions:
         actions = [""] * beats
     # 写提示词
@@ -428,4 +439,5 @@ def run_it(wf, profile_path):
 
 if __name__ == "__main__":
     sys.exit(main())
+
 

@@ -47,9 +47,36 @@ def test_five_beats_cli(tmp_path):
     assert len(wf["nodes"]) == 65
 
 
+def test_same_seed_and_denoise_written_back(tmp_path):
+    """回归：已有关键帧 KSampler 也必须回写同 seed / 同 denoise，否则帧间抖动。"""
+    out = tmp_path / "b4.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+                     "--story", str(ROOT / "assets" / "story.4beat.json"),
+                     "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    ks = [n for n in wf["nodes"] if n["type"] == "KSampler"]
+    seeds = {n["widgets_values"][0] for n in ks}
+    assert len(seeds) == 1, seeds
+    assert ks[0]["widgets_values"][-1] == 1.0
+    assert all(n["widgets_values"][-1] == 0.4 for n in ks[1:])
+
+
+def test_seed_offset_mode(tmp_path):
+    out = tmp_path / "b4.json"
+    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+                     "--story", str(ROOT / "assets" / "story.4beat.json"),
+                     "--seed-mode", "offset", "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    seeds = sorted(n["widgets_values"][0] for n in wf["nodes"] if n["type"] == "KSampler")
+    assert seeds == list(range(seeds[0], seeds[0] + 4))
+
+
 def test_shipped_assets_validate():
     for name in ("workflow-sdxl.json", "workflow-moss.json",
-                 "workflow-sdxl-4beat.json", "workflow-moss-4beat.json"):
+                 "workflow-sdxl-4beat.json", "workflow-moss-4beat.json",
+                 "workflow-sdxl-preview.json"):
         code, log = run(["--validate", str(ROOT / "assets" / name)])
         assert code == 0, name + log
 

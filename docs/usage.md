@@ -74,3 +74,11 @@ python check_anim.py output/APNG/final/apng/anim24_00001_.png --expect 24
 
 关注四项：`frames=24`、`loop=0`、`identical_pairs=0`、`color_drift` 不超过 6。
 
+## 落盘验收
+
+```bash
+python scripts/check_output.py --profile profiles/xl.json
+```
+
+三格式同批、`output/APNG/` 根目录无游离文件、`FAIL 总数: 0` 才算完成。细则见 [成品落盘](output.md)。
+

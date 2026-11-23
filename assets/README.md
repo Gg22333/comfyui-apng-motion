@@ -10,6 +10,7 @@
 | `workflow-sdxl-4beat.json` | SDXL | 4 | 63 | 同上 |
 | `workflow-moss.json` | Moss / DiT | 3 | 63 | `UNETLoader` + `CLIPLoader` + `VAELoader` |
 | `workflow-moss-4beat.json` | Moss / DiT | 4 | 65 | 同上 |
+| `workflow-sdxl-preview.json` | SDXL | 4 | 63 | 用于生成仓库预览图，近景表情四拍 |
 
 四份都是同一套结构：`K 关键帧 → 24 × LatentInterpolate → 24 × VAEDecode → ImageBatchMulti(24) → 三输出`。
 4 拍版本只是多了一对 `CLIPTextEncode` + `KSampler`，24 帧按 6/7/6/5 分配。
@@ -29,6 +30,7 @@
 | --- | --- |
 | `story.example.json` | 3 拍模板（中性 → 笑 → 大笑） |
 | `story.4beat.json` | 4 拍模板（常态 → 察觉 → 反应 → 收） |
+| `story.preview.json` | 仓库预览图用：近景、四拍、同 seed、denoise 0.5 |
 
 ```bash
 python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out my-4beat.json
