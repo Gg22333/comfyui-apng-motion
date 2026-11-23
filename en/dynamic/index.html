@@ -1533,8 +1533,16 @@ Defaults are neutral; adjust on the canvas after emitting.</p>
   <code>loop=False</code> or add frames.</li>
 <li>Camera and storyboard are different layers: the <strong>storyboard</strong> changes keyframe content (K
   KSamplers with their own prompts); the <strong>camera</strong> transforms already-decoded pixels. They compose.</li>
-<li>Finished output only: with <code>--camera</code>, the three savers and <code>APNGFrameStats</code> all read the camera
-  node, so the diff / seam verdicts describe the final pixels.</li>
+<li>
+<p>Finished output only: with <code>--camera</code>, the three savers and <code>APNGFrameStats</code> all read the camera
+  node, so the diff / seam verdicts describe the final pixels.</p>
+</li>
+<li>
+<p>Self-check after rendering: <code>python scripts/check_anim.py &lt;file&gt; --expect 24 --camera</code>. A camera
+  move shifts the whole frame, so mean RGB drifts legitimately; <code>--camera</code> raises the drift limit
+  from 20 to 45 so motion is not misread as colour flashing. <code>emit_workflow.py --run</code> adds the flag
+  automatically when the camera widgets are off-centre.</p>
+</li>
 </ul>
 <blockquote>
 <p>The whole-sequence camera + easing idea was inspired by

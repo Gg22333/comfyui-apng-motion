@@ -1527,8 +1527,15 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <li><code>loop=True</code> 且总帧数 N=2 时，首尾都是原位，等于没有运动；要动就关 <code>loop</code> 或加帧。</li>
 <li>镜头和分镜是两件事：<strong>分镜</strong>改的是关键帧内容（K 个 KSampler + 各自的提示词），
   <strong>镜头</strong>只对已经解码好的像素做统一变换。两者可以叠加。</li>
-<li>只存成品：<code>--camera</code> 的图里三个保存节点和 <code>APNGFrameStats</code> 都接在镜头节点之后，
-  帧差 / 接缝检查看的就是最终像素。</li>
+<li>
+<p>只存成品：<code>--camera</code> 的图里三个保存节点和 <code>APNGFrameStats</code> 都接在镜头节点之后，
+  帧差 / 接缝检查看的就是最终像素。</p>
+</li>
+<li>
+<p>出图自检：<code>python scripts/check_anim.py &lt;文件&gt; --expect 24 --camera</code>。镜头位移会让整幅画面的
+  RGB 均值一起平移，<code>--camera</code> 把漂移阈值从 20 放宽到 45，避免把正常位移误判成闪色；
+  <code>emit_workflow.py --run</code> 检测到非中立镜头参数时会自动带上这个开关。</p>
+</li>
 </ul>
 <blockquote>
 <p>整段镜头 + 缓动的思路参考 <a href="https://github.com/ShmuelRonen/ComfyUI-AstralAnimator">ShmuelRonen/ComfyUI-AstralAnimator</a>。
