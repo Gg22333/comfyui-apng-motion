@@ -11,6 +11,8 @@
 同一个工作流，**8 / 24 / 30 / 60 帧**随便切；SDXL 与 Moss/DiT 两套环境都有可直接导入的 JSON。
 不靠 `batch_size` 堆帧，不逐帧落盘，一次 Queue 出三个成品文件。
 
+文档站：[gg22333.github.io/comfyui-apng-motion](https://gg22333.github.io/comfyui-apng-motion/)（右上角语言选择器可在原地切中/英）。
+
 ![预览](docs/assets/preview.webp)
 
 ![十一拍分镜](docs/assets/storyboard-diet.webp)

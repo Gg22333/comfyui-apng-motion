@@ -11,6 +11,8 @@ Make **coherent APNG / WebP / GIF** animations in ComfyUI from **3–8 keyframes
 just a face wiggling. One graph, **8 / 24 / 30 / 60 frames**, ready-to-import JSON for both SDXL and
 Moss/DiT. No frame-by-frame scripts, no per-frame image dumps, one queue → three files.
 
+Docs site: [gg22333.github.io/comfyui-apng-motion](https://gg22333.github.io/comfyui-apng-motion/) — the header language selector switches zh/en in place.
+
 ![preview](docs/assets/preview.webp)
 
 ![eleven-beat storyboard](docs/assets/storyboard-diet.webp)
