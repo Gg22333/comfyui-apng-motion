@@ -11,7 +11,8 @@
 | --- | --- | --- | --- |
 | UNet 系（SDXL） | [workflow-sdxl.json](assets/workflows/workflow-sdxl.json) | [workflow-sdxl-4beat.json](assets/workflows/workflow-sdxl-4beat.json) | `CheckpointLoaderSimple`，20–30 步，cfg 5–7 |
 | DiT 系（MOSS-Image） | [workflow-moss.json](assets/workflows/workflow-moss.json) | [workflow-moss-4beat.json](assets/workflows/workflow-moss-4beat.json) | `UNETLoader` + `CLIPLoader` + `VAELoader`，8 步，cfg 1.0。换 FLUX / SD3 / Krea / Anima 只换三个加载器 |
-| 预览用 | — | [workflow-sdxl-preview.json](assets/workflows/workflow-sdxl-preview.json) | 生成仓库那张预览图，同 seed、denoise 0.35 |
+| 预览用（SDXL，60 帧 4 拍） | — | [workflow-sdxl-preview.json](assets/workflows/workflow-sdxl-preview.json) | SDXL 预览样例，同 seed、`denoise 0.5`、30fps |
+| 预览用（MOSS，60 帧 11 拍） | — | [workflow-moss-preview.json](assets/workflows/workflow-moss-preview.json) | 生成仓库那张预览图，同 seed、`denoise 0.85`、20fps、3.00 秒 |
 
 24 帧是默认。想要 8 / 30 / 60 帧不用换文件：
 

@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 1.3.4 — 2026-11-24
+
+- **补齐预览工作流**：新增 `workflows/workflow-moss-preview.json`（60 帧 / 11 拍 / 20fps /
+  `denoise 0.85`），与 `assets/story.diet.json` 一致，就是首页那张预览图的配方；
+  `workflows/workflow-sdxl-preview.json` 按 `assets/story.preview.json` 重生成
+  （60 帧 / 4 拍 / `denoise 0.5`）。旧文件停在 24 帧，Note 也还是「SDXL / MOSS 两套」的旧标题。
+- **`workflows/README.md` 对齐 v1.3.3**：环境列改成「UNet（SDXL）/ DiT（MOSS-Image）」，
+  不再把 DiT 与模型并列；节点数改成实测值（67 / 70 / 69 / 72）；关键帧 denoise 改成 0.82–0.90；
+  帧数表改成 60 帧 / 20fps / 3.00 秒默认；提示词段收敛为三种方言，规则链接到 `docs/prompting.md`。
+- **文档下载表**：中英 `workflows.md` 的「预览用」拆成 SDXL / MOSS 两行，各自写真实参数。
+- **版本号**：1.3.3 → 1.3.4。
+
 ## 1.3.3 — 2026-11-24
 
 - **节奏参数化**：新增 `scripts/timing.py` 作为帧延时唯一真相源，导出

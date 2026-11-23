@@ -11,7 +11,8 @@ The download links below are mirrored into `docs/assets/workflows/` by `scripts/
 | --- | --- | --- | --- |
 | UNet family (SDXL) | [workflow-sdxl.json](../assets/workflows/workflow-sdxl.json) | [workflow-sdxl-4beat.json](../assets/workflows/workflow-sdxl-4beat.json) | `CheckpointLoaderSimple`, 20–30 steps, cfg 5–7 |
 | DiT family (MOSS-Image) | [workflow-moss.json](../assets/workflows/workflow-moss.json) | [workflow-moss-4beat.json](../assets/workflows/workflow-moss-4beat.json) | `UNETLoader` + `CLIPLoader` + `VAELoader`, 8 steps, cfg 1.0. Swap three loaders for FLUX / SD3 / Krea / Anima |
-| Preview | — | [workflow-sdxl-preview.json](../assets/workflows/workflow-sdxl-preview.json) | Builds the repo preview; same seed, denoise 0.35 |
+| Preview (SDXL, 60f / 4 beats) | — | [workflow-sdxl-preview.json](../assets/workflows/workflow-sdxl-preview.json) | SDXL sample: same seed, `denoise 0.5`, 30fps |
+| Preview (MOSS, 60f / 11 beats) | — | [workflow-moss-preview.json](../assets/workflows/workflow-moss-preview.json) | Builds the repo preview: same seed, `denoise 0.85`, 20fps, 3.00 s |
 
 24 frames is the default. For 8 / 30 / 60 frames you do not switch files:
 

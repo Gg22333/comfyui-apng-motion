@@ -5,13 +5,17 @@
 
 ## 清单
 
-| 文件 | 环境 | 拍数 | 节点数 | 加载方式 |
-| --- | --- | --- | --- | --- |
-| `workflow-sdxl.json` | SDXL | 3 | 67 | `CheckpointLoaderSimple` |
-| `workflow-sdxl-4beat.json` | SDXL | 4 | 70 | 同上 |
-| `workflow-moss.json` | Moss / DiT | 3 | 70 | `UNETLoader` + `CLIPLoader` + `VAELoader` |
-| `workflow-moss-4beat.json` | Moss / DiT | 4 | 73 | 同上 |
-| `workflow-sdxl-preview.json` | SDXL | 4 | 70 | 生成仓库预览图；同 seed、denoise 0.35 |
+| 文件 | 架构 / 模型 | 拍数 | 帧数 | 节点数 | 加载方式 |
+| --- | --- | --- | --- | --- | --- |
+| `workflow-sdxl.json` | UNet（SDXL） | 3 | 24 | 67 | `CheckpointLoaderSimple` |
+| `workflow-sdxl-4beat.json` | UNet（SDXL） | 4 | 24 | 70 | 同上 |
+| `workflow-moss.json` | DiT（MOSS-Image） | 3 | 24 | 69 | `UNETLoader` + `CLIPLoader` + `VAELoader` |
+| `workflow-moss-4beat.json` | DiT（MOSS-Image） | 4 | 24 | 72 | 同上 |
+| `workflow-sdxl-preview.json` | UNet（SDXL） | 4 | 60 | 142 | SDXL 预览样例：同 seed、`denoise 0.5`、30fps |
+| `workflow-moss-preview.json` | DiT（MOSS-Image） | 11 | 60 | 157 | 生成仓库那张预览图：同 seed、`denoise 0.85`、20fps |
+
+`workflow-moss-preview.json` 就是 `assets/story.diet.json`（60 帧 / 11 拍 / 20fps / 3.00 秒）对应的图，
+网页首页那张 `preview.webp` / `preview.gif` 由它出片后用 `scripts/make_preview.py` 缩到 384 生成。
 
 全部是同一套骨架：
 
@@ -23,7 +27,7 @@ K 个关键帧（KSampler，共用首帧 latent、同 seed）
   → SaveAnimatedPNG + SaveAnimatedWEBP + VHS_VideoCombine(GIF)
 ```
 
-N 默认 24，`emit_workflow.py --frames N --segs ...` 会自动扩缩插值/解码/batch 节点。
+N 默认 24，8 / 24 / 30 / 60 都能用：`emit_workflow.py --frames N --segs ...` 会自动扩缩插值 / 解码 / batch 节点。
 4 拍版本只是多一组 `CLIPTextEncode` + `KSampler` + `ConditioningCombine`。
 
 ## 画布上有哪些旋钮
@@ -34,8 +38,8 @@ N 默认 24，`emit_workflow.py --frames N --segs ...` 会自动扩缩插值/解
    改一处，所有关键帧生效。写镜头、光照、构图、全片动作约束。留空 = 旁路，不稀释单帧提示。
 2. **`CLIPTextEncode`「K0 首帧提示」/「K1 提示」/ …**
    每一拍独立可改。这是讲故事的地方。
-3. **`Note`「可调参数清单」+ `Note`「提示词写法（SDXL / MOSS 两套）」**
-   直接把可调项、两套提示词写法、帧数表写在画布上，不用翻文档。
+3. **`Note`「可调参数清单」+ `Note`「提示词写法（按架构分方言）」**
+   直接把可调项、三种方言、帧数与 fps 表写在画布上，不用翻文档。
 
 采样参数（seed / steps / cfg / denoise / sampler / scheduler）在每个 `KSampler` 上，逐拍可改。
 
@@ -44,70 +48,56 @@ N 默认 24，`emit_workflow.py --frames N --segs ...` 会自动扩缩插值/解
 1. 打开对应环境的 ComfyUI。
 2. 把 JSON 拖进画布，或用左侧工作流面板打开。
 3. **改 loader 里的模型名**为你本机实际文件：
-   - SDXL：`CheckpointLoaderSimple`
-   - Moss / DiT：`UNETLoader` + `CLIPLoader` + `VAELoader`
+   - UNet 系：`CheckpointLoaderSimple`（SD1.5 / SDXL）
+   - DiT 系：`UNETLoader` + `CLIPLoader` + `VAELoader`（MOSS-Image；换 FLUX / SD3 / Krea / Anima 只换这三个加载器）
 4. 确认三个保存节点的 `filename_prefix` 是 `APNG/final/{apng,webp,gif}/...`。
 5. **F5 刷新页面**，再 Queue —— 否则前端可能还持着旧 prefix。
 6. 成品落在 ComfyUI 自己的 `output/APNG/final/` 下。
 
 ## 环境要求
 
-| | SDXL | Moss / DiT |
+| | UNet 系（SDXL） | DiT 系（MOSS-Image） |
 | --- | --- | --- |
 | 显存 | 6 GB 起 | 8 GB 起（512/640 实测可用） |
 | 步数 | 20–30 | 8（DMD 蒸馏） |
 | CFG | 5–7 | 1.0 |
-| 关键帧 denoise | 0.35–0.45 | 0.50–0.80 |
+| 关键帧 denoise | 0.35–0.45 | 0.82–0.90 |
 | 文本编码器 | CLIP（逗号标签） | Qwen-VL（中文散文） |
 | 自定义节点 | VHS、KJNodes | 同左 |
 
-Moss 是 8 步蒸馏模型，**不要**把 steps 提到 20、cfg 提到 6 —— 只会更糊。
+**DiT 是架构，MOSS-Image 只是其中一个模型。** 写「Moss / DiT」并列等于把架构当成模型之外的类别。
+Flux、SD3、Krea、Anima 同样跑在 DiT 上，逐模型参数与出处见 [`docs/models.md`](../docs/models.md)。
+
+MOSS 是 8 步蒸馏模型，**不要**把 steps 提到 20、cfg 提到 6 —— 只会更糊。
 SDXL 是常规扩散，反而需要 20 步以上和 5 以上的 cfg。
 
 ## 帧数怎么选
 
-| 帧数 | fps | 时长 | 用途 |
+| 帧数 | 慢（叙事） | 标准 | 快（弹幕感） |
 | --- | --- | --- | --- |
-| 8 | 8 | 1.00 s | 单表情，体积最小 |
-| 24 | 10 | 2.40 s | 默认，聊天表情包 |
-| 30 | 15 | 2.00 s | 短动作 |
-| 60 | 30 | 2.00 s | 完整小故事，最顺 |
+| 8 | 6 fps / 1.33 s | 8 fps / 1.00 s | 10 fps / 0.80 s |
+| 24 | 8 fps / 3.00 s | 10 fps / 2.40 s | 12 fps / 2.00 s |
+| 30 | 10 fps / 3.00 s | 15 fps / 2.00 s | 20 fps / 1.50 s |
+| 60 | **20 fps / 3.00 s（默认）** | 25 fps / 2.40 s | 30 fps / 2.00 s |
+
+GIF 的帧延时只能量化到 10 ms（1 厘秒）：24fps 会被写成 40 ms（整片 2.4 s 不是 2.5 s），30fps 变成 1.8 s。
+20 / 25 fps 整除，不会走样；APNG / WebP 是毫秒精度，不受限。
+逐拍停留用剧情卡的 `dwell` / `ease`，出片后跑 `scripts/retime.py` 写入，像素不动、不重跑采样。
 
 不改节点也能改：`python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.diet.json --frames 60 --segs 10,12,4,12,10,12 --out my60.json`
 
 ## 提示词写法
 
-两套编码器的手感完全不同，别混。
+三种方言按**文本编码器**分，不是按模型名分：
 
-**SDXL / 传统 CLIP（tags）**
+| 文本编码器 | 模型例子 | 写法 |
+| --- | --- | --- |
+| CLIP | SD1.5 / SDXL | 英文逗号标签，重要标签往前，画风放最后 |
+| Qwen-VL | MOSS-Image / Krea 2 / Qwen-Image | 中文散文，换行分段，每段「。」结尾，不堆 quality tag |
+| T5 | FLUX.1 / SD3 | 英文自然语言句子，少堆标签 |
 
-```
-1girl, solo, full body, black short hair, blue eyes, beige hoodie,
-dark shorts, barefoot, bedroom at night, warm lamp light,
-〈这一拍动作〉,
-anime screencap, clean lineart, flat cel shading
-```
-
-- 英文逗号分隔，重要标签往前放。
-- 画风放最后：CLIP 对末尾 token 权重最高，写在中段会被动作词冲掉。
-- 写画面不写效果：`eyes wide, pupils small` 而不是 `shocked`。
-- 负向单独一个 `CLIPTextEncode`。
-
-**MOSS / Qwen-VL（moss_zh）**
-
-```
-一间温馨的小卧室，深夜。画面右侧有一盏暖色台灯，光从右前方斜照下来，落在木地板上。
-固定机位，平视，全身镜头，人物从头到脚完整入画，双手和双脚都留在画框里。
-小满：黑色短发，蓝色眼睛，身材微胖，穿着宽松的米色连帽卫衣和深色短裤，赤脚。
-小满盘腿坐在矮桌前，背挺得很直，双手叉在腰上，抬起下巴，嘴角只上扬几毫米。
-动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影。
-```
-
-- 中文散文，换行分段，每段以「。」结尾。
-- 不堆 quality tag：`masterpiece` / `best quality` 对它是噪声。
-- 用可测量的身体描述：`震惊 = 双眼睁大、瞳孔缩小、嘴张开`。
-- 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。
-- 负向同样用中文。
+完整规则、逐拍三段式、Layout 的 bbox 与 16 倍数约束见
+[`docs/prompting.md`](../docs/prompting.md) · [`docs/en/prompting.md`](../docs/en/prompting.md)。
 
 ## 不要做的事
 
