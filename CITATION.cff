@@ -7,7 +7,7 @@ authors:
 repository-code: "https://github.com/Gg22333/comfyui-apng-motion"
 url: "https://gg22333.github.io/comfyui-apng-motion/"
 license: MIT
-version: "1.3.9"
+version: "1.3.10"
 date-released: "2026-11-24"
 abstract: >-
   A ComfyUI skill and toolkit that turns 3-8 keyframes into coherent APNG, WebP

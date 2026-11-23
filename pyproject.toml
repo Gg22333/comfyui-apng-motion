@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-apng-motion"
-version = "1.3.9"
+version = "1.3.10"
 description = "Coherent 8-60 frame APNG/WebP/GIF skill and toolkit for ComfyUI"
 readme = "README.md"
 requires-python = ">=3.9"

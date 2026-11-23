@@ -98,6 +98,11 @@ Semantics:
 - Finished output only: with `--camera`, the three savers and `APNGFrameStats` all read the camera
   node, so the diff / seam verdicts describe the final pixels.
 
+- Self-check after rendering: `python scripts/check_anim.py <file> --expect 24 --camera`. A camera
+  move shifts the whole frame, so mean RGB drifts legitimately; `--camera` raises the drift limit
+  from 20 to 45 so motion is not misread as colour flashing. `emit_workflow.py --run` adds the flag
+  automatically when the camera widgets are off-centre.
+
 > The whole-sequence camera + easing idea was inspired by
 > [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator).
 > That project has no license file and **no code was reused**; this node is an independent

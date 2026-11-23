@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 1.3.10 — 2026-11-24
+
+**镜头出图的漂移误报修掉：`check_anim.py --camera`。**
+
+- 带 `--camera` 的动态图整段在位移，`check_anim.py` 原来用固定阈值 20 判 `color drift`，
+  正常平移 / 推近也会报 `FAIL: 颜色漂移 > 20，大概率是色块闪`。现在新增 `--camera`：
+  阈值放宽到 45，并明确标注「漂移来自整段位移，不等于色块闪」。
+- `emit_workflow.py --run` 会读工作流的镜头 widget；只要 `x/y/zoom/angle` 任一偏离中立位，
+  就自动给 `check_anim.py` 加 `--camera`，`--run` 不再对镜头图误报。
+- 新增 `tests/test_check_anim.py`（默认阈值仍报 FAIL、`--camera` 放宽、120 的离谱漂移照样 FAIL、
+  `--json` 带 `camera` 字段）与 `test_camera_motion_detection`。
+- `scripts/package.py`：`docs/assets` 的排除条件从「只排该层」改成「排整棵子树」，
+  本地先跑过 `sync_workflows.py` 再打包也不会把文档镜像重复塞进 zip。
+- 版本号：1.3.9 → 1.3.10。
+
 ## 1.3.9 — 2026-11-24
 
 **整段镜头运动：平移 / 缩放 / 旋转 + 缓动，一次作用于全部帧。**

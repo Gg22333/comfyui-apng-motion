@@ -21,7 +21,7 @@ identical_pairs > 0 表示有完全相同的相邻帧：Pillow 写 APNG 时会�
     表演拍  full >= 2.0     关键帧之间要有真实换姿势
     下半身  lower >= 1.0    只动脸不动身体，说明构图被裁成半身了
     循环接点 0.3 <= full <= 6.0
-    颜色漂移 drift <= 20
+    颜色漂移 drift <= 20（--camera 时放宽到 45：镜头位移本来就会改变整幅构图）
 """
 import argparse
 import json
@@ -56,6 +56,8 @@ def main():
     ap.add_argument("--story", default="", help="剧情卡 JSON；从里面读 segs")
     ap.add_argument("--strict", action="store_true", help="拍检查失败也返回退出码 1")
     ap.add_argument("--json", action="store_true", help="只输出 JSON")
+    ap.add_argument("--camera", action="store_true",
+                    help="画面带整段镜头运动（APNG Camera Move）；放宽颜色漂移判定，避免把位移误报成闪色")
     args = ap.parse_args()
 
     if not os.path.exists(args.path):
@@ -103,6 +105,7 @@ def main():
         "diff_avg": round(sum(diffs) / len(diffs), 2) if diffs else None,
         "identical_pairs": identical,
         "color_drift": round(drift, 2),
+        "camera": bool(args.camera),
     }
 
     # ---- 逐拍检查 ----
@@ -170,10 +173,16 @@ def main():
             print(f"timing  : {res['duration_ms']} ms/frame  total={res['total_s']} s")
         print(f"diff    : min={res['diff_min']}  max={res['diff_max']}  avg={res['diff_avg']}")
         print(f"color   : drift={res['color_drift']}（相对第 1 帧的平均 RGB 最大偏移）")
-        if drift > 20:
-            print("FAIL    : 颜色漂移 > 20，大概率是色块闪，回去查 denoise 和提示词里的光照词")
-        elif drift > 6:
+        lim_fail, lim_warn = (45, 20) if args.camera else (20, 6)
+        if drift > lim_fail:
+            if args.camera:
+                print("FAIL    : 颜色漂移 > %d，超过镜头运动的合理位移，先确认 x/y/zoom/angle 没写太大" % lim_fail)
+            else:
+                print("FAIL    : 颜色漂移 > %d，大概率是色块闪，回去查 denoise 和提示词里的光照词" % lim_fail)
+        elif drift > lim_warn:
             print("WARN    : 颜色漂移偏大，检查关键帧里是否有 eyes closed / 光照词变化")
+        if args.camera:
+            print("note    : --camera 已放宽漂移阈值；这里的漂移来自整段位移，不等于色块闪")
         if identical:
             print(f"WARN    : {identical} 对相邻帧完全相同，APNG 会被合并、时长相加")
         elif diffs and min(diffs) < 0.15:

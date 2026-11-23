@@ -92,6 +92,10 @@ K 个关键帧 KSampler（同 seed，首帧 latent）
 - 只存成品：`--camera` 的图里三个保存节点和 `APNGFrameStats` 都接在镜头节点之后，
   帧差 / 接缝检查看的就是最终像素。
 
+- 出图自检：`python scripts/check_anim.py <文件> --expect 24 --camera`。镜头位移会让整幅画面的
+  RGB 均值一起平移，`--camera` 把漂移阈值从 20 放宽到 45，避免把正常位移误判成闪色；
+  `emit_workflow.py --run` 检测到非中立镜头参数时会自动带上这个开关。
+
 > 整段镜头 + 缓动的思路参考 [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator)。
 > 该仓库没有许可证文件，**未复用任何代码**；本节点是 `torch.nn.functional.affine_grid` + `grid_sample` 的独立实现。
 

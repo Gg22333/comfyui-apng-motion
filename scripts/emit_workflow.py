@@ -1088,6 +1088,23 @@ def validate(wf):
     return probs
 
 
+def camera_motion(wf):
+    """工作流里镜头参数是否真的偏离中立位（x=y=angle=0, zoom=1）。"""
+    for n in wf.get("nodes") or []:
+        if n.get("type") != DYN_CAMERA:
+            continue
+        w = n.get("widgets_values") or []
+        if len(w) < 4:
+            return False
+        try:
+            vals = [float(w[0]), float(w[1]), float(w[2]), float(w[3])]
+        except (TypeError, ValueError):
+            return False
+        if any(abs(v - d) > 1e-9 for v, d in zip(vals, (0.0, 0.0, 1.0, 0.0))):
+            return True
+    return False
+
+
 def run_it(wf, profile_path, segs=None):
     prof = L.load_json(profile_path) if profile_path else {}
     if not prof:
@@ -1126,6 +1143,8 @@ def run_it(wf, profile_path, segs=None):
                 chk = os.path.join(os.path.dirname(os.path.abspath(__file__)), "check_anim.py")
                 # os.system 在 Windows 上对多段带引号路径会报 "filename syntax is incorrect"
                 cmd = [prof.get("python") or sys.executable, chk, p, "--expect", str(nframes)]
+                if camera_motion(wf):
+                    cmd.append("--camera")
                 if segs:
                     cmd += ["--segs", ",".join(str(x) for x in segs)]
                 subprocess.call(cmd)

@@ -248,6 +248,21 @@ def test_camera_validate_rejects_bad_widgets_and_rewire(tmp_path):
     assert "镜头节点" in log, log
 
 
+def test_camera_motion_detection():
+    import emit_workflow as E
+    assert E.camera_motion({"nodes": []}) is False
+    neutral = {"nodes": [{"type": "APNGCameraMove",
+                          "widgets_values": [0, 0, 1, 0, "sine", True, "reflection"]}]}
+    assert E.camera_motion(neutral) is False
+    for i in range(4):
+        w = [0, 0, 1, 0, "sine", True, "reflection"]
+        w[i] = [8, -8, 1.2, 15][i]
+        moved = {"nodes": [{"type": "APNGCameraMove", "widgets_values": w}]}
+        assert E.camera_motion(moved) is True, i
+    broken = {"nodes": [{"type": "APNGCameraMove", "widgets_values": ["x"]}]}
+    assert E.camera_motion(broken) is False
+
+
 def test_camera_node_rejected_in_static_graph(tmp_path):
     out = tmp_path / "static.json"
     code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),

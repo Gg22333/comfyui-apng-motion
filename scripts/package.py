@@ -45,7 +45,8 @@ def main():
                 continue
             if rel == "profiles" and not a.with_profiles:
                 continue
-            if rel.replace("\\", "/") == "docs/assets":
+            if rel.replace("\\", "/").startswith("docs/assets"):
+                # 文档站的镜像目录（sync_workflows.py 生成），不进分发包
                 continue
             files.append(os.path.relpath(os.path.join(root, f), SKILL))
     files.sort()
