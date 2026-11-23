@@ -114,7 +114,7 @@ The contract is loader-agnostic:
 | SD 1.5 | `CheckpointLoaderSimple` | 0.45-0.55 |
 | SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35-0.45 |
 | FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45-0.55 |
-| Moss / DiT | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.50-0.55 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.82-0.90 |
 
 Denoise values are field experience. On SDXL, above ~0.42 the keyframe redraw starts changing
 clothes and background, and latent interpolation turns that into colour blotches.
@@ -147,8 +147,8 @@ python scripts/check_anim.py output/APNG/final/apng/anim60_00001_.png --expect 6
 ```
 
 Watch four values: `frames=N` (matching `--frames`), `loop=0`, `identical_pairs=0`, and `color_drift`.
-Moss at denoise 0.5 measures around 18 and still looks fine; SDXL at 0.35 measures about 2.6. Above 20
-means the keyframe redraw is changing too much.
+Moss at denoise 0.85 measures 9–15; cold screen light or closed-eye keyframes push it higher. SDXL at
+0.35 measures about 2.6. Above 20 means the keyframe redraw is changing too much.
 
 ## Where files land
 

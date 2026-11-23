@@ -13,7 +13,7 @@ Moss/DiT. No frame-by-frame scripts, no per-frame image dumps, one queue → thr
 
 ![preview](docs/assets/preview.webp)
 
-![six-beat storyboard](docs/assets/storyboard-diet.webp)
+![eleven-beat storyboard](docs/assets/storyboard-diet.webp)
 
 ---
 
@@ -84,21 +84,24 @@ the beats, and if you omit it the split is even.
 | 12 | 12 | 1.0 s | light sticker | `3,3,3,3` |
 | 24 | 10 | 2.4 s | default; expression loop | `6,7,6,5` |
 | 30 | 15 | 2.0 s | five-beat story, half-body action | `8,8,7,7` |
-| 60 | 30 | 2.0 s | smooth web/Discord preview, five-beat story | `15,15,15,15` |
+| 60 | 30 | 2.0 s | smooth web/Discord preview, eleven-beat mini story | `5,5,4,7,6,7,5,6,5,5,5` |
 
 Sampling cost stays at K passes (one per keyframe) no matter which row you pick — only decode count and
 file size scale with N. For the same content a 60-frame APNG is roughly 2.5x the size of 24; see [docs/formats.md](docs/formats.md).
-The preview above is the six-beat story *Diet Betrayal* — 60 frames, 30 fps, Moss/DiT: sits up determined →
-slumps onto the table → reaches for the phone → hugs the fried-chicken bucket → sneaks a bite → hugs the salad
-bowl again, fist raised, "tomorrow for sure". Recipe: `assets/story.diet.json`, `prompt_mode: moss_zh`,
-segments `10/12/4/12/10/12`, denoise 0.85, 640×640.
+The preview above is the eleven-beat story *Diet Betrayal* — 60 frames, 30 fps, Moss/DiT: sits up
+determined → shoulders drop → face down on the table → looks at the floor → reaches for the phone →
+stares at the screen → hugs the chicken bucket → reaches inside → sneaks a bite → puts it down → holds
+the salad bowl, fist raised, "tomorrow for sure". Recipe: `assets/story.diet.json`,
+`prompt_mode: moss_zh`, segments `5,5,4,7,6,7,5,6,5,5,5`, denoise 0.85, 640×640.
+`LatentInterpolate` fills the in-betweens; each keyframe appears once on the timeline, so no seam holds
+the same frame twice. Frame budgeting: [docs/en/workflows.md](docs/en/workflows.md#how-to-lay-out-transition-frames).
 The contact sheet below it is sampled from the real output by `--segs`, not a mock-up.
 
 ## Motion library
 
 `assets/motion-presets.json` ships 17 ready-to-use beat recipes: 9 emotions (laugh / cry / shock / angry / smug / sigh / panic / sleepy / heart hands),
 5 gestures (wave / nod / shake / thumbs up / think), 2 five-beat stories (rainy walk / morning coffee),
-and one six-beat full-body story (`diet-betrayal`, `moss_zh` Chinese prose).
+and one eleven-beat full-body story (`diet-betrayal`, `moss_zh` Chinese prose).
 `scripts/make_story.py` merges a preset with your character lock and writes a story card for `emit_workflow.py`:
 
 ```bash
@@ -175,7 +178,7 @@ anime screencap, clean lineart, flat cel shading
 - State framing explicitly: locked camera, eye level, full body, head to toe inside the frame.
 - Chinese negative prompt.
 
-Full six-beat example: [`assets/story.diet.json`](assets/story.diet.json);
+Full eleven-beat example: [`assets/story.diet.json`](assets/story.diet.json);
 `python scripts/make_story.py --preset diet-betrayal --out my.json` regenerates it.
 
 ## Why not `batch_size`

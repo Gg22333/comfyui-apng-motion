@@ -10,6 +10,7 @@ on:
       - "workflows/**"
       - "assets/**"
       - "scripts/sync_workflows.py"
+      - "requirements-docs.txt"
   workflow_dispatch:
 
 permissions:
@@ -27,5 +28,5 @@ jobs:
           python-version: "3.12"
       - name: Mirror workflows and presets into docs/assets
         run: python scripts/sync_workflows.py
-      - run: pip install mkdocs-material
+      - run: pip install -r requirements-docs.txt
       - run: mkdocs gh-deploy --force

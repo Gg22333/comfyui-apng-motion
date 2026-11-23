@@ -465,7 +465,7 @@ NOTE_PARAMS_TEXT = (
     "  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n"
     "每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n"
     "采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n"
-    "  SDXL 关键帧 denoise 建议 0.35-0.45；Moss 0.50-0.80。越低越稳，越高越自由但容易出现色斑。\n"
+    "  SDXL 关键帧 denoise 建议 0.35-0.45；Moss 0.82-0.90（低于 0.80 几乎不动）。越高越自由但容易出现色斑。\n"
     "节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n"
     "速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长；24 @10fps = 2.4 秒，60 @30fps = 2 秒。\n"
     "命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n"

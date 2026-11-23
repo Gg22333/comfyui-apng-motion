@@ -13,7 +13,7 @@
 
 ![预览](docs/assets/preview.webp)
 
-![六拍分镜](docs/assets/storyboard-diet.webp)
+![十一拍分镜](docs/assets/storyboard-diet.webp)
 
 ---
 
@@ -64,7 +64,7 @@ N 个 `LatentInterpolate` + N 个 `VAEDecode` + `ImageBatchMulti(N)` + 3 个保�
 | SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 | 原生 512×512 |
 | SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 | 原生 1024×1024，512 也能跑 |
 | FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 | 采样器前加 `FluxGuidance` |
-| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.70 | 8 步 DMD，cfg 1.0；0.5 几乎不动，0.7 有可见头部动作，>0.8 开始漂 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 | 8 步 DMD，cfg 1.0；低于 0.80 关键帧几乎不动（整片相邻帧差 0.03），0.85 起动作才出得来；漂移靠同 seed、同首帧 latent、固定光照压住 |
 | 任意微调模型 | 跟随其基座 | 先 0.35 | 越低越稳，越高越自由 |
 
 denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳定上限约 0.35**：
@@ -83,20 +83,22 @@ denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳�
 | 12 | 12 | 1.0 s | 轻量贴纸 | `3,3,3,3` |
 | 24 | 10 | 2.4 s | 默认；表情循环 | `6,7,6,5` |
 | 30 | 15 | 2.0 s | 五拍故事、半身动作 | `8,8,7,7` |
-| 60 | 30 | 2.0 s | 网页/Discord 顺滑预览、五拍故事 | `15,15,15,15` |
+| 60 | 30 | 2.0 s | 网页/Discord 顺滑预览、十一拍小故事 | `5,5,4,7,6,7,5,6,5,5,5` |
 
 不管选哪一行，采样次数都还是 K 次（每个关键帧一次），只有解码次数和文件体积随 N 线性增长。
 同内容下 60 帧 APNG 约为 24 帧的 2.5 倍；画面细节越多单帧越大，实测雨夜 60 帧 APNG 为 17 MB。见 [docs/formats.md](docs/formats.md)。
-上面是 **60 帧 / 30fps / Moss-DiT** 的六拍故事《减肥破功》：坐直立志 → 趴桌绝望 → 侧身够手机 →
-抱炸鸡桶 → 举鸡腿偷吃 → 抱回沙拉碗握拳「明天再减」。配方在
-[`assets/story.diet.json`](assets/story.diet.json)，`prompt_mode: moss_zh`，节拍 `10/12/4/12/10/12`，
-denoise 0.85，640×640。
+上面是 **60 帧 / 30fps / Moss-DiT** 的十一拍故事《减肥破功》：坐直立志 → 肩塌 → 趴桌 → 抬头看地板 →
+侧身够手机 → 低头看屏 → 抱炸鸡桶 → 伸手进桶 → 举鸡腿偷吃 → 放下 → 扶住沙拉碗握拳「明天再减」。
+配方在 [`assets/story.diet.json`](assets/story.diet.json)，`prompt_mode: moss_zh`，
+节拍 `5,5,4,7,6,7,5,6,5,5,5`，denoise 0.85，640×640。
+每拍之间由 `LatentInterpolate` 补过渡帧，关键帧在时间线上只出现一次，接缝不会停一帧；
+分帧方法见 [docs/workflows.md](docs/workflows.md#过渡帧怎么排)。
 下面那张联系表是按 `--segs` 从成片里抽出来的真实关键拍，不是示意图。
 
 ## 动作库
 
 `assets/motion-presets.json` 带 17 组可直接用的动作节拍：9 组情绪（大笑 / 大哭 / 震惊 / 生气 / 得意 / 无语 / 慌张 / 困 / 比心）、
-5 组动作（打招呼 / 点头 / 摇头 / 点赞 / 思考）、2 组五拍小故事（雨天出门 / 早八续命）、1 组六拍全身故事（减肥破功，`moss_zh` 中文散文）。
+5 组动作（打招呼 / 点头 / 摇头 / 点赞 / 思考）、2 组五拍小故事（雨天出门 / 早八续命）、1 组十一拍全身故事（减肥破功，`moss_zh` 中文散文）。
 `scripts/make_story.py` 把它们和你的角色锁定句拼成剧情卡，再交给 `emit_workflow.py`：
 
 ```bash
@@ -173,7 +175,7 @@ anime screencap, clean lineart, flat cel shading
 - 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。
 - 负向用中文。
 
-完整六拍范例：[`assets/story.diet.json`](assets/story.diet.json)；
+完整十一拍范例：[`assets/story.diet.json`](assets/story.diet.json)；
 `python scripts/make_story.py --preset diet-betrayal --out my.json` 可以直接生成。
 
 ## 为什么不用 batch_size

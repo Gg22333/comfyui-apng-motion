@@ -130,7 +130,7 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-s
 | SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 |
 | SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 |
 | FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 |
-| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.55 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 |
 
 denoise 是经验值。同 seed 下 SDXL 超过 0.42 就开始改衣服和背景，插值时出现色斑；
 要更大表情用 0.45–0.5 并接受漂移，或改用面部局部重绘。
@@ -163,7 +163,7 @@ python check_anim.py output/APNG/final/apng/anim60_00001_.png --expect 60
 ```
 
 关注四项：`frames=N`（与 `--frames` 一致）、`loop=0`、`identical_pairs=0`、`color_drift` 尽量低
-（Moss 0.5 档实测 18 上下仍可看，SDXL 0.35 档约 2.6；超过 20 基本就是关键帧重绘过头）。
+（Moss 0.85 档实测 9–15，换冷光或闭眼关键帧会更高；SDXL 0.35 档约 2.6；超过 20 基本就是关键帧重绘过头）。
 
 ## 落盘验收
 

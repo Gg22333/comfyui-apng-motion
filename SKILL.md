@@ -29,7 +29,7 @@ N 由 `--frames` 决定（默认 24，支持 8–60 任意值），插值/解码
 | 模型 | `checkpoints\NovaAnimeILV190.safetensors` | `diffusion_models\moss_image_base_8stepdmd_int8_convrot.safetensors` + `text_encoders\qwen3.5_9b_moss_image_sft_w4a8_gptq.safetensors`（type=`moss_image`）+ `vae\moss_image_vae_bf16.safetensors` |
 | 工作流 | `user\default\workflows\APNG多帧合成-SDXL.json` | `user\default\workflows\APNG多帧合成-Moss.json` |
 | 默认端口 | 8188（验证用 8190） | 8189（验证用 8191） |
-| 关键帧 denoise | 0.4 | 0.5 |
+| 关键帧 denoise | 0.4 | 0.85（0.82–0.90） |
 | 采样 | 20 步 / cfg 6.0 / euler_ancestral / normal | 8 步 / cfg 1.0 / euler / simple |
 
 两套工作流**不是同一份**：加载器和采样参数不同，但节点结构一致；帧数由 `--frames` 决定，曲线长度跟着帧数走。
@@ -52,7 +52,7 @@ netstat -ano | findstr ":8190 :8191"
 | 新（denoise 0.35 + linear + 全局动作） | xl | 0.12 – 2.35，平均 1.08 | 2.63 | 当前默认，已不闪 |
 | 旧（denoise 0.55 + 幂曲线） | xl | 0.95 – 5.42，平均 2.34 | 3.07 | 中段出现色斑，已弃用 |
 | 历史 | Dit | 0.06 – 3.04，平均 1.43 | — | 结构同步到新默认，未重测成片 |
-| 60 帧展示图（Moss-DiT，denoise 0.5，30fps） | Dit | 0.75 avg / 1.42 max | 7.19 | 当前仓库预览；兜帽遮脸，表情幅度偏小 |
+| 60 帧展示图（Moss-DiT，denoise 0.85，30fps，十一拍） | Dit | 1.72 – 5.00，平均 2.78 | 14.75 | 当前仓库预览；接缝无停顿，桌子与白碗全程在画面里；漂移来自手机冷光和闭眼拍 |
 
 xl 的稳定上限约 **denoise 0.35**：0.42 时颜色漂移升到 8 左右，衣服和背景开始被重绘；0.45 时衣服变蓝。
 要更大表情，优先加帧数或做面部局部重绘，不要直接抬 denoise。
@@ -105,7 +105,7 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story asse
 | SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 |
 | SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 |
 | FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55（前面加 `FluxGuidance`） |
-| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.55 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.82–0.90 |
 
 ### 0.5.1 工作流里能改什么
 
@@ -353,7 +353,7 @@ Pillow 写 APNG 时，如果两帧像素完全相同，会**丢掉这一帧并�
 1. **整体快慢 → 改 fps**。10 偏稳，9 更慢，12 更利落。24 帧 @10fps = 2.4s，@12fps = 2s。
 2. **某一段太快 → 改那一段的比例密度**。让相邻 ratio 差值变小 = 该段变慢。
 3. **要停顿 → 加"贴着关键帧"的帧**。例如 0.08 之后再来一个 0.04，再切到 0.92。
-4. **要动作更明显 → 先加 A/B 的提示词差异，再加 denoise**（xl 0.4→0.45，Dit 0.5→0.55 上限）。
+4. **要动作更明显 → 先加 A/B 的提示词差异，再加 denoise**（xl 0.4→0.45；Dit 0.85→0.90 上限）。
 5. **不要用降帧数换慢**。12 帧放慢只会变成幻灯片。
 
 手感基准（实测可接受区间）：
@@ -390,8 +390,8 @@ MOSS 读的是自然语言语义，不读逗号标签权重。堆 `masterpiece, 
 构图必须写死：固定机位、平视、全身镜头、从头到脚完整入画、双手双脚留在画框内。
 负向也用中文，放在单独的 `CLIPTextEncode`。
 
-完整范例 `assets/story.diet.json`：六拍 / 60 帧 / 30fps / 640×640，节拍 `10,12,4,12,10,12`，
-denoise 0.75。生成命令：
+完整范例 `assets/story.diet.json`：十一拍 / 60 帧 / 30fps / 640×640，节拍 `5,5,4,7,6,7,5,6,5,5,5`，
+denoise 0.85。生成命令：
 
 ```bash
 python scripts/emit_workflow.py --base workflows/workflow-moss.json \
@@ -505,9 +505,10 @@ python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --f
 | 情绪 | `laugh` `cry` `shock` `angry` `smug` `sigh` `panic` `sleepy` `love` |
 | 动作 | `wave` `nod` `shake` `thumbsup` `think` |
 | 五拍故事 | `rainy-walk` `morning-coffee` |
-| 六拍全身故事 | `diet-betrayal`（`moss_zh` 中文散文，60 帧） |
+| 十一拍全身故事 | `diet-betrayal`（`moss_zh` 中文散文，60 帧） |
 
-动作语法固定为五拍：**K0 静息（循环接点 + 封面）→ K1 预备（反方向蓄力）→ K2 主动作（最大剪影变化）→ K3 余震（回落）→ 回到 K0**。
+表情/动作卡固定为五拍：**K0 静息（循环接点 + 封面）→ K1 预备（反方向蓄力）→ K2 主动作（最大剪影变化）→ K3 余震（回落）→ 回到 K0**。
+故事卡不受五拍限制：`diet-betrayal` 是 11 拍 60 帧，每一拍只推进一步，大动作多给帧。
 每拍只改 1–2 个部位；`style` 必须放在提示词末尾。完整说明与平台规格（Telegram 512/≤3s/60fps、LINE APNG 5–20 帧/≤4s/≤1MB、微信 GIF 240²/≤500KB）
 见 [docs/motion-presets.md](docs/motion-presets.md)。
 
@@ -723,7 +724,7 @@ output\APNG\
 | `scripts/make_storyboard.py` | 按 segs 抽关键拍拼联系表 → `docs/assets/storyboard-*.webp` |
 | `scripts/sync_workflows.py` | `workflows/` 与 `assets/` → `docs/assets/` 同步，`--check` 查漂移 |
 | `scripts/make_story.py` | 从 `assets/motion-presets.json` 生成剧情卡；校验 frames/segs/beats |
-| `assets/motion-presets.json` | 17 组动作节拍（情绪 / 动作 / 五拍故事 / 六拍 moss_zh 故事） |
+| `assets/motion-presets.json` | 17 组动作节拍（情绪 / 动作 / 五拍故事 / 十一拍 moss_zh 故事） |
 | `scripts/make_curve.py` | 生成 ratio 曲线，支持 3–6 段：`--segs 6,7,6,5` 出 24 值 |
 | `scripts/detect_env.py` | 扫本机 ComfyUI → `profiles/*.json`（换机器第一步） |
 | `scripts/doctor.py` | profile 体检：模型、插件、节点、端口、输出目录 |
@@ -731,7 +732,7 @@ output\APNG\
 | `scripts/comfy_lib.py` | 共用库（profile / HTTP / 曲线 / UI→API） |
 | `profiles/xl.json` `profiles/dit.json` | 本机探测结果，换机器重新生成 |
 | `assets/story.example.json` `assets/story.4beat.json` | 剧情卡样例（3 拍 / 4 拍，tags 模式） |
-| `assets/story.diet.json` | 六拍全身故事（`moss_zh` 中文散文） |
+| `assets/story.diet.json` | 十一拍全身故事（`moss_zh` 中文散文，60 帧） |
 | `workflows/workflow-sdxl-4beat.json` `workflows/workflow-moss-4beat.json` | 已扩好的 4 拍工作流 |
 | `assets/node_schema.json` | 节点定义兜底（服务器 `/object_info` 取不到时用） |
 | `scripts/check_deps.py` | 依赖自检：Python / Pillow / curl / profiles 里的 ComfyUI 与插件 |

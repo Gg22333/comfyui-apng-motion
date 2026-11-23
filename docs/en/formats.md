@@ -141,10 +141,11 @@ Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is no
 | File | Size | Frames | Bytes | Adjacent-frame diff (avg) |
 | --- | --- | --- | --- | --- |
 | Old GIF (VHS direct, 512, `sierra2_4a`) | 512x512 | 24 | 3.45 MB | 2.49 |
-| New GIF (global palette + `dither=none`) | 384x384 | 60 | 2.13 MB | 1.94 |
-| New WebP (quality 100, keeps all 60 frames) | 384x384 | 60 | 1.46 MB | 1.82 |
+| New GIF (global palette + `dither=none`) | 384x384 | 60 | 2.62 MB | 2.98 |
+| New WebP (quality 100, keeps all 60 frames) | 384x384 | 60 | 1.53 MB | 2.77 |
 
-The current preview is 60 frames / 30 fps / Moss-DiT, recipe in `assets/story.preview.json`.
+The current preview is the eleven-beat story *Diet Betrayal*: 60 frames / 30 fps / Moss-DiT, recipe in
+`assets/story.diet.json` (`segs = 5,5,4,7,6,7,5,6,5,5,5`, denoise 0.85).
 
 WebP has a frame-count trap: libwebp's animation encoder merges adjacent frames that are nearly identical after compression.
 At quality 90, 60 frames become 58 (same duration, wrong metadata); quality 100 keeps all 60, at the cost of
@@ -165,7 +166,7 @@ Check the APNG first, then the GIF.
 
 | Source | How to recognise | Fix |
 | --- | --- | --- |
-| Generation: keyframe denoise too high | APNG adjacent diff avg > 2, patchy blotches on face/clothes | drop keyframe denoise to 0.35-0.40; same seed; same first latent |
+| Generation: wrong keyframe denoise | APNG adjacent diff avg > 2 with patchy blotches, or the film barely moves | SDXL 0.35-0.40; Moss 0.82-0.90 (below 0.80 it barely moves). Same seed, same first latent, and check whether lighting words change per beat |
 | Generation: uneven curve | diff series has 4-5 spikes in the middle | `--curve linear`; avoid `snap` |
 | Encoding: per-frame GIF palette | APNG clean, GIF shows blocky noise | global palette + no dither; or use WebP |
 | Loop seam | last frame to first frame diff is large | bring the last beat back to the first pose |

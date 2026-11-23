@@ -1,6 +1,6 @@
 {
   "name": "comfyui-apng-motion",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "schema": 1,
   "summary": "ComfyUI 连贯 APNG/WebP/GIF：8/24/30/60 帧可变、关键帧 latent 插值、17 组动作库、tags 与 moss_zh 双提示词方言、SDXL + Moss/DiT 双环境",
   "license": "MIT",

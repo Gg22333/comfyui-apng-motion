@@ -13,7 +13,7 @@ Frame-by-frame img2img needs 24 samples and accumulates drift (black hair turnin
 GIF delay is in 1/100 s; 10 fps = 10cs exactly. 12 fps becomes 8cs (12.5 fps).
 
 **Why is the motion so small?**
-Raise keyframe `denoise` (xl 0.4 → 0.45, Moss 0.5 → 0.55) or increase the difference between A/B prompts. Do not add frames.
+Raise keyframe `denoise` (xl 0.4 → 0.45; Moss 0.85 → 0.90) or increase the difference between A/B prompts. Do not add frames.
 
 **Can the character walk?**
 No. This route has no real trajectory. Walking and turning need a ControlNet pose sequence or a video model (Wan / LTX).

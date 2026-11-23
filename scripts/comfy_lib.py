@@ -150,11 +150,14 @@ def wait_history(base, prompt_id, timeout=1800, poll=2.0):
 
 
 def build_curve(segs, starts=None, ends=None, powers=None, curve="linear"):
-    """生成 24 帧的插值比例。
+    """生成 N 帧的插值比例（N = sum(segs)）。
 
-    默认 linear：每段从 1.0 均匀降到 0.0，步长恒定，视觉最稳。
-    curve=ease：smootherstep，两端慢、中间快，动作更自然但中段单帧位移更大。
-    curve=snap：旧版幂曲线，前段几乎静止、末段猛冲，容易看成跳帧。
+    默认 linear：段内匀速推进。每个关键帧只出现一次：
+      - 段 0 第 0 帧 ratio=1.0（K0 封面），段 0 末帧 ratio=0.0（正好是 K1）；
+      - 其余段从 1/cnt 起步，末帧 ratio=0.0（正好是下一关键帧）。
+    旧实现每段都从 1.0 走到 0.0，段尾与下一段段首是同一个关键帧，
+    播放时每个接缝都会停一帧（实测相邻帧差 0.06）。
+    curve=ease：smootherstep，两端慢、中间快；curve=snap：旧版幂曲线。
     显式给 starts/ends/powers 时按旧公式计算，保持向后兼容。
     """
     n = len(segs)
@@ -168,21 +171,37 @@ def build_curve(segs, starts=None, ends=None, powers=None, curve="linear"):
                 t = i / (cnt - 1) if cnt > 1 else 1.0
                 raw.append(s + (e - s) * (t ** p))
     else:
-        for cnt in segs:
-            for i in range(cnt):
-                u = i / (cnt - 1) if cnt > 1 else 1.0
+        out = []
+        last = len(segs) - 1
+        for si, cnt in enumerate(segs):
+            segvals = []
+            for j in range(cnt):
+                if si == 0:
+                    u = j / (cnt - 1) if cnt > 1 else 1.0
+                elif si == last:
+                    # 最后一段插回 K0；末帧停在 K0 前一格，循环播放时接回第 0 帧
+                    # 才不会因为首末帧完全相同而多停一帧。
+                    u = (j + 1) / (cnt + 1) if cnt else 0.0
+                else:
+                    u = (j + 1) / cnt if cnt else 1.0
                 if curve == "ease":
                     t = u * u * u * (u * (u * 6 - 15) + 10)
                 elif curve == "snap":
                     t = u ** 1.8
                 else:
                     t = u
-                raw.append(1.0 - t)
+                v = round(min(max(1.0 - t, 0.0), 1.0), 3)
+                # 同一段内必须严格递减；跨段出现相同数值是安全的（latent 对不同）。
+                if segvals and v >= segvals[-1]:
+                    v = round(max(0.0, segvals[-1] - 0.001), 3)
+                segvals.append(v)
+            out.extend(segvals)
+        return out
     used = set()
     out = []
     for r in raw:
         v = round(min(max(r, 0.0), 1.0), 3)
-        if v in used:  # 全局唯一，不只看相邻：两段各出一个 0.665 也会被 Pillow 合并
+        if v in used:
             for k in range(1, 250):
                 hit = None
                 for cand in (round(v + k * 0.004, 3), round(v - k * 0.004, 3)):

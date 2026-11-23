@@ -48,7 +48,62 @@ plain tensor ops, so doubling frames does not double compute.
 Beat length follows the `LatentInterpolate` distribution: more interpolation nodes in a segment means
 a slower beat. `emit_workflow.py --segs` lays this out for you.
 
+## How to lay out transition frames
+
+Sixty frames are not sixty new images. Sampling still runs K times (once per keyframe); the frames in
+between are points on the latent line between two keyframes, decoded one by one. So "transition" has two
+layers:
+
+1. **Inside a beat** — each frame's ratio moves from the source keyframe toward the target keyframe.
+   The segment's frame count is how many steps that move is cut into.
+2. **Between beats** — the last frame of a segment lands on the target keyframe; the next segment
+   continues from there. A keyframe appears exactly once on the timeline.
+
+### Where the seam stall came from
+
+The old curve ramped every segment from `1.0` to `0.0`:
+
+```
+seg0: K0 … K1(0.0)
+seg1: K1(1.0) … K2(0.0)   ← K1 again
+```
+
+The end of one segment and the start of the next were the same keyframe, i.e. the same image twice.
+Measured adjacent-frame difference at those seams was `0.06` — it reads as a freeze. The current layout:
+
+- segment 0 frame 0 is `ratio=1.0` (the K0 cover), and its last frame is `ratio=0.0`, exactly K1;
+- every middle segment starts at `1/cnt` and ends at `ratio=0.0`, exactly the next keyframe;
+- the last segment interpolates back to K0 but stops one step short, so looping into frame 0 does not
+  hold the same image for an extra frame.
+
+### Budget the frames per beat
+
+`segs` holds the frame count of each segment and must sum to `frames`. One rule: **the bigger the pose
+change between the two ends of a beat, the more frames it gets.**
+
+| What the beat does | Frames (out of 60) |
+| --- | --- |
+| shoulders, head or mouth only | 4–5 |
+| raise a hand, turn, bow the head | 5–6 |
+| reach across the body, lift a large prop | 7–8 |
+
+The eleven-beat *Diet Betrayal* uses `5,5,4,7,6,7,5,6,5,5,5`: reaching for the phone (K3→K4) and
+lifting the chicken bucket (K5→K6) get 7 frames each; shoulder/head beats get 4–5; the final beat uses 5
+frames to interpolate back to K0.
+
+```bash
+python scripts/check_anim.py output/apng/anim60_00001_.png \
+    --segs 5,5,4,7,6,7,5,6,5,5,5 --fps 30
+```
+
+| Reading | Meaning | Fix |
+| --- | --- | --- |
+| `min < 0.5` | duplicate frame, the seam stalls | check that each segment does not ramp 1.0→0.0; check `segs` vs `beats` |
+| `max > 8` | one step is too large, reads as a cut | give that beat 1–2 more frames before touching denoise |
+| `drift > 20` | colour drifts across the film | check lighting words per keyframe and whether denoise is too high |
+
 ## Import
+
 
 1. Open the matching ComfyUI instance.
 2. Drag the JSON onto the canvas.
@@ -65,7 +120,7 @@ a slower beat. `emit_workflow.py --segs` lays this out for you.
 | VRAM | from 6 GB | from 8 GB (512 / 640 verified) |
 | steps | 20–30 | 8 (DMD distilled, do not raise) |
 | cfg | 5–7 | 1.0 |
-| keyframe denoise | 0.35–0.45 | 0.50–0.80 |
+| keyframe denoise | 0.35–0.45 | 0.82–0.90 (below 0.80 the keyframes barely move) |
 | text encoder | CLIP (comma tags) | Qwen-VL (Chinese prose) |
 | prompt mode | `tags` | `moss_zh` |
 
@@ -93,7 +148,7 @@ no quality tags, framing stated explicitly:
 动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影。
 ```
 
-`assets/story.diet.json` is a complete six-beat `moss_zh` example;
+`assets/story.diet.json` is a complete eleven-beat `moss_zh` example (60 frames / 30 fps);
 `python scripts/make_story.py --preset diet-betrayal --out my.json` regenerates it.
 
 ## Frame counts
@@ -103,6 +158,6 @@ no quality tags, framing stated explicitly:
 | 8 | 8 | 1.00 s | single expression, smallest file |
 | 24 | 10 | 2.40 s | default, chat sticker |
 | 30 | 15 | 2.00 s | short action |
-| 60 | 30 | 2.00 s | full mini story |
+| 60 | 30 | 2.00 s | full mini story (eleven beats: `5,5,4,7,6,7,5,6,5,5,5`) |
 
 All three save nodes must share the same fps. `emit_workflow.py --fps` sets all three at once.

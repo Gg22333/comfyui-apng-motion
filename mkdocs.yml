@@ -1,47 +1,118 @@
 site_name: comfyui-apng-motion
 site_url: https://gg22333.github.io/comfyui-apng-motion/
-site_description: Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI
+site_description: 用 ComfyUI 把 3–8 个关键帧合成 8/24/30/60 帧的连贯 APNG、WebP 与 GIF
+site_author: Gg22333
+repo_url: https://github.com/Gg22333/comfyui-apng-motion
+repo_name: Gg22333/comfyui-apng-motion
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 Gg22333 · MIT License
+
 docs_dir: docs
+
 theme:
   name: material
   language: zh
+  font:
+    text: Noto Sans SC
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
   palette:
-    - scheme: default
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
       toggle:
         icon: material/weather-night
-        name: 暗色
-    - scheme: slate
+        name: 切到暗色
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
       toggle:
         icon: material/weather-sunny
-        name: 亮色
+        name: 切到亮色
+
 nav:
-  - 首页: index.md
-  - 安装: install.md
-  - 用法: usage.md
-  - 工作流: workflows.md
-  - 动作库: motion-presets.md
-  - 成品落盘: output.md
-  - 方案对比: synthesis-comparison.md
-  - 格式对比: formats.md
-  - 架构: architecture.md
-  - 排错: troubleshooting.md
-  - FAQ: faq.md
-  - 发布: publishing.md
-  - English:
-      - Home: en/index.md
-      - Install: en/install.md
-      - Usage: en/usage.md
-      - Workflows: en/workflows.md
-      - Motion library: en/motion-presets.md
-      - Output layout: en/output.md
-      - Approach comparison: en/synthesis-comparison.md
-      - Formats: en/formats.md
-      - Architecture: en/architecture.md
-      - Troubleshooting: en/troubleshooting.md
-      - FAQ: en/faq.md
+  - 开始:
+      - 首页: index.md
+      - 安装: install.md
+      - 用法: usage.md
+  - 工作流:
+      - 五份工作流: workflows.md
+      - 动作库: motion-presets.md
+  - 参考:
+      - 成品落盘: output.md
+      - 方案对比: synthesis-comparison.md
+      - 格式对比: formats.md
+      - 架构: architecture.md
+  - 帮助:
+      - 排错: troubleshooting.md
+      - FAQ: faq.md
+      - 发布: publishing.md
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: folder
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: zh
+          name: 简体中文
+          default: true
+        - locale: en
+          name: English
+          nav_translations:
+            开始: Get started
+            首页: Home
+            安装: Install
+            用法: Usage
+            工作流: Workflows
+            五份工作流: Five importable graphs
+            动作库: Motion library
+            参考: Reference
+            成品落盘: Output layout
+            方案对比: Approach comparison
+            格式对比: Formats
+            架构: Architecture
+            帮助: Help
+            排错: Troubleshooting
+            发布: Publishing
+
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - tables
   - toc:
       permalink: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.details
+  - pymdownx.superfences
 
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Gg22333/comfyui-apng-motion
+      name: GitHub
+    - icon: fontawesome/solid/comment-dots
+      link: https://github.com/Gg22333/comfyui-apng-motion/issues
+      name: Issues
+
+extra_css:
+  - stylesheets/extra.css

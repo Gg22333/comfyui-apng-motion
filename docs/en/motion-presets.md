@@ -146,6 +146,49 @@ Do not pile on `ugly, bad`; that suppresses ordinary expressions too.
 Stories are not "one expression"; they act out a **state change**: sleepy → awake, calm → delighted.
 The structure is unchanged: one step per beat, and the last segment still interpolates back to K0.
 
+### 4.3.1 Eleven-beat full-body story (`moss_zh`)
+
+`diet-betrayal` · Diet Betrayal · 60 frames / 30 fps / 640×640 · `prompt_mode: moss_zh` · `segs = 5,5,4,7,6,7,5,6,5,5,5`
+
+| Beat | Frame | Action |
+| --- | --- | --- |
+| K0 | 0 | sits straight, hands on the table edge, chin up, salad bowl in front |
+| K1 | 5 | shoulders drop, hands slide to the sides of the bowl, head lowers |
+| K2 | 10 | elbows on the table, head down to the bowl, flat mouth, fork hanging |
+| K3 | 14 | head lifts slowly, turns right, eyes toward the floor beside the table |
+| K4 | 21 | leans right, right hand on the table, left hand reaches for the phone, cold screen light |
+| K5 | 27 | pulls the phone back, sits up, stares at the screen, mouth relaxes |
+| K6 | 34 | shoulders shrink, lifts a fried-chicken bucket from under the table, hugs it, puffed cheeks |
+| K7 | 39 | looks into the bucket, one hand inside it, shoulders relax |
+| K8 | 45 | leans back, drumstick to the mouth, eyes closed in crescents, small smile |
+| K9 | 50 | puts the chicken down, hands on the table, whole body relaxes |
+| K10 | 55 | sits up, pushes the empty bucket away, holds the bowl, fist raised, tears at the eye corners |
+| loop | 55→59 | 5 frames interpolate back to K0 so the loop meets the cover |
+
+```bash
+python scripts/make_story.py --preset diet-betrayal --out assets/story.diet.json
+python scripts/emit_workflow.py --base workflows/workflow-moss.json \
+    --story assets/story.diet.json --size 640 --out my-60.json
+```
+
+Constraints that matter for this preset:
+
+- **One step per beat.** Eleven beats are not padding: they split "face down on the table → reach for the
+  phone" and "look at the screen → lift the bucket" into two smaller moves. A single segment with that
+  much pose distance interpolates into a ghost.
+- **Big moves get more frames.** K3→K4 and K5→K6 get 7 frames each in `segs`; shoulder/head beats get 4–5.
+  Judge by the pose distance at the two ends, not by how long the sentence is.
+- **Start every action with 「矮木桌前，」 (at the low table).** A scene anchor at the front of the sentence
+  makes it much harder for the model to drop the table and the bowl. The background is reduced to wall,
+  lamp and table so each redraw has less freedom.
+- **Lower body stays behind the table.** Move the legs and latent interpolation produces double legs.
+- **Keyframe denoise 0.85 (range 0.82–0.90).** Moss is an 8-step DMD distilled model; below 0.80 the
+  keyframes barely move (measured whole-film adjacent diff 0.03). Get the motion from the prompt and the
+  frame budget, not from pushing denoise further.
+- **Leave `motion` empty.** A negation such as "do not move the camera" is read as "keep everything as is"
+  and suppresses the beat's action too.
+- Chinese prose, one idea per paragraph, every paragraph ends with 「。」; `prompt_mode: moss_zh`.
+
 ### 4.4 Action vocabulary (paste into `actions`)
 
 Popular sticker packs reuse a small vocabulary. Use **one action phrase + one expression phrase per beat**;
@@ -227,7 +270,7 @@ Size rules of thumb: for the same content, 60 frames ≈ 2.5× the 24-frame clip
 | --- | --- | --- |
 | loop seam "changes face" | K0 is not a rest pose, or the last beat does not return | put a neutral pose in `actions[0]`; use the 4-beat template |
 | ghosting / blotches in between | three or more body parts changed in one beat | change 1–2 parts; drop denoise to 0.4 |
-| hands melt | large hand motion at low frame count | denoise 0.5 for hand beats; crop to upper body |
+| hands melt | large hand motion at low frame count | give hand beats more frames; crop to upper body |
 | frame smears | `motion` contains camera move / zoom | keep `same camera, same framing` |
 | style eaten by action words | style before action | keep `lock + action + style` |
 | 24 frames exported as 19 | duplicate ratios on the same latent pair | use `make_curve.py`; never hand-write duplicates |
