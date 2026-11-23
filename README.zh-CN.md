@@ -1,6 +1,6 @@
 # comfyui-apng-motion
 
-[![CI](https://github.com/yourname/comfyui-apng-motion/actions/workflows/ci.yml/badge.svg)](https://github.com/yourname/comfyui-apng-motion/actions/workflows/ci.yml)
+[![CI](https://github.com/Gg22333/comfyui-apng-motion/actions/workflows/ci.yml/badge.svg)](https://github.com/Gg22333/comfyui-apng-motion/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](CHANGELOG.md)
 
@@ -18,7 +18,7 @@ ComfyUI 里用「首帧 + 关键帧 latent 插值」做 **24 帧连贯 APNG / We
 ## 快速开始
 
 ```powershell
-git clone https://github.com/yourname/comfyui-apng-motion.git
+git clone https://github.com/Gg22333/comfyui-apng-motion.git
 cd comfyui-apng-motion
 
 python scripts/detect_env.py      # 扫本机 ComfyUI，写 profiles/
@@ -82,4 +82,5 @@ dist/                 打包产物，已 gitignore
 ## 许可
 
 MIT，见 [LICENSE](LICENSE)。ComfyUI、ComfyUI-KJNodes、ComfyUI-VideoHelperSuite 是各自独立项目，遵循各自许可。
+
 

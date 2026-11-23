@@ -1,6 +1,6 @@
 # comfyui-apng-motion
 
-[![CI](https://github.com/yourname/comfyui-apng-motion/actions/workflows/ci.yml/badge.svg)](https://github.com/yourname/comfyui-apng-motion/actions/workflows/ci.yml)
+[![CI](https://github.com/Gg22333/comfyui-apng-motion/actions/workflows/ci.yml/badge.svg)](https://github.com/Gg22333/comfyui-apng-motion/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.9-blue.svg)](https://www.python.org/)
@@ -32,7 +32,7 @@ do not drift. Interpolation ratios are globally unique so Pillow never merges fr
 ## Quick start
 
 ```bash
-git clone https://github.com/yourname/comfyui-apng-motion.git
+git clone https://github.com/Gg22333/comfyui-apng-motion.git
 cd comfyui-apng-motion
 
 python scripts/detect_env.py      # find ComfyUI installs, write profiles/
@@ -102,4 +102,5 @@ Issues and PRs are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and
 MIT — see [LICENSE](LICENSE).
 
 ComfyUI, ComfyUI-KJNodes and ComfyUI-VideoHelperSuite are separate projects under their own licenses.
+
 
