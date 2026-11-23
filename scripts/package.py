@@ -18,7 +18,8 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {"__pycache__", "dist", ".git", "profiles", ".github", "tests"}
+SKIP_DIRS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".mypy_cache",
+             "dist", ".git", "profiles", ".github", "tests"}
 FIXED = (2020, 1, 1, 0, 0, 0)
 
 
