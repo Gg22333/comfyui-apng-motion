@@ -1409,6 +1409,8 @@
 </table>
 <p>十一拍《减肥破功》的分配是 <code>5,5,4,7,6,7,5,6,5,5,5</code>：
 够手机（K3→K4）和抱炸鸡桶（K5→K6）各给 7 帧，只动肩膀和头的段给 4–5 帧，最后一拍用 5 帧插回 K0 收尾。</p>
+<p><strong>想整体更慢</strong>：帧数不用动，把三个保存节点的 fps 从 30 降到 24（2.5 s）或 20（3 s）。
+插值帧数与每帧步长不变，只是播放速度变慢；这比继续拆拍更省事。</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/check_anim.py<span class="w"> </span>output/apng/anim60_00001_.png<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--segs<span class="w"> </span><span class="m">5</span>,5,4,7,6,7,5,6,5,5,5<span class="w"> </span>--fps<span class="w"> </span><span class="m">30</span>
 </code></pre></div>

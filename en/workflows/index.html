@@ -1415,6 +1415,8 @@ change between the two ends of a beat, the more frames it gets.</strong></p>
 <p>The eleven-beat <em>Diet Betrayal</em> uses <code>5,5,4,7,6,7,5,6,5,5,5</code>: reaching for the phone (K3→K4) and
 lifting the chicken bucket (K5→K6) get 7 frames each; shoulder/head beats get 4–5; the final beat uses 5
 frames to interpolate back to K0.</p>
+<p><strong>To slow the whole film down</strong>, keep the frame count and drop fps on all three save nodes from 30 to 24
+(2.5 s) or 20 (3 s). The in-between count and per-frame step stay the same; only playback speed changes.</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/check_anim.py<span class="w"> </span>output/apng/anim60_00001_.png<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--segs<span class="w"> </span><span class="m">5</span>,5,4,7,6,7,5,6,5,5,5<span class="w"> </span>--fps<span class="w"> </span><span class="m">30</span>
 </code></pre></div>
