@@ -41,6 +41,7 @@
   VideoHelperSuite / ComfyUI 三个 GPL-3.0 运行依赖「只调用节点、未复制源码」、
   以及项目名与 Logo 不在 MIT 授权内；新增 `CITATION.cff`，GitHub 侧栏会显示
   "Cite this repository"。README 中英双版补「保留声明即可、回链不强制」与 fork 不得冒充官方。
+
 ## 1.3.2 — 2026-11-23
 
 - **接缝停顿修复**：`build_curve()` 不再让每段都从 `1.0` 走到 `0.0`。旧排法段尾与下一段段首是
