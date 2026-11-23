@@ -13,11 +13,15 @@
 | `workflow-moss-4beat.json` | DiT（MOSS-Image） | 4 | 24 | 72 | 同上 |
 | `workflow-sdxl-preview.json` | UNet（SDXL） | 4 | 60 | 142 | SDXL 预览样例：同 seed、`denoise 0.5`、30fps |
 | `workflow-moss-preview.json` | DiT（MOSS-Image） | 11 | 60 | 157 | 生成仓库那张预览图：同 seed、`denoise 0.85`、20fps |
+| `workflow-sdxl-dynamic.json` | UNet（SDXL） | 3 | 24（图上可改） | 26 | 先装 `comfyui_nodes`；每拍 `frames` 是 widget |
+| `workflow-moss-dynamic.json` | DiT（MOSS-Image） | 3 | 24（图上可改） | 28 | 同上 |
+| `workflow-sdxl-dynamic-camera.json` | UNet（SDXL） | 3 | 24（图上可改） | 27 | 动态图 + `APNG Camera Move`（`--camera`） |
+| `workflow-moss-dynamic-camera.json` | DiT（MOSS-Image） | 3 | 24（图上可改） | 29 | 同上 |
 
 `workflow-moss-preview.json` 就是 `assets/story.diet.json`（60 帧 / 11 拍 / 20fps / 3.00 秒）对应的图，
 网页首页那张 `preview.webp` / `preview.gif` 由它出片后用 `scripts/make_preview.py` 缩到 384 生成。
 
-全部是同一套骨架：
+前六份（静态）是同一套骨架：
 
 ```
 K 个关键帧（KSampler，共用首帧 latent、同 seed）
@@ -29,6 +33,10 @@ K 个关键帧（KSampler，共用首帧 latent、同 seed）
 
 N 默认 24，8 / 24 / 30 / 60 都能用：`emit_workflow.py --frames N --segs ...` 会自动扩缩插值 / 解码 / batch 节点。
 4 拍版本只是多一组 `CLIPTextEncode` + `KSampler` + `ConditioningCombine`。
+
+后四份（动态）是另一套骨架：关键帧链不变，插值层换成「每拍一个 `APNGLatentInterpolateN` +
+`APNGLatentConcat` → 一次 `VAEDecode`」，可选再串一个 `APNGCameraMove` 做整段镜头运动。
+帧数从节点数量变成 widget，详见 [`docs/dynamic.md`](../docs/dynamic.md)。
 
 ## 画布上有哪些旋钮
 

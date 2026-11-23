@@ -196,7 +196,7 @@ Per-frame dwell and per-beat ease still cannot be expressed because ComfyUI save
 
 ## Workflows
 
-Nine JSON files, drop one into ComfyUI and queue (the four dynamic ones need the bundled `comfyui_nodes` first):
+Ten JSON files, drop one into ComfyUI and queue (the four dynamic ones need the bundled `comfyui_nodes` first):
 
 | Environment | 3 beats | 4 beats |
 | --- | --- | --- |
@@ -645,7 +645,7 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
 
 ### 工作流
 
-九份 JSON，拖进 ComfyUI 就能跑（四份动态帧数的先装 `comfyui_nodes`）：
+十份 JSON，拖进 ComfyUI 就能跑（四份动态帧数的先装 `comfyui_nodes`）：
 
 | 环境 | 3 拍 | 4 拍 |
 | --- | --- | --- |
