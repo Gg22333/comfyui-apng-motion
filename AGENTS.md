@@ -12,7 +12,7 @@
 ```bash
 python scripts/detect_env.py
 python scripts/doctor.py
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
 python scripts/check_deps.py
 pytest -q
 ```

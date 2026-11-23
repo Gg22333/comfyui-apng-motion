@@ -31,7 +31,7 @@
 | profile | output 根 |
 | --- | --- |
 | `profiles/xl.json` | `D:\ComfyUI-aki-v3.2-xl\ComfyUI\output` |
-| `profiles/dit.json` | `D:\ComfyUI-aki-v3.2-dit\ComfyUI\output` |
+| `profiles/dit.json` | `D:\ComfyUI-aki-v3.2-DiT\ComfyUI\output` |
 
 换机器后路径由 `detect_env.py` 重新生成，不要照抄本文的盘符。
 
@@ -68,7 +68,7 @@
 | 来源 | 现象 | 处理 |
 | --- | --- | --- |
 | 浏览器缓存旧 prefix | 成品落 `output/APNG/anim24_00001_.png` | 三个保存节点逐个确认前缀 → **F5** → 重跑 |
-| 跑了旧工作流 | 同一目录出现旧命名（`anim_base_*`、`anim24_1_*`） | 用 `assets/workflow-*.json` 或 `emit_workflow.py` 重新生成 |
+| 跑了旧工作流 | 同一目录出现旧命名（`anim_base_*`、`anim24_1_*`） | 用 `workflows/workflow-*.json` 或 `emit_workflow.py` 重新生成 |
 | 历史 `SaveImage` | `output/` 根目录出现 `anim_base_00001_.png` | 删掉保存节点；文件归档，不再当成品 |
 | 旧脚本中间帧 | `anim24_1_00002_.png` 这种带 `_1_` 的 | 历史脚本产物，移到 `archive/frames/` |
 
@@ -142,3 +142,23 @@ python scripts/check_output.py --profile profiles/xl.json --fix
 | `archive/stray-<时间戳>/` | 游离文件、旧前缀残留 | `check_output.py --fix` |
 
 备份工作流也不要留在 `ComfyUI/user/default/workflows/`。同名 `-v1.json` 会被前端当成第二套工作流；备份放 `archive/`，目录里只留正在用的那一份。
+
+---
+
+## 7 · 仓库里不该出现的东西
+
+仓库和 skill 目录只放**源代码与网页素材**。运行产物一律留在 ComfyUI 的 `output/`：
+
+| 路径 | 该有什么 | 不该有什么 |
+| --- | --- | --- |
+| `<ComfyUI>/output/APNG/final/` | 三格式成品 | 单帧 PNG、旧前缀残留 |
+| 仓库 `docs/assets/` | `preview.webp` / `preview.gif` / `storyboard-*.webp` | 原始 APNG、`_00001_` 成品 |
+| 仓库根 | 源码、文档、`workflows/` | 任何 `output/` 的拷贝 |
+| `_tmp/` 之类的草稿区 | 一次性脚本、试片 | 长期留存的 PNG / WebP |
+
+脚本自己产出的只有两种，而且都是**网页素材**，不是成品：
+
+- `make_preview.py` → `docs/assets/preview.{webp,gif}`（重编码过的预览）
+- `make_storyboard.py` → `docs/assets/storyboard-<name>.webp`（关键拍联系表）
+
+验收：`git status` 除了这两个文件，不该出现任何图片的增删。

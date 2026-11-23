@@ -3,7 +3,7 @@
 ## 1 · 作为 skill 安装
 
 ```bash
-git clone https://github.com/yourname/comfyui-apng-motion.git
+git clone https://github.com/Gg22333/comfyui-apng-motion.git
 cd comfyui-apng-motion
 python scripts/install.py
 ```

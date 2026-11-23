@@ -24,11 +24,24 @@
 }
 ```
 
-编译规则：`关键帧_i = lock + actions[i] + style`，字段顺序固定，每帧只改动作。
+编译规则取决于 `prompt_mode`：
 
-注意 `style` 在最后是有实测依据的：Moss 的 LLM 文本编码器对末尾 token 权重最高，
-`anime screencap, clean lineart, flat cel shading` 写在中段会被动作词挤掉，出图会掉进写实照相模式
-（表现为拼贴照、色块闪）。
+| 模式 | 编译结果 | 用在 |
+| --- | --- | --- |
+| `tags`（默认） | `lock, actions[i], style` 英文逗号拼接 | SDXL / 传统 CLIP |
+| `moss_zh` | `lock。\n action。\n style。` 中文散文，换行分段 | MOSS / Qwen-VL |
+
+`tags` 模式下 `style` 必须放最后：CLIP 对末尾 token 权重最高，画风写在中段会被动作词挤掉，
+出图会掉进写实照相模式（表现为拼贴照、色块闪）。
+
+`moss_zh` 模式下三段都写中文，每段以「。」结尾；不要混英文标签，也不要堆 `masterpiece`。
+
+`assets/story.diet.json` 是完整范例：
+
+```bash
+python scripts/emit_workflow.py --base workflows/workflow-moss.json \
+  --story assets/story.diet.json --size 640 --out diet60.json
+```
 
 ## 帧数怎么选
 
@@ -39,7 +52,7 @@
 | --- | --- | --- | --- | --- |
 | 8 | 8 | 1.0 s | 头像微动、聊天气泡 | `2,2,2,2` |
 | 12 | 12 | 1.0 s | 轻量贴纸 | `3,3,3,3` |
-| 24 | 12 | 2.0 s | 默认；表情循环 | `6,7,6,5` |
+| 24 | 10 | 2.4 s | 默认；表情循环 | `6,7,6,5` |
 | 30 | 15 | 2.0 s | 五拍故事、半身动作 | `8,8,7,7` |
 | 60 | 30 | 2.0 s | 网页/Discord 顺滑预览、五拍故事 | `15,15,15,15` |
 
@@ -47,31 +60,31 @@
 `3 拍 8/8/8`、`4 拍 6/7/6/5`、`5 拍 5/6/5/4/4`，其余帧数一律平均分。
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-moss.json --story assets/story.preview.json \
+python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.preview.json \
   --frames 60 --segs 15,15,15,15 --fps 30 --out my-60f.json
 ```
 
 ## 生成工作流
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json --out my.json
 ```
 
 | 拍数 | 段数分配（24 帧） | 节点数（SDXL） | 节点数（Moss） |
 | --- | --- | --- | --- |
-| 3 | 8/8/8 | 66 | 68 |
-| 4 | 6/7/6/5 | 69 | 71 |
-| 5 | 5/6/5/4/4 | 72 | 74 |
+| 3 | 8/8/8 | 67 | 69 |
+| 4 | 6/7/6/5 | 70 | 72 |
+| 5 | 5/6/5/4/4 | 73 | 75 |
 
 节点数比早期版本多，是因为多了全局动作层：每个关键帧一个 `ConditioningCombine`，
-加一个共享的 `CLIPTextEncode` 和一个 `Note`。全局动作**留空时不建合并节点**（空提示参与
+加一个共享的 `CLIPTextEncode` 和两个 `Note`（参数清单 + 提示词写法）。全局动作**留空时不建合并节点**（空提示参与
 `ConditioningCombine` 会稀释本帧提示，小模型直接掉画质），填了动作则每多一拍再加 1 个。
 帧数只改插值 / 解码 / 合批三件的数量，不改拍数。
 
 命令行直接给参数（不写 JSON）：
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json \
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
   --beats 4 --segs 6,7,6,5 \
   --lock "masterpiece, 1girl, silver hair" --style "anime" \
   --actions "neutral|notice|react|settle" --out my.json
@@ -85,14 +98,16 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json \
 | 每帧提示 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线，逐帧独立 |
 | 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
 | 节奏 | N 个 `LatentInterpolate` 的 ratio | 缓动曲线。`linear` 每帧步长恒定，最稳 |
-| 速度 | 三个保存节点的 `fps` | 必须改成同一个值；`fps × 帧数` = 时长（24 帧 @12fps = 2 秒） |
+| 速度 | 三个保存节点的 `fps` | 必须改成同一个值；`fps × 帧数` = 时长（24 帧 @10fps = 2.4 秒，60 帧 @30fps = 2 秒） |
+| 提示词方言 | `--prompt-mode tags|moss_zh` / 剧情卡 `prompt_mode` | `tags` = 英文标签；`moss_zh` = 中文散文 |
+| 尺寸 | latent 宽高 / `--size 640` | Moss 512 或 640；SDXL 512–1024 |
 | 命名 | `filename_prefix` | 分别落在 `apng/`、`webp/`、`gif/` |
 | 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放行为 |
 
 命令行也能一次改：
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json \
   --motion "slow head tilt, stable lighting" \
   --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
   --curve linear --out my.json

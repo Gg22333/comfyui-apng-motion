@@ -7,11 +7,13 @@
 [![License: MIT](https://img.shields.io/github/license/Gg22333/comfyui-apng-motion)](LICENSE)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.9-blue)](pyproject.toml)
 
-Make **coherent APNG / WebP / GIF** animations in ComfyUI by interpolating three to five keyframes in
-latent space — **8, 12, 24, 30 or 60 frames** out of the same graph, no frame-by-frame scripts, no
-per-frame image dumps, one queue → three files.
+Make **coherent APNG / WebP / GIF** animations in ComfyUI from **3–8 keyframes** — story-shaped, not
+just a face wiggling. One graph, **8 / 24 / 30 / 60 frames**, ready-to-import JSON for both SDXL and
+Moss/DiT. No frame-by-frame scripts, no per-frame image dumps, one queue → three files.
 
 ![preview](docs/assets/preview.webp)
+
+![six-beat storyboard](docs/assets/storyboard-diet.webp)
 
 ---
 
@@ -20,6 +22,8 @@ per-frame image dumps, one queue → three files.
 - [At a glance](#at-a-glance)
 - [Model support](#model-support)
 - [Frame count](#frame-count)
+- [Workflows](#workflows)
+- [How to write prompts](#how-to-write-prompts)
 - [Motion library](#motion-library)
 - [Tunable parameters](#tunable-parameters)
 - [Why not `batch_size`](#why-not-batch_size)
@@ -78,18 +82,23 @@ the beats, and if you omit it the split is even.
 | --- | --- | --- | --- | --- |
 | 8 | 8 | 1.0 s | avatar twitch, chat reaction | `2,2,2,2` |
 | 12 | 12 | 1.0 s | light sticker | `3,3,3,3` |
-| 24 | 12 | 2.0 s | default; expression loop | `6,7,6,5` |
+| 24 | 10 | 2.4 s | default; expression loop | `6,7,6,5` |
 | 30 | 15 | 2.0 s | five-beat story, half-body action | `8,8,7,7` |
 | 60 | 30 | 2.0 s | smooth web/Discord preview, five-beat story | `15,15,15,15` |
 
 Sampling cost stays at K passes (one per keyframe) no matter which row you pick — only decode count and
 file size scale with N. For the same content a 60-frame APNG is roughly 2.5x the size of 24; see [docs/formats.md](docs/formats.md).
-The preview at the top of this page is 60 frames, 30 fps, Moss/DiT, `assets/story.preview.json`.
+The preview above is the six-beat story *Diet Betrayal* — 60 frames, 30 fps, Moss/DiT: sits up determined →
+slumps onto the table → reaches for the phone → hugs the fried-chicken bucket → sneaks a bite → hugs the salad
+bowl again, fist raised, "tomorrow for sure". Recipe: `assets/story.diet.json`, `prompt_mode: moss_zh`,
+segments `10/12/4/12/10/12`, denoise 0.85, 640×640.
+The contact sheet below it is sampled from the real output by `--segs`, not a mock-up.
 
 ## Motion library
 
-`assets/motion-presets.json` ships 16 ready-to-use beat recipes: 9 emotions (laugh / cry / shock / angry / smug / sigh / panic / sleepy / heart hands),
-5 gestures (wave / nod / shake / thumbs up / think), and 2 five-beat stories (rainy walk / morning coffee).
+`assets/motion-presets.json` ships 17 ready-to-use beat recipes: 9 emotions (laugh / cry / shock / angry / smug / sigh / panic / sleepy / heart hands),
+5 gestures (wave / nod / shake / thumbs up / think), 2 five-beat stories (rainy walk / morning coffee),
+and one six-beat full-body story (`diet-betrayal`, `moss_zh` Chinese prose).
 `scripts/make_story.py` merges a preset with your character lock and writes a story card for `emit_workflow.py`:
 
 ```bash
@@ -112,10 +121,62 @@ Everything below is editable inside the workflow, no script required.
 | Per keyframe sampling | each `KSampler` | seed, steps, cfg, sampler, scheduler, denoise |
 | Pacing | N x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
 | Speed | three save nodes `fps` | set the same value in all three; `fps x frames` = duration (24 @ 12 fps = 2.0 s) |
+| Prompt dialect | `--prompt-mode tags|moss_zh` | `tags` = SDXL comma tags; `moss_zh` = MOSS Chinese prose |
+| Size | latent width/height or `--size 640` | Moss 512 or 640; SDXL 512–1024 |
 | Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` subfolders |
 | Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | file size and playback behaviour |
 
 The workflow ships with a `Note` node listing the same table, so you can find the knobs on the canvas.
+
+## Workflows
+
+Five JSON files, drop one into ComfyUI and queue:
+
+| Environment | 3 beats | 4 beats |
+| --- | --- | --- |
+| SDXL | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |
+| Moss / DiT | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
+
+Each graph carries two `Note` nodes on the canvas: "tunable parameters" and "prompt dialect (SDXL / MOSS)",
+so the two prompt styles and the frame table are inside the file, not only in the docs.
+Download page and import steps: [docs/en/workflows.md](docs/en/workflows.md).
+
+## How to write prompts
+
+The two text encoders behave differently. Do not mix them.
+
+**SDXL / classic CLIP (`tags`)**
+
+```
+1girl, solo, full body, black short hair, blue eyes, beige hoodie,
+dark shorts, barefoot, bedroom at night, warm lamp light,
+〈this beat〉,
+anime screencap, clean lineart, flat cel shading
+```
+
+- Comma-separated, important tags first.
+- Style goes last: CLIP weights the tail tokens most; style in the middle gets overwritten by action words.
+- Describe pixels, not feelings: `eyes wide, pupils small`, not `shocked`.
+- Negative prompt in its own `CLIPTextEncode`.
+
+**MOSS / Qwen-VL (`moss_zh`)**
+
+```
+一间温馨的小卧室，深夜。画面右侧有一盏暖色台灯，光从右前方斜照下来，落在木地板上。
+固定机位，平视，全身镜头，人物从头到脚完整入画，双手和双脚都留在画框里。
+小满：黑色短发，蓝色眼睛，身材微胖，穿着宽松的米色连帽卫衣和深色短裤，赤脚。
+小满盘腿坐在矮桌前，背挺得很直，双手叉在腰上，抬起下巴，嘴角只上扬几毫米。
+动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影。
+```
+
+- Chinese prose, one paragraph per idea, every paragraph ends with 「。」.
+- No quality tags: `masterpiece` / `best quality` are noise to this encoder.
+- Measurable body language: `震惊 = 双眼睁大、瞳孔缩小、嘴张开`.
+- State framing explicitly: locked camera, eye level, full body, head to toe inside the frame.
+- Chinese negative prompt.
+
+Full six-beat example: [`assets/story.diet.json`](assets/story.diet.json);
+`python scripts/make_story.py --preset diet-betrayal --out my.json` regenerates it.
 
 ## Why not `batch_size`
 
@@ -160,7 +221,7 @@ cd comfyui-apng-motion
 python scripts/detect_env.py      # find ComfyUI installs → profiles/*.json
 python scripts/doctor.py          # check models, custom nodes, ports, output dir
 python scripts/emit_workflow.py \
-  --base assets/workflow-sdxl.json \
+  --base workflows/workflow-sdxl.json \
   --story assets/story.4beat.json \
   --out my-4beat.json
 ```
@@ -204,7 +265,8 @@ SKILL.md              the skill itself (principles, story cards, multi-character
 skill.json            version, dependencies, entrypoints, install targets
 scripts/              detect_env · doctor · emit_workflow · make_story · check_anim · check_output
                       make_curve · check_deps · install · package · comfy_lib
-assets/               workflow templates (SDXL + Moss), 16 motion presets, story cards, node schema
+workflows/            importable graphs (SDXL + Moss, 3/4 beats each)
+assets/               17 motion presets, story cards (incl. a moss_zh story), node schema
 docs/                 docs in Chinese, English under docs/en/
 tests/                offline unit tests — no GPU, no network
 profiles/             generated per machine (git-ignored)
@@ -228,7 +290,7 @@ are in [docs/formats.md](docs/formats.md) and [SKILL.md](SKILL.md).
 | Overview | [docs/en/index.md](docs/en/index.md) | [docs/index.md](docs/index.md) |
 | Install | [docs/en/install.md](docs/en/install.md) | [docs/install.md](docs/install.md) |
 | Usage | [docs/en/usage.md](docs/en/usage.md) | [docs/usage.md](docs/usage.md) |
-| Motion library (16 presets) | [docs/en/motion-presets.md](docs/en/motion-presets.md) | [docs/motion-presets.md](docs/motion-presets.md) |
+| Motion library (17 presets) | [docs/en/motion-presets.md](docs/en/motion-presets.md) | [docs/motion-presets.md](docs/motion-presets.md) |
 | Output layout | [docs/en/output.md](docs/en/output.md) | [docs/output.md](docs/output.md) |
 | Approach comparison | [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md) | [docs/synthesis-comparison.md](docs/synthesis-comparison.md) |
 | APNG vs GIF vs video | [docs/en/formats.md](docs/en/formats.md) | [docs/formats.md](docs/formats.md) |

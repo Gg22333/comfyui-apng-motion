@@ -141,14 +141,14 @@ Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is no
 | File | Size | Frames | Bytes | Adjacent-frame diff (avg) |
 | --- | --- | --- | --- | --- |
 | Old GIF (VHS direct, 512, `sierra2_4a`) | 512x512 | 24 | 3.45 MB | 2.49 |
-| New GIF (global palette + `dither=none`) | 384x384 | 60 | 1.53 MB | 0.72 |
-| New WebP (quality 100, keeps all 60 frames) | 384x384 | 60 | 1.78 MB | 0.78 |
+| New GIF (global palette + `dither=none`) | 384x384 | 60 | 2.13 MB | 1.94 |
+| New WebP (quality 100, keeps all 60 frames) | 384x384 | 60 | 1.46 MB | 1.82 |
 
 The current preview is 60 frames / 30 fps / Moss-DiT, recipe in `assets/story.preview.json`.
 
 WebP has a frame-count trap: libwebp's animation encoder merges adjacent frames that are nearly identical after compression.
 At quality 90, 60 frames become 58 (same duration, wrong metadata); quality 100 keeps all 60, at the cost of
-growing from ~0.6 MB to 1.8 MB. `make_preview.py` defaults to 100 and verifies the frame count after saving,
+growing from ~0.6 MB to 1.5 MB. `make_preview.py` defaults to 100 and verifies the frame count after saving,
 falling back to lossless if needed.
 
 GIF has 256 colours. VHS runs `palettegen` + `paletteuse` per frame with `sierra2_4a` dithering:

@@ -15,45 +15,45 @@ def run(args):
 
 def test_three_beats(tmp_path):
     out = tmp_path / "b3.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--story", str(ROOT / "assets" / "story.example.json"),
                      "--out", str(out)])
     assert code == 0, log
     assert "VALIDATE OK" in log
     wf = json.loads(out.read_text(encoding="utf-8"))
     assert len([n for n in wf["nodes"] if n["type"] == "KSampler"]) == 3
-    # 61 基础 + 3 个条件合并 + 1 全局动作编码 + 1 Note
-    assert len(wf["nodes"]) == 66
+    # 61 基础 + 3 个条件合并 + 1 全局动作编码 + 2 个 Note
+    assert len(wf["nodes"]) == 67
 
 
 def test_four_beats(tmp_path):
     out = tmp_path / "b4.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--story", str(ROOT / "assets" / "story.4beat.json"),
                      "--out", str(out)])
     assert code == 0, log
     wf = json.loads(out.read_text(encoding="utf-8"))
-    assert len(wf["nodes"]) == 69
+    assert len(wf["nodes"]) == 70
 
 
 def test_five_beats_cli(tmp_path):
     out = tmp_path / "b5.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--beats", "5", "--segs", "5,6,5,4,4",
                      "--lock", "masterpiece, 1girl", "--style", "anime",
                      "--actions", "a|b|c|d|e",
                      "--out", str(out)])
     assert code == 0, log
     wf = json.loads(out.read_text(encoding="utf-8"))
-    # motion 留空 -> 不走 ConditioningCombine，只多 1 个全局编码 + 1 个 Note
-    assert len(wf["nodes"]) == 70
+    # motion 留空 -> 不走 ConditioningCombine，只多 1 个全局编码 + 2 个 Note
+    assert len(wf["nodes"]) == 71
     assert len([n for n in wf["nodes"] if n["type"] == "ConditioningCombine"]) == 3
 
 
 def test_same_seed_and_denoise_written_back(tmp_path):
     """回归：已有关键帧 KSampler 也必须回写同 seed / 同 denoise，否则帧间抖动。"""
     out = tmp_path / "b4.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--story", str(ROOT / "assets" / "story.4beat.json"),
                      "--out", str(out)])
     assert code == 0, log
@@ -67,7 +67,7 @@ def test_same_seed_and_denoise_written_back(tmp_path):
 
 def test_seed_offset_mode(tmp_path):
     out = tmp_path / "b4.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--story", str(ROOT / "assets" / "story.4beat.json"),
                      "--seed-mode", "offset", "--out", str(out)])
     assert code == 0, log
@@ -80,7 +80,7 @@ def test_shipped_assets_validate():
     for name in ("workflow-sdxl.json", "workflow-moss.json",
                  "workflow-sdxl-4beat.json", "workflow-moss-4beat.json",
                  "workflow-sdxl-preview.json"):
-        code, log = run(["--validate", str(ROOT / "assets" / name)])
+        code, log = run(["--validate", str(ROOT / "workflows" / name)])
         assert code == 0, name + log
 
 
@@ -90,13 +90,13 @@ def test_shipped_assets_share_one_seed():
              "workflow-sdxl-4beat.json", "workflow-moss-4beat.json",
              "workflow-sdxl-preview.json")
     for name in names:
-        wf = json.loads((ROOT / "assets" / name).read_text(encoding="utf-8"))
+        wf = json.loads((ROOT / "workflows" / name).read_text(encoding="utf-8"))
         seeds = {n["widgets_values"][0] for n in wf["nodes"] if n["type"] == "KSampler"}
         assert len(seeds) == 1, (name, seeds)
 
 
 def test_rejects_bad_seg_sum(tmp_path):
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--beats", "4", "--segs", "8,8,8",
                      "--lock", "x", "--actions", "a|b|c|d",
                      "--out", str(tmp_path / "x.json")])
@@ -108,7 +108,7 @@ def test_rejects_bad_seg_sum(tmp_path):
 def test_motion_layer_shared_and_each_frame_kept(tmp_path):
     """全局动作只写一个节点；每帧提示仍在各自的 CLIPTextEncode 里。"""
     out = tmp_path / "b3.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--story", str(ROOT / "assets" / "story.example.json"),
                      "--motion", "slow blink, stable lighting",
                      "--out", str(out)])
@@ -129,7 +129,7 @@ def test_emit_is_idempotent(tmp_path):
     """把 emit 产物再当 base 跑一次，合并层与 Note 不能重复叠加。"""
     once_out = tmp_path / "b3.json"
     twice_out = tmp_path / "b3x2.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--story", str(ROOT / "assets" / "story.example.json"),
                      "--out", str(once_out)])
     assert code == 0, log
@@ -141,7 +141,7 @@ def test_emit_is_idempotent(tmp_path):
     b = json.loads(twice_out.read_text(encoding="utf-8"))
     assert len(a["nodes"]) == len(b["nodes"])
     assert len([n for n in b["nodes"] if n["type"] == "ConditioningCombine"]) == 3
-    assert len([n for n in b["nodes"] if n["type"] == "Note"]) == 1
+    assert len([n for n in b["nodes"] if n["type"] == "Note"]) == 2
 
 
 def test_linear_curve_has_uniform_steps():
@@ -153,7 +153,7 @@ def test_linear_curve_has_uniform_steps():
 def test_frames_60_expands_nodes(tmp_path):
     """--frames 60：插值/解码/batch 三件套自动补齐到 60。"""
     out = tmp_path / "f60.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-moss.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-moss.json"),
                      "--beats", "4", "--frames", "60", "--segs", "15,15,15,15",
                      "--fps", "30", "--lock", "x", "--actions", "a|b|c|d",
                      "--out", str(out)])
@@ -173,7 +173,7 @@ def test_frames_60_expands_nodes(tmp_path):
 def test_frames_auto_split_without_segs(tmp_path):
     """不给 --segs 时按 beats 平均分 60 帧。"""
     out = tmp_path / "f60auto.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--beats", "4", "--frames", "60",
                      "--lock", "x", "--actions", "a|b|c|d", "--out", str(out)])
     assert code == 0, log
@@ -182,7 +182,7 @@ def test_frames_auto_split_without_segs(tmp_path):
 
 def test_frames_8_shrinks(tmp_path):
     out = tmp_path / "f8.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--beats", "4", "--frames", "8",
                      "--lock", "x", "--actions", "a|b|c|d", "--out", str(out)])
     assert code == 0, log
@@ -195,7 +195,7 @@ def test_frames_8_shrinks(tmp_path):
 
 
 def test_frames_rejects_bad_sum(tmp_path):
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--beats", "4", "--frames", "60", "--segs", "15,15,15,10",
                      "--lock", "x", "--actions", "a|b|c|d",
                      "--out", str(tmp_path / "x.json")])
@@ -205,7 +205,7 @@ def test_frames_rejects_bad_sum(tmp_path):
 def test_empty_motion_bypasses_combine(tmp_path):
     """motion 留空时不能走 ConditioningCombine：空提示会稀释本帧提示，掉画质。"""
     out = tmp_path / "bypass.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
                      "--beats", "4", "--frames", "8", "--lock", "L",
                      "--actions", "a0|a1|a2|a3", "--out", str(out)])
     assert code == 0, log
@@ -235,7 +235,54 @@ def test_story_segs_rescale_when_frames_override(tmp_path):
                      '"lock":"1girl","style":"anime","actions":["a","b","c","d","e"]}',
                      encoding="utf-8")
     out = tmp_path / "wf.json"
-    code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"), "--story", str(story),
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-sdxl.json"), "--story", str(story),
                      "--frames", "30", "--out", str(out)])
     assert code == 0, log
     assert "segs=[6, 6, 6, 6, 6]" in log
+
+
+def test_moss_zh_compiles_to_prose(tmp_path):
+    """moss_zh 模式：三段用换行拼接，每段以中文句号收尾，不掺英文逗号。"""
+    out = tmp_path / "moss.json"
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-moss.json"),
+                     "--beats", "2", "--frames", "2", "--segs", "1,1", "--fps", "2",
+                     "--prompt-mode", "moss_zh",
+                     "--lock", "一间卧室。", "--style", "动漫风格。",
+                     "--actions", "坐着。|躺下。", "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    texts = [n["widgets_values"][0] for n in wf["nodes"]
+             if n["type"] == "CLIPTextEncode" and "一间卧室" in str(n.get("widgets_values"))]
+    assert texts, "找不到 K0/K1 提示节点"
+    for t in texts:
+        assert "\n" in t, t
+        assert t.rstrip().endswith("。"), t
+        assert "一间卧室。, " not in t
+    assert any("坐着" in t for t in texts)
+    assert any("躺下" in t for t in texts)
+
+
+def test_size_override(tmp_path):
+    out = tmp_path / "size.json"
+    code, log = run(["--base", str(ROOT / "workflows" / "workflow-moss.json"),
+                     "--beats", "2", "--frames", "2", "--segs", "1,1",
+                     "--lock", "x", "--actions", "a|b", "--size", "640", "--out", str(out)])
+    assert code == 0, log
+    wf = json.loads(out.read_text(encoding="utf-8"))
+    lat = [n for n in wf["nodes"] if n["type"].startswith("Empty") and "Latent" in n["type"]]
+    assert lat and lat[0]["widgets_values"][0] == 640 and lat[0]["widgets_values"][1] == 640
+
+
+def test_notes_are_idempotent(tmp_path):
+    """--notes-only 跑两次，两个 Note 不能变成四个。"""
+    first = tmp_path / "n1.json"
+    code, log = run(["--notes-only", "--base", str(ROOT / "workflows" / "workflow-sdxl.json"),
+                     "--out", str(first)])
+    assert code == 0, log
+    wf = json.loads(first.read_text(encoding="utf-8"))
+    assert len([n for n in wf["nodes"] if n["type"] == "Note"]) == 2
+    second = tmp_path / "n2.json"
+    code, log = run(["--notes-only", "--base", str(first), "--out", str(second)])
+    assert code == 0, log
+    wf2 = json.loads(second.read_text(encoding="utf-8"))
+    assert len([n for n in wf2["nodes"] if n["type"] == "Note"]) == 2

@@ -108,7 +108,7 @@ Do not pile on `ugly, bad`; that suppresses ordinary expressions too.
 
 ---
 
-## 4 · The library (16 presets)
+## 4 · The library (17 presets)
 
 `assets/motion-presets.json` ships with the repo. Each preset carries beats, frames, segments, fps, denoise, four actions, a motion layer and a scene hint.
 
@@ -188,7 +188,7 @@ python scripts/make_story.py \
   --out assets/story.my-laugh.json
 
 python scripts/emit_workflow.py \
-  --base assets/workflow-sdxl.json \
+  --base workflows/workflow-sdxl.json \
   --story assets/story.my-laugh.json \
   --out my-laugh.json \
   --run

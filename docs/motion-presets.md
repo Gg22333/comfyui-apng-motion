@@ -110,7 +110,7 @@ same camera, same framing, stable lighting, no zoom, no camera move
 
 ---
 
-## 4 · 动作库（16 组，直接调用）
+## 4 · 动作库（17 组，直接调用）
 
 `assets/motion-presets.json` 是随包的动作库。每组都带：拍数、帧数、段数、fps、denoise、四条动作、全局指导、场景提示。
 
@@ -147,6 +147,31 @@ same camera, same framing, stable lighting, no zoom, no camera move
 
 故事类不要求「一个表情」，它演的是**状态变化**：困 → 清醒、平静 → 惊喜。
 但结构不变：每一拍仍然只推进一步，最后一拍仍然插回 K0。
+
+### 4.3.1 六拍全身故事（`moss_zh`）
+
+`diet-betrayal`｜减肥破功｜60 帧 / 30fps / 640×640｜`prompt_mode: moss_zh`
+
+| 拍 | 帧 | 动作 |
+| --- | --- | --- |
+| K0 | 0 | 坐直、叉腰、抬下巴、面前是沙拉碗 |
+| K1 | 10 | 背塌、双肘撑桌、头低到碗口、嘴角拉直 |
+| K2 | 22 | 身体右倾、右手撑桌、左手够地上的手机、屏幕冷光打脸 |
+| K3 | 26 | 缩肩、从桌下抱起炸鸡桶、鼓腮、额角一滴汗 |
+| K4 | 38 | 后靠椅背、举炸鸡到嘴边、眼睛闭成两道弯 |
+| K5 | 48 | 坐直、推走空桶、抱回沙拉碗、握拳（明天再减） |
+
+```bash
+python scripts/make_story.py --preset diet-betrayal --out assets/story.diet.json
+```
+
+这一组的关键约束：
+
+- **下半身全程固定在矮桌后面**。腿的位置一变，latent 插值就会出现「双重腿」残影。
+- **denoise 0.85–0.90**。MOSS 是 8 步 DMD 蒸馏模型，低于 0.8 几乎不动（实测整片相邻帧差 0.03）。
+- **`motion` 留空**。写「不要推镜头 / 不要换角度」这类否定句，模型会理解成「保持原样」，
+  把本帧动作一起压掉。
+- 提示词用中文散文，每段以「。」结尾；`prompt_mode` 设成 `moss_zh`。
 
 ### 4.4 动作词汇表（直接粘进 `actions`）
 
@@ -190,7 +215,7 @@ python scripts/make_story.py \
   --out assets/story.my-laugh.json
 
 python scripts/emit_workflow.py \
-  --base assets/workflow-sdxl.json \
+  --base workflows/workflow-sdxl.json \
   --story assets/story.my-laugh.json \
   --out my-laugh.json \
   --run

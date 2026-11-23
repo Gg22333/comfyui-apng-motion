@@ -5,10 +5,10 @@
       一张剧情卡（JSON，见 assets/story.example.json），或用命令行直接给
 
 用法:
-    python emit_workflow.py --base ../assets/workflow-sdxl.json --story ../assets/story.example.json --out out.json
-    python emit_workflow.py --base ../assets/workflow-moss.json --story ../assets/story.example.json \
+    python emit_workflow.py --base ../workflows/workflow-sdxl.json --story ../assets/story.example.json --out out.json
+    python emit_workflow.py --base ../workflows/workflow-moss.json --story ../assets/story.example.json \
         --frames 60 --segs 15,15,15,15 --out out60.json      # 任意帧数
-    python emit_workflow.py --base ../assets/workflow-sdxl.json --beats 4 --segs 6,7,6,5 \
+    python emit_workflow.py --base ../workflows/workflow-sdxl.json --beats 4 --segs 6,7,6,5 \
         --lock "masterpiece, 1girl, silver hair, blue eyes" --style "anime screencap" \
         --actions "neutral expression|eyes widened|mouth open|flat expression" --out out.json
     python emit_workflow.py --validate out.json                  # 只校验
@@ -89,6 +89,11 @@ def main():
     ap.add_argument("--negative", default="")
     ap.add_argument("--actions", default="")
     ap.add_argument("--denoise", type=float, default=0)
+    ap.add_argument("--size", type=int, default=0, help="正方形边长；写 640 就是 640x640")
+    ap.add_argument("--width", type=int, default=0)
+    ap.add_argument("--height", type=int, default=0)
+    ap.add_argument("--prompt-mode", choices=["tags", "moss_zh"], default="",
+                    help="tags=英文逗号标签（SDXL）；moss_zh=中文散文段落（MOSS / Qwen-VL 编码器）")
     ap.add_argument("--motion", default=None,
                     help="全局动作指导，写进所有关键帧共享的 CLIPTextEncode")
     ap.add_argument("--curve", choices=["linear", "ease", "snap"], default="")
@@ -97,10 +102,23 @@ def main():
     ap.add_argument("--cfg", type=float, default=0)
     ap.add_argument("--seed-mode", choices=["same", "offset"], default=None,
                     help="same=所有关键帧同 seed（少抖动，默认）；offset=逐帧 +1")
+    ap.add_argument("--notes-only", action="store_true",
+                    help="只给 --base 补/更新两个说明 Note，不动其它节点")
     ap.add_argument("--validate", default="")
     ap.add_argument("--run", action="store_true")
     ap.add_argument("--profile", default="")
     a = ap.parse_args()
+
+    if a.notes_only:
+        if not a.base:
+            print("--notes-only 需要 --base")
+            return 2
+        wf = L.load_json(a.base)
+        apply_notes(wf["nodes"])
+        wf["last_node_id"] = max(n["id"] for n in wf["nodes"])
+        L.save_json(a.out or a.base, wf)
+        print("notes-only:", a.out or a.base, "nodes=%d" % len(wf["nodes"]))
+        return 0
 
     if a.validate:
         wf = L.load_json(a.validate)
@@ -112,7 +130,7 @@ def main():
             return 1
         if not a.run:
             return 0
-        return run_it(wf, a.profile)
+        return run_it(wf, a.profile, None)
 
     if not (a.base and a.out):
         print("需要 --base 与 --out（或用 --validate）")
@@ -162,9 +180,26 @@ def main():
     cfg = a.cfg or float(story.get("cfg", 0))
     seed_base = a.seed or int(story.get("seed", 0))
     same_seed = (a.seed_mode or story.get("seed_mode", "same")) == "same"
+    prompt_mode = a.prompt_mode or story.get("prompt_mode", "tags")
+    if prompt_mode not in ("tags", "moss_zh"):
+        print("prompt_mode 只能是 tags 或 moss_zh，当前 %r" % prompt_mode)
+        return 2
 
     nodes = wf["nodes"]
     ledger = Ledger(wf["links"])
+
+    # 尺寸：直接改 latent 节点，避免用户在图堆里找「尺寸」节点
+    w = a.width or a.size or int(story.get("width", 0) or 0)
+    h = a.height or a.size or int(story.get("height", 0) or 0)
+    if w or h:
+        for n in nodes:
+            if n["type"] in ("EmptyLatentImage", "EmptyFlux2LatentImage", "EmptySD3LatentImage"):
+                wv = list(n.get("widgets_values") or [])
+                if len(wv) >= 2:
+                    wv[0] = w or wv[0]
+                    wv[1] = h or wv[1]
+                    n["widgets_values"] = wv
+                    print("size: %sx%s (%s)" % (wv[0], wv[1], n["type"]))
 
     samplers = sorted([n for n in nodes if n["type"] == "KSampler"], key=lambda n: n.get("order", 0))
     if len(samplers) < 2:
@@ -237,7 +272,7 @@ def main():
     chain = [k0] + list(key_samplers)
     while len(chain) < beats:
         i = len(chain) - 1  # 新增第 i 个关键帧
-        text = compile_prompt(lock, style, actions[i] if i < len(actions) else "")
+        text = compile_prompt(lock, style, actions[i] if i < len(actions) else "", prompt_mode)
         enc = mk_encoder(text, 600 + i * 280)
         chain.append(mk_sampler(enc, 600 + i * 280, i))
         kf_enc.append(enc)
@@ -255,10 +290,10 @@ def main():
         actions = [""] * beats
     # 写提示词
     pos0 = positive_encoder(wf, k0)
-    pos0["widgets_values"] = [compile_prompt(lock, style, actions[0])]
+    pos0["widgets_values"] = [compile_prompt(lock, style, actions[0], prompt_mode)]
     pos0["title"] = "K0 首帧提示"
     for i, enc in enumerate(kf_enc[: beats - 1], start=1):
-        enc["widgets_values"] = [compile_prompt(lock, style, actions[i])]
+        enc["widgets_values"] = [compile_prompt(lock, style, actions[i], prompt_mode)]
         enc["title"] = "K%d 提示" % i
     if negative:
         node_by(nodes, neg_o[0])["widgets_values"] = [negative]
@@ -341,34 +376,7 @@ def main():
                         ledger.drop(inp["link"])
                     inp["link"] = ledger.add(comb["id"], 0, s["id"], 1, "CONDITIONING")
 
-    # ---- 画布内的参数清单，避免用户在节点堆里找不到入口 ----
-    note_text = (
-        "【可调参数清单】\n"
-        "全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n"
-        "  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n"
-        "每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n"
-        "采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n"
-        "  关键帧 denoise 建议 0.30-0.40；越低越稳，越高越自由但容易出现色斑。\n"
-        "节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n"
-        "速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长；24 @10fps = 2.4 秒，60 @30fps = 2 秒。\n"
-        "命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n"
-        "画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n"
-        "避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。"
-    )
-    note = None
-    for n in nodes:
-        if n["type"] == "Note" and str((n.get("widgets_values") or [""])[0]).startswith("【可调参数清单】"):
-            note = n
-            break
-    if note is None:
-        note = {"id": next_id, "type": "Note", "pos": [max_x + 420, 1080], "size": [520, 360],
-                "flags": {}, "order": max_order + 1, "mode": 0, "widgets_values": [note_text]}
-        next_id += 1
-        max_order += 1
-        nodes.append(note)
-    else:
-        note["widgets_values"] = [note_text]
-        note["pos"] = [max_x + 420, 1080]
+    apply_notes(nodes)
 
     # N 个插值 / 解码（N = frames），不足则克隆补齐，多余则删掉
     interps, decodes = ensure_frames(wf, ledger, frames)
@@ -434,7 +442,7 @@ def main():
     L.save_json(a.out, wf)
     print("written:", a.out, "nodes=%d links=%d" % (len(nodes), len(wf["links"])))
     print("beats=%d frames=%d segs=%s fps=%s denoise=%s curve=%s" % (beats, frames, segs, fps, base_dn, curve))
-    print("motion=%r" % motion)
+    print("prompt_mode=%s  motion=%r" % (prompt_mode, motion))
     if probs:
         print("VALIDATE FAIL")
         for p in probs:
@@ -442,10 +450,94 @@ def main():
         return 1
     print("VALIDATE OK")
     for i in range(beats):
-        print("  K%d: %s" % (i, compile_prompt(lock, style, actions[i])[:120]))
+        print("  K%d: %s" % (i, (actions[i] or "")[:100]))
     if a.run:
-        return run_it(wf, a.profile)
+        return run_it(wf, a.profile, None)
     return 0
+
+
+NOTE_PARAMS_TITLE = "【可调参数清单】"
+NOTE_PROMPTS_TITLE = "【提示词写法（SDXL / MOSS 两套）】"
+
+NOTE_PARAMS_TEXT = (
+    "【可调参数清单】\n"
+    "全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n"
+    "  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n"
+    "每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n"
+    "采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n"
+    "  SDXL 关键帧 denoise 建议 0.35-0.45；Moss 0.50-0.80。越低越稳，越高越自由但容易出现色斑。\n"
+    "节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n"
+    "速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长；24 @10fps = 2.4 秒，60 @30fps = 2 秒。\n"
+    "命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n"
+    "画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n"
+    "避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。\n"
+    "帧数与 fps 怎么配、提示词怎么写：看右边【提示词写法】这个 Note。"
+)
+
+NOTE_PROMPTS_TEXT = (
+    "【提示词写法（SDXL / MOSS 两套）】\n"
+    "\n"
+    "■ tags 模式 —— SDXL / 传统 CLIP\n"
+    "  格式：角色与场景标签, 这一拍动作, 画风标签\n"
+    "  · 英文逗号分隔，重要标签往前放。\n"
+    "  · 画风必须放最后：anime screencap, clean lineart, flat cel shading。\n"
+    "  · 写画面不写效果：写「eyes wide, pupils small」不写「shocked」。\n"
+    "  · 负向单独一个 CLIPTextEncode，不要混进正向。\n"
+    "  例：1girl, solo, full body, black short hair, blue eyes, beige hoodie,\n"
+    "      sitting on floor, bedroom at night, warm lamp light /\n"
+    "      这一拍动作 / anime screencap, clean lineart, flat cel shading\n"
+    "\n"
+    "■ moss_zh 模式 —— MOSS-Image / Qwen-VL 文本编码器\n"
+    "  格式：中文散文，换行分段，每段以「。」结尾\n"
+    "  · 不堆 quality tag：masterpiece / best quality 对它是噪声。\n"
+    "  · 场景 → 人物 → 这一拍 → 画风，四件事说全。\n"
+    "  · 用可测量的身体描述代替形容词：\n"
+    "      震惊 = 双眼睁大、瞳孔缩小、嘴张开\n"
+    "      疲惫嫌弃 = 眼半闭、瞳孔偏低、唇压成直线\n"
+    "  · 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。\n"
+    "  · 负向同样用中文，放单独的 CLIPTextEncode。\n"
+    "\n"
+    "■ 帧数与 fps（三个保存节点的 fps 必须一致）\n"
+    "   8 帧  @ 8fps = 1.00s   单表情，体积最小\n"
+    "  24 帧  @10fps = 2.40s   默认，聊天表情包\n"
+    "  30 帧  @15fps = 2.00s   短动作\n"
+    "  60 帧  @30fps = 2.00s   完整小故事，最顺\n"
+    "  改帧数：python scripts/emit_workflow.py --frames N --segs a,b,c,...\n"
+    "  segs 之和必须等于 N；每拍至少 1 帧。\n"
+    "\n"
+    "■ 换故事不改节点\n"
+    "  只改三个地方：全局动作指导、K0..Kn 各自提示、segs。\n"
+    "  节点数量、连线、保存路径都不用动。"
+)
+
+
+def apply_notes(nodes):
+    """补/更新画布上的两个说明 Note（幂等）。就地修改 nodes。"""
+    nid = max(n["id"] for n in nodes)
+    order = max(n.get("order", 0) for n in nodes)
+    max_x = max((n.get("pos") or [0, 0])[0] for n in nodes)
+
+    specs = [
+        (NOTE_PARAMS_TITLE, NOTE_PARAMS_TEXT, [max_x + 420, 1080], [520, 380]),
+        (NOTE_PROMPTS_TITLE, NOTE_PROMPTS_TEXT, [max_x + 1000, 1080], [760, 780]),
+    ]
+    for title, text, pos, size in specs:
+        hit = None
+        for n in nodes:
+            if n["type"] == "Note" and str((n.get("widgets_values") or [""])[0]).startswith(title):
+                hit = n
+                break
+        if hit is None:
+            nid += 1
+            order += 1
+            nodes.append({
+                "id": nid, "type": "Note", "pos": pos, "size": size,
+                "flags": {}, "order": order, "mode": 0, "widgets_values": [text],
+            })
+        else:
+            hit["widgets_values"] = [text]
+            hit["pos"] = pos
+            hit["size"] = size
 
 
 def ensure_frames(wf, ledger, frames):
@@ -539,13 +631,29 @@ def name_of(n, i):
     return "K0" if i == 0 else "K%d" % i
 
 
-def compile_prompt(lock, style, action):
-    """顺序固定：人物/场景 -> 本帧动作 -> 风格画质。
+def compile_prompt(lock, style, action, mode="tags"):
+    """把 场景/人物 (lock) + 这一拍动作 (action) + 画风 (style) 拼成一条提示词。
 
-    风格必须放最后。Moss 的 LLM 文本编码器对末尾 token 权重最高，
-    anime screencap / clean lineart / flat cel shading 写在中段会被动作词冲掉，
-    出图会直接掉进写实照相模式（实测：拼贴照、色块闪）。
+    tags（SDXL / 传统 CLIP）
+        "lock, action, style" —— 英文逗号标签流。
+        风格放最后：SDXL 的 CLIP 对末尾 token 权重最高，画风写在中段会被动作词冲掉，
+        出图掉进写实照相模式（实测：拼贴照、色块闪）。
+
+    moss_zh（MOSS-Image / Qwen-VL 文本编码器）
+        中文散文，换行分段，每段以「。」收尾。
+        这类编码器读自然语言语义，不读逗号标签权重；堆 quality tag 反而退化。
+        顺序：场景与画风 -> 人物 -> 这一拍 -> 画风收口。
     """
+    if mode == "moss_zh":
+        segs = []
+        for p in (lock, action, style):
+            p = (p or "").strip()
+            if not p:
+                continue
+            if p[-1] not in "。！？.!?":
+                p += "。"
+            segs.append(p)
+        return "\n".join(segs)
     parts = [p.strip().rstrip(",") for p in (lock, action, style) if p and p.strip()]
     return ", ".join(parts)
 
@@ -642,7 +750,7 @@ def validate(wf):
     return probs
 
 
-def run_it(wf, profile_path):
+def run_it(wf, profile_path, segs=None):
     prof = L.load_json(profile_path) if profile_path else {}
     if not prof:
         print("--run 需要 --profile")
@@ -675,7 +783,10 @@ def run_it(wf, profile_path):
             if os.path.isfile(p):
                 chk = os.path.join(os.path.dirname(os.path.abspath(__file__)), "check_anim.py")
                 # os.system 在 Windows 上对多段带引号路径会报 "filename syntax is incorrect"
-                subprocess.call([prof.get("python") or sys.executable, chk, p, "--expect", str(nframes)])
+                cmd = [prof.get("python") or sys.executable, chk, p, "--expect", str(nframes)]
+                if segs:
+                    cmd += ["--segs", ",".join(str(x) for x in segs)]
+                subprocess.call(cmd)
     return 0
 
 

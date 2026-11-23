@@ -68,10 +68,13 @@ def build_story(data, preset_id, lock, style=None, name=None, frames=None, fps=N
     hint = (p.get("lock_hint") or "").strip() if use_hint else ""
     if hint:
         lock_text = (lock_text.rstrip(", ") + ", " + hint).strip(", ") if lock_text else hint
+    # moss_zh 类预设自带完整的中文场景+人物段落，用户没覆盖就直接用
+    if not lock_text and p.get("lock_full"):
+        lock_text = p["lock_full"]
     if not lock_text:
         raise ValueError("必须给 --lock（角色/场景的不变量），否则每拍会换人")
 
-    neg = negative if negative is not None else d.get("negative", "")
+    neg = negative if negative is not None else (p.get("negative") or d.get("negative", ""))
     extra = (p.get("negative_extra") or "").strip()
     if extra:
         neg = (neg.rstrip(", ") + ", " + extra).strip(", ")
@@ -94,6 +97,9 @@ def build_story(data, preset_id, lock, style=None, name=None, frames=None, fps=N
     }
     if seed:
         story["seed"] = int(seed)
+    mode = p.get("prompt_mode") or "tags"
+    if mode != "tags":
+        story["prompt_mode"] = mode
     return story
 
 
@@ -143,7 +149,7 @@ def main(argv=None):
     ap.add_argument("--curve", choices=["linear", "ease", "snap"], default=None)
     ap.add_argument("--prefix", default=None)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--seed-mode", choices=["same", "different"], default=None)
+    ap.add_argument("--seed-mode", choices=["same", "offset", "different"], default=None)
     ap.add_argument("--no-hint", action="store_true", help="不追加动作自带的场景提示")
     ap.add_argument("--out", default="", help="输出路径；不给就打到 stdout")
     a = ap.parse_args(argv)

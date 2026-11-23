@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_ui_to_api_widgets_and_links():
-    wf = json.loads((ROOT / "assets" / "workflow-sdxl.json").read_text(encoding="utf-8"))
+    wf = json.loads((ROOT / "workflows" / "workflow-sdxl.json").read_text(encoding="utf-8"))
     info = json.loads((ROOT / "assets" / "node_schema.json").read_text(encoding="utf-8"))
     api = L.ui_to_api(wf, info)
 

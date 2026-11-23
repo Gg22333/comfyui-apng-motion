@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 1.3.1 — 2026-11-23
+
+- **六拍全身故事**：新增 `assets/story.diet.json` 与 `diet-betrayal` 动作预设
+  （60 帧 / 30fps / 640×640 / `moss_zh` / denoise 0.85）。主预览换成这一版，
+  并新增 `docs/assets/storyboard-diet.webp` 关键拍联系表。
+- **第二套提示词方言**：`emit_workflow.py --prompt-mode tags|moss_zh`。`moss_zh` 把
+  `lock / action / style` 拼成中文散文，换行分段、每段以「。」收尾；适合 MOSS / Qwen-VL 文本编码器。
+- **`--size` / `--width` / `--height`**：直接改 latent 尺寸，不用在画布上找节点。
+- **`--notes-only`**：给任意工作流补/更新两个说明 Note（参数清单 + 提示词写法），幂等。
+- **工作流独立目录**：`assets/workflow-*.json` → `workflows/`，新增 `workflows/README.md`；
+  新增 `scripts/sync_workflows.py`，把 `workflows/` 与 `assets/*.json` 镜像到
+  `docs/assets/{workflows,presets}`，`--check` 查漂移，已接入 CI 与 Pages 构建。
+- **新页面**：`docs/workflows.md` / `docs/en/workflows.md`（下载、结构、两个环境的参数差异、
+  提示词方言、帧数表）。
+- **`check_anim.py --segs`**：按拍比较段首与段尾，输出 `full` 与画面下半区 `lower` 差异；
+  `--strict` 让 CI 在表演不足时失败。
+- **`make_storyboard.py`**：按 segs 抽关键拍拼联系表。
+- 修：`docs/install.md` 的 `yourname`、`docs/publishing.md` 过时步骤、GIF 体积、
+  `site_url` 大小写、`deploy-docs.yml` 不监听 `workflows/` 与 `assets/`、
+  `install.py` 不排除 `.pytest_cache`。
+- 帧数表统一为 8 @8fps / 24 @10fps / 30 @15fps / 60 @30fps。
+- 测试 49 → 56 项。
+
 ## 1.3.0 — 2026-11-23
 
 - **任意帧数**：`emit_workflow.py` 新增 `--frames N`（8–60），剧情卡支持 `"frames"`；`--segs` 之和必须等于 N，

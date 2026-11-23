@@ -20,7 +20,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {"__pycache__", "dist", ".git", ".github", "tests"}
+SKIP_DIRS = {"__pycache__", "dist", ".git", ".github", "tests", ".pytest_cache", ".ruff_cache"}
 SKIP_SUFFIX = (".bak", ".pyc", ".tmp")
 
 

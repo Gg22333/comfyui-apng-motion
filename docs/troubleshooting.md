@@ -4,7 +4,7 @@
 
 | 症状 | 根因 | 处理 |
 | --- | --- | --- |
-| `emit_workflow.py` 报「关键帧 KSampler 不足 2 个」 | base 不是三关键帧结构 | 用 `assets/workflow-*.json` 当模板 |
+| `emit_workflow.py` 报「关键帧 KSampler 不足 2 个」 | base 不是三关键帧结构 | 用 `workflows/workflow-*.json` 当模板 |
 | 报「base 里 LatentInterpolate 是 N 个，必须是 24」 | base 被改过 | 恢复模板或手工补到 24 |
 | 报「segs 之和必须 24」 | 段数分配写错 | 3 拍 `8/8/8`、4 拍 `6/7/6/5`、5 拍 `5/6/5/4/4` |
 | 报「同一对 latent 上 ratio 有重复值」 | 同一段里撞了同一个小数 | 用 `make_curve.py` 重算（已做全局去重） |

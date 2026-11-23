@@ -93,7 +93,7 @@ xl 的稳定上限约 **denoise 0.35**：0.42 时颜色漂移升到 8 左右，�
 ```powershell
 python scripts/detect_env.py                     # 1 扫描本机 ComfyUI，写 profiles/*.json
 python scripts/doctor.py                         # 2 逐项体检（模型/插件/节点/输出目录/端口）
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out my-4beat.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out my-4beat.json
 ```
 
 `emit_workflow.py` 认的是**结构**，不是模型名：只要 base 里有「1 个 denoise=1 的 KSampler + ≥2 个关键帧 KSampler + 24 个 LatentInterpolate + 24 个 VAEDecode + ImageBatchMulti(24) + 三个输出」，就能扩成 3–5 拍。换模型只需要把 base 里的 loader 换成你自己的（`CheckpointLoaderSimple` 或 `UNETLoader`+`CLIPLoader`+`VAELoader` 都行），其余别动。
@@ -371,6 +371,33 @@ Dit 现在差异 0.06–3.04、平均 1.43，动作幅度已经够，不要再�
 
 ## 5 · 提示词写法（决定连贯度的一半）
 
+### 5.0 两套方言：`tags` 与 `moss_zh`
+
+`emit_workflow.py --prompt-mode`（或剧情卡 `"prompt_mode"`）决定三段怎么拼：
+
+| 模式 | 拼接结果 | 给谁用 |
+| --- | --- | --- |
+| `tags`（默认） | `lock, 动作, style` 英文逗号 | SDXL / 传统 CLIP |
+| `moss_zh` | `lock。\n 动作。\n style。` 中文散文 | MOSS / Qwen-VL 文本编码器 |
+
+MOSS 读的是自然语言语义，不读逗号标签权重。堆 `masterpiece, best quality` 只会让它退回通用图库风格。
+用**可测量的身体描述**代替形容词：
+
+- 震惊 = 双眼睁大、瞳孔缩小、嘴张开
+- 疲惫嫌弃 = 眼半闭、瞳孔偏低、唇压成直线
+- 破功 = 肩膀塌下、头低到接近碗口、嘴角拉成直线
+
+构图必须写死：固定机位、平视、全身镜头、从头到脚完整入画、双手双脚留在画框内。
+负向也用中文，放在单独的 `CLIPTextEncode`。
+
+完整范例 `assets/story.diet.json`：六拍 / 60 帧 / 30fps / 640×640，节拍 `10,12,4,12,10,12`，
+denoise 0.75。生成命令：
+
+```bash
+python scripts/emit_workflow.py --base workflows/workflow-moss.json \
+  --story assets/story.diet.json --size 640 --out diet60.json
+```
+
 三个正向框必须共享同一句"主体锁定句"，只改表情尾巴：
 
 ```
@@ -463,7 +490,7 @@ K3 收：  … , flat expression, eyes half lidded, mouth closed, head straight
       different hair color, different eye color, color shift, style change, multiple views
 ```
 
-### 5.3.1 动作库：16 组现成节拍
+### 5.3.1 动作库：17 组现成节拍
 
 `assets/motion-presets.json` 把常见表情包动作写成了可复用的节拍卡，`scripts/make_story.py` 直接生成剧情卡：
 
@@ -478,6 +505,7 @@ python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --f
 | 情绪 | `laugh` `cry` `shock` `angry` `smug` `sigh` `panic` `sleepy` `love` |
 | 动作 | `wave` `nod` `shake` `thumbsup` `think` |
 | 五拍故事 | `rainy-walk` `morning-coffee` |
+| 六拍全身故事 | `diet-betrayal`（`moss_zh` 中文散文，60 帧） |
 
 动作语法固定为五拍：**K0 静息（循环接点 + 封面）→ K1 预备（反方向蓄力）→ K2 主动作（最大剪影变化）→ K3 余震（回落）→ 回到 K0**。
 每拍只改 1–2 个部位；`style` 必须放在提示词末尾。完整说明与平台规格（Telegram 512/≤3s/60fps、LINE APNG 5–20 帧/≤4s/≤1MB、微信 GIF 240²/≤500KB）
@@ -688,20 +716,23 @@ output\APNG\
 
 | 路径 | 用途 |
 | --- | --- |
-| `assets/workflow-sdxl.json` | xl 环境工作流副本（与线上一致） |
-| `assets/workflow-moss.json` | Dit 环境工作流副本 |
+| `workflows/workflow-sdxl.json` | xl 环境工作流副本（与线上一致） |
+| `workflows/workflow-moss.json` | Dit 环境工作流副本 |
 | `scripts/check_anim.py` | 帧数 / 时长 / 相邻帧差异 / 颜色漂移校验 |
 | `scripts/make_preview.py` | 成品 APNG → 全局调色板 GIF + WebP 网页预览 |
+| `scripts/make_storyboard.py` | 按 segs 抽关键拍拼联系表 → `docs/assets/storyboard-*.webp` |
+| `scripts/sync_workflows.py` | `workflows/` 与 `assets/` → `docs/assets/` 同步，`--check` 查漂移 |
 | `scripts/make_story.py` | 从 `assets/motion-presets.json` 生成剧情卡；校验 frames/segs/beats |
-| `assets/motion-presets.json` | 16 组动作节拍（情绪 / 动作 / 五拍故事） |
+| `assets/motion-presets.json` | 17 组动作节拍（情绪 / 动作 / 五拍故事 / 六拍 moss_zh 故事） |
 | `scripts/make_curve.py` | 生成 ratio 曲线，支持 3–6 段：`--segs 6,7,6,5` 出 24 值 |
 | `scripts/detect_env.py` | 扫本机 ComfyUI → `profiles/*.json`（换机器第一步） |
 | `scripts/doctor.py` | profile 体检：模型、插件、节点、端口、输出目录 |
-| `scripts/emit_workflow.py` | 3 关键帧 → 3–5 拍剧情工作流；编译提示词、重算曲线、校验、可选 `--run` |
+| `scripts/emit_workflow.py` | 3 关键帧 → 3–8 拍剧情工作流；`--prompt-mode`、`--size`、编译提示词、重算曲线、校验、可选 `--run`、`--notes-only` |
 | `scripts/comfy_lib.py` | 共用库（profile / HTTP / 曲线 / UI→API） |
 | `profiles/xl.json` `profiles/dit.json` | 本机探测结果，换机器重新生成 |
-| `assets/story.example.json` `assets/story.4beat.json` | 剧情卡样例（3 拍 / 4 拍） |
-| `assets/workflow-sdxl-4beat.json` `assets/workflow-moss-4beat.json` | 已扩好的 4 拍工作流 |
+| `assets/story.example.json` `assets/story.4beat.json` | 剧情卡样例（3 拍 / 4 拍，tags 模式） |
+| `assets/story.diet.json` | 六拍全身故事（`moss_zh` 中文散文） |
+| `workflows/workflow-sdxl-4beat.json` `workflows/workflow-moss-4beat.json` | 已扩好的 4 拍工作流 |
 | `assets/node_schema.json` | 节点定义兜底（服务器 `/object_info` 取不到时用） |
 | `scripts/check_deps.py` | 依赖自检：Python / Pillow / curl / profiles 里的 ComfyUI 与插件 |
 | `scripts/install.py` | 装到 Codex / magpie 的 skills 目录，覆盖前自动备份 |
@@ -757,7 +788,7 @@ output\APNG\
 | --- | --- |
 | 正文里的 `D:\ComfyUI-aki-v3.2-xl` | 示例。脚本只从 profile 读路径 |
 | 正文里的 8190/8191 | 示例。`doctor`/`emit --run` 用 profile 的 `port` |
-| `assets/workflow-*.json` | 结构模板，模型名要换成你自己的 |
+| `workflows/workflow-*.json` | 结构模板，模型名要换成你自己的 |
 | `profiles/*.json` | 本机探测产物，别拷到别的机器直接用，重新跑 `detect_env.py` |
 
 ## 附录 D · 安装、升级、卸载

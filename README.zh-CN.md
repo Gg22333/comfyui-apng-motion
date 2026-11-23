@@ -7,11 +7,13 @@
 [![License: MIT](https://img.shields.io/github/license/Gg22333/comfyui-apng-motion)](LICENSE)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.9-blue)](pyproject.toml)
 
-在 ComfyUI 里用「3–5 个关键帧 + latent 插值」做 **连贯 APNG / WebP / GIF**。
-帧数可选 **8 / 12 / 24 / 30 / 60**，同一个工作流改参数即可；不靠 `batch_size` 堆帧，不逐帧落盘，
-一次 Queue 出三个成品文件。
+在 ComfyUI 里用 **3–8 个关键帧 + latent 插值**做**能讲故事的 APNG / WebP / GIF**。
+同一个工作流，**8 / 24 / 30 / 60 帧**随便切；SDXL 与 Moss/DiT 两套环境都有可直接导入的 JSON。
+不靠 `batch_size` 堆帧，不逐帧落盘，一次 Queue 出三个成品文件。
 
 ![预览](docs/assets/preview.webp)
+
+![六拍分镜](docs/assets/storyboard-diet.webp)
 
 ---
 
@@ -20,6 +22,8 @@
 - [一眼看懂](#一眼看懂)
 - [模型支持](#模型支持)
 - [帧数怎么选](#帧数怎么选)
+- [工作流](#工作流)
+- [提示词怎么写](#提示词怎么写)
 - [动作库](#动作库)
 - [可调参数](#可调参数)
 - [为什么不用 batch_size](#为什么不用-batch_size)
@@ -77,18 +81,22 @@ denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳�
 | --- | --- | --- | --- | --- |
 | 8 | 8 | 1.0 s | 头像微动、聊天气泡 | `2,2,2,2` |
 | 12 | 12 | 1.0 s | 轻量贴纸 | `3,3,3,3` |
-| 24 | 12 | 2.0 s | 默认；表情循环 | `6,7,6,5` |
+| 24 | 10 | 2.4 s | 默认；表情循环 | `6,7,6,5` |
 | 30 | 15 | 2.0 s | 五拍故事、半身动作 | `8,8,7,7` |
 | 60 | 30 | 2.0 s | 网页/Discord 顺滑预览、五拍故事 | `15,15,15,15` |
 
 不管选哪一行，采样次数都还是 K 次（每个关键帧一次），只有解码次数和文件体积随 N 线性增长。
 同内容下 60 帧 APNG 约为 24 帧的 2.5 倍；画面细节越多单帧越大，实测雨夜 60 帧 APNG 为 17 MB。见 [docs/formats.md](docs/formats.md)。
-本页顶部的预览就是 **60 帧 / 30fps / Moss-DiT**，配方在 `assets/story.preview.json`。
+上面是 **60 帧 / 30fps / Moss-DiT** 的六拍故事《减肥破功》：坐直立志 → 趴桌绝望 → 侧身够手机 →
+抱炸鸡桶 → 举鸡腿偷吃 → 抱回沙拉碗握拳「明天再减」。配方在
+[`assets/story.diet.json`](assets/story.diet.json)，`prompt_mode: moss_zh`，节拍 `10/12/4/12/10/12`，
+denoise 0.85，640×640。
+下面那张联系表是按 `--segs` 从成片里抽出来的真实关键拍，不是示意图。
 
 ## 动作库
 
-`assets/motion-presets.json` 带 16 组可直接用的动作节拍：9 组情绪（大笑 / 大哭 / 震惊 / 生气 / 得意 / 无语 / 慌张 / 困 / 比心）、
-5 组动作（打招呼 / 点头 / 摇头 / 点赞 / 思考）、2 组五拍小故事（雨天出门 / 早八续命）。
+`assets/motion-presets.json` 带 17 组可直接用的动作节拍：9 组情绪（大笑 / 大哭 / 震惊 / 生气 / 得意 / 无语 / 慌张 / 困 / 比心）、
+5 组动作（打招呼 / 点头 / 摇头 / 点赞 / 思考）、2 组五拍小故事（雨天出门 / 早八续命）、1 组六拍全身故事（减肥破功，`moss_zh` 中文散文）。
 `scripts/make_story.py` 把它们和你的角色锁定句拼成剧情卡，再交给 `emit_workflow.py`：
 
 ```bash
@@ -111,10 +119,62 @@ python scripts/make_story.py --preset rainy-walk --lock "masterpiece, 1girl" --f
 | 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
 | 节奏 | N 个 `LatentInterpolate` 的 ratio | 缓动曲线；`linear` 最均匀 |
 | 速度 | 三个保存节点的 `fps` | 三处必须一致；`fps × 帧数` = 时长（24 帧 @12fps = 2.0 秒） |
+| 提示词方言 | `--prompt-mode tags|moss_zh` | `tags` = SDXL 英文标签；`moss_zh` = MOSS 中文散文 |
+| 尺寸 | latent 节点的宽高 / `--size 640` | Moss 512 或 640；SDXL 512–1024 |
 | 命名 | `filename_prefix` | `apng/`、`webp/`、`gif/` 子目录 |
 | 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放行为 |
 
 工作流里自带一个 `Note` 节点，把这张表写在画布上，不用翻文档找旋钮。
+
+## 工作流
+
+五份 JSON，拖进 ComfyUI 就能跑：
+
+| 环境 | 3 拍 | 4 拍 |
+| --- | --- | --- |
+| SDXL | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |
+| Moss / DiT | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
+
+画布上自带两个 `Note`：一个是「可调参数清单」，一个是「提示词写法（SDXL / MOSS 两套）」，
+两套编码器的写法和帧数表都写在节点里，不用翻文档。
+下载页与导入细节：[docs/workflows.md](docs/workflows.md)。
+
+## 提示词怎么写
+
+两套编码器手感完全不同，别混。
+
+**SDXL / 传统 CLIP（`tags`）**
+
+```
+1girl, solo, full body, black short hair, blue eyes, beige hoodie,
+dark shorts, barefoot, bedroom at night, warm lamp light,
+〈这一拍动作〉,
+anime screencap, clean lineart, flat cel shading
+```
+
+- 英文逗号分隔，重要标签往前放。
+- 画风放最后：CLIP 对末尾 token 权重最高，写在中段会被动作词冲掉。
+- 写画面不写效果：`eyes wide, pupils small` 而不是 `shocked`。
+- 负向单独一个 `CLIPTextEncode`。
+
+**MOSS / Qwen-VL（`moss_zh`）**
+
+```
+一间温馨的小卧室，深夜。画面右侧有一盏暖色台灯，光从右前方斜照下来，落在木地板上。
+固定机位，平视，全身镜头，人物从头到脚完整入画，双手和双脚都留在画框里。
+小满：黑色短发，蓝色眼睛，身材微胖，穿着宽松的米色连帽卫衣和深色短裤，赤脚。
+小满盘腿坐在矮桌前，背挺得很直，双手叉在腰上，抬起下巴，嘴角只上扬几毫米。
+动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影。
+```
+
+- 中文散文，换行分段，每段以「。」结尾。
+- 不堆 quality tag：`masterpiece` / `best quality` 对它是噪声。
+- 用可测量的身体描述：`震惊 = 双眼睁大、瞳孔缩小、嘴张开`。
+- 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。
+- 负向用中文。
+
+完整六拍范例：[`assets/story.diet.json`](assets/story.diet.json)；
+`python scripts/make_story.py --preset diet-betrayal --out my.json` 可以直接生成。
 
 ## 为什么不用 batch_size
 
@@ -156,7 +216,7 @@ cd comfyui-apng-motion
 
 python scripts/detect_env.py      # 扫本机 ComfyUI，写 profiles/
 python scripts/doctor.py          # 体检模型、插件、端口、输出目录
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out my-4beat.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out my-4beat.json
 ```
 
 把 `my-4beat.json` 拖进 ComfyUI，改提示词，Queue。
@@ -197,7 +257,8 @@ pip install -r requirements.txt
 SKILL.md              完整方法（原理 / 剧情卡 / 多角色 / 排错 / 移植）
 skill.json            版本、依赖、入口、安装目标
 scripts/              探测、体检、生成工作流、动作库→剧情卡、校验成品、曲线、安装、打包
-assets/               工作流模板（SDXL + Moss）、16 组动作库、剧情卡、节点定义兜底
+workflows/            可直接导入的工作流（SDXL + Moss，各 3/4 拍）
+assets/               17 组动作库、剧情卡（含 moss_zh 故事卡）、节点定义兜底
 docs/                 中文文档；英文在 docs/en/
 tests/                离线单测（不联网、不用 GPU）
 profiles/             每台机器生成（已 gitignore）
@@ -221,7 +282,8 @@ dist/                 打包产物（已 gitignore）
 | 总览 | [docs/index.md](docs/index.md) | [docs/en/index.md](docs/en/index.md) |
 | 安装 | [docs/install.md](docs/install.md) | [docs/en/install.md](docs/en/install.md) |
 | 用法 | [docs/usage.md](docs/usage.md) | [docs/en/usage.md](docs/en/usage.md) |
-| 动作库（16 组） | [docs/motion-presets.md](docs/motion-presets.md) | [docs/en/motion-presets.md](docs/en/motion-presets.md) |
+| 工作流 | [docs/workflows.md](docs/workflows.md) | [docs/en/workflows.md](docs/en/workflows.md) |
+| 动作库（17 组） | [docs/motion-presets.md](docs/motion-presets.md) | [docs/en/motion-presets.md](docs/en/motion-presets.md) |
 | 成品落盘 | [docs/output.md](docs/output.md) | [docs/en/output.md](docs/en/output.md) |
 | 方案对比 | [docs/synthesis-comparison.md](docs/synthesis-comparison.md) | [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md) |
 | 格式对比 | [docs/formats.md](docs/formats.md) | [docs/en/formats.md](docs/en/formats.md) |
@@ -252,6 +314,7 @@ dist/                 打包产物（已 gitignore）
 没有同批 WebP/GIF 的单张 PNG，只是半次运行或旧前缀残留，不是成品。
 `check_output.py` 会报 `stray_root`、`incomplete`、`outside_apng`，并识别正常的 `vhs_sidecar`；加 `--fix` 把游离文件移进 `output/APNG/archive/stray-<时间戳>/`。
 
+仓库和 skill 目录里不放任何成品，也不放原始 APNG；`docs/assets/` 只有 `make_preview.py` 与 `make_storyboard.py` 生成的网页素材。
 细则：[docs/output.md](docs/output.md)。
 
 ## 限制

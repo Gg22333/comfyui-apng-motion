@@ -4,7 +4,7 @@
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| `emit_workflow.py` says "fewer than 2 keyframe KSamplers" | The base is not a three-keyframe graph | Use `assets/workflow-*.json` as the template |
+| `emit_workflow.py` says "fewer than 2 keyframe KSamplers" | The base is not a three-keyframe graph | Use `workflows/workflow-*.json` as the template |
 | "base has N LatentInterpolate nodes, must be 24" | The base was edited | Restore the template or add nodes up to 24 |
 | "segs must sum to 24" | Wrong split | 3 beats `8/8/8`, 4 beats `6/7/6/5`, 5 beats `5/6/5/4/4` |
 | "duplicate ratio within one latent pair" | Same decimal inside a segment | Recompute with `make_curve.py` (it deduplicates globally) |

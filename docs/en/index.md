@@ -1,10 +1,14 @@
 # comfyui-apng-motion
 
-A ComfyUI skill and toolkit for **coherent APNG / WebP / GIF** animations — 8, 12, 24, 30 or 60 frames.
+Story-shaped **coherent APNG / WebP / GIF** from 3–8 keyframes in ComfyUI — one graph, **8 / 24 / 30 / 60
+frames**, importable JSON for both SDXL and Moss/DiT.
 
 ![preview](../assets/preview.webp)
 
-> Preview: 60 frames at 30 fps, Moss/DiT — recipe in `assets/story.preview.json`.
+![six-beat storyboard](../assets/storyboard-diet.webp)
+
+> Preview: the six-beat story *Diet Betrayal*, 60 frames at 30 fps, Moss/DiT — recipe in `assets/story.diet.json` (`prompt_mode: moss_zh`).
+> The contact sheet below is sampled from the real output by `--segs`.
 > The primary preview is WebP q100 (true colour, all 60 frames; libwebp merges near-duplicates at q90); `preview.gif` remains for
 > chat apps. The GIF is re-encoded with one global palette and dithering off, so 256-colour
 > quantisation no longer reads as flicker. See [formats](formats.md#46-why-the-web-preview-is-webp).
@@ -24,14 +28,15 @@ This project instead: **sample the first frame once → redraw every keyframe fr
 ```bash
 python scripts/detect_env.py
 python scripts/doctor.py
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out my.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out my.json
 ```
 
 ## More
 
 - [Install](install.md)
 - [Usage](usage.md)
-- [Motion library: 16 sticker actions](motion-presets.md)
+- [Workflows: five importable graphs](workflows.md)
+- [Motion library: 17 sticker actions](motion-presets.md)
 - [Output layout](output.md)
 - [Approach comparison: APNG / GIF / Live2D / video](synthesis-comparison.md)
 - [APNG, GIF and video-to-GIF](formats.md)

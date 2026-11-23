@@ -1,8 +1,8 @@
 {
   "id": "91ae3ee1-b52b-4f2e-8d12-843188838bc9",
   "revision": 0,
-  "last_node_id": 68,
-  "last_link_id": 197,
+  "last_node_id": 72,
+  "last_link_id": 256,
   "nodes": [
     {
       "id": 1,
@@ -26,7 +26,8 @@
           "links": [
             1,
             9,
-            13
+            13,
+            199
           ]
         }
       ],
@@ -63,7 +64,8 @@
             3,
             4,
             5,
-            140
+            140,
+            198
           ]
         }
       ],
@@ -198,7 +200,8 @@
           "links": [
             7,
             11,
-            15
+            15,
+            201
           ]
         }
       ],
@@ -287,22 +290,18 @@
           "links": [
             12,
             16,
-            150,
-            152,
-            154,
-            156,
-            158,
-            160,
-            162,
-            164,
-            183,
-            185,
-            187,
-            189,
-            191,
-            193,
-            195,
-            197
+            202,
+            209,
+            211,
+            213,
+            215,
+            217,
+            219,
+            248,
+            250,
+            252,
+            254,
+            256
           ]
         }
       ],
@@ -354,7 +353,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, big smile, eyes half closed, blush"
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, eyes widened, eyebrows raised, head tilted 8 degrees"
       ],
       "title": "K1 提示"
     },
@@ -399,22 +398,19 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            151,
-            153,
-            155,
-            157,
-            159,
-            161,
-            163,
-            165,
-            166,
-            168,
-            170,
-            172,
-            174,
-            176,
-            178,
-            180
+            210,
+            212,
+            214,
+            216,
+            218,
+            220,
+            221,
+            223,
+            225,
+            227,
+            229,
+            231,
+            233
           ]
         }
       ],
@@ -430,7 +426,7 @@
         "simple",
         0.5
       ],
-      "title": "K1 关键帧：big smile"
+      "title": "K1 关键帧：eyes widened"
     },
     {
       "id": 10,
@@ -466,7 +462,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, laughing, mouth open, blush"
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, eyes half closed, mouth open, head tilted back 12 degrees"
       ],
       "title": "K2 提示"
     },
@@ -511,22 +507,19 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            167,
-            169,
-            171,
-            173,
-            175,
-            177,
-            179,
-            181,
-            182,
-            184,
-            186,
-            188,
-            190,
-            192,
-            194,
-            196
+            222,
+            224,
+            226,
+            228,
+            230,
+            232,
+            234,
+            235,
+            237,
+            239,
+            241,
+            243,
+            245
           ]
         }
       ],
@@ -542,7 +535,7 @@
         "simple",
         0.5
       ],
-      "title": "K2 关键帧：laughing"
+      "title": "K2 关键帧：eyes half closed"
     },
     {
       "id": 12,
@@ -562,12 +555,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 150
+          "link": 209
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 151
+          "link": 210
         }
       ],
       "outputs": [
@@ -646,12 +639,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 152
+          "link": 211
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 153
+          "link": 212
         }
       ],
       "outputs": [
@@ -667,7 +660,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.857
+        0.8
       ],
       "title": "插值 2 (K0→K1)"
     },
@@ -730,12 +723,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 154
+          "link": 213
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 155
+          "link": 214
         }
       ],
       "outputs": [
@@ -751,7 +744,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.714
+        0.6
       ],
       "title": "插值 3 (K0→K1)"
     },
@@ -814,12 +807,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 156
+          "link": 215
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 157
+          "link": 216
         }
       ],
       "outputs": [
@@ -835,7 +828,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.571
+        0.4
       ],
       "title": "插值 4 (K0→K1)"
     },
@@ -898,12 +891,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 158
+          "link": 217
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 159
+          "link": 218
         }
       ],
       "outputs": [
@@ -919,7 +912,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.429
+        0.2
       ],
       "title": "插值 5 (K0→K1)"
     },
@@ -982,12 +975,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 160
+          "link": 219
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 161
+          "link": 220
         }
       ],
       "outputs": [
@@ -1003,7 +996,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.286
+        0.0
       ],
       "title": "插值 6 (K0→K1)"
     },
@@ -1066,12 +1059,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 162
+          "link": 221
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 163
+          "link": 222
         }
       ],
       "outputs": [
@@ -1087,9 +1080,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.143
+        0.996
       ],
-      "title": "插值 7 (K0→K1)"
+      "title": "插值 7 (K1→K2)"
     },
     {
       "id": 25,
@@ -1150,12 +1143,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 164
+          "link": 223
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 165
+          "link": 224
         }
       ],
       "outputs": [
@@ -1171,9 +1164,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.0
+        0.833
       ],
-      "title": "插值 8 (K0→K1)"
+      "title": "插值 8 (K1→K2)"
     },
     {
       "id": 27,
@@ -1234,12 +1227,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 166
+          "link": 225
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 167
+          "link": 226
         }
       ],
       "outputs": [
@@ -1255,7 +1248,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.996
+        0.667
       ],
       "title": "插值 9 (K1→K2)"
     },
@@ -1318,12 +1311,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 168
+          "link": 227
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 169
+          "link": 228
         }
       ],
       "outputs": [
@@ -1339,7 +1332,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.861
+        0.5
       ],
       "title": "插值 10 (K1→K2)"
     },
@@ -1402,12 +1395,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 170
+          "link": 229
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 171
+          "link": 230
         }
       ],
       "outputs": [
@@ -1423,7 +1416,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.718
+        0.333
       ],
       "title": "插值 11 (K1→K2)"
     },
@@ -1486,12 +1479,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 172
+          "link": 231
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 173
+          "link": 232
         }
       ],
       "outputs": [
@@ -1507,7 +1500,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.575
+        0.167
       ],
       "title": "插值 12 (K1→K2)"
     },
@@ -1570,12 +1563,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 174
+          "link": 233
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 175
+          "link": 234
         }
       ],
       "outputs": [
@@ -1591,7 +1584,7 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.433
+        0.004
       ],
       "title": "插值 13 (K1→K2)"
     },
@@ -1654,12 +1647,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 176
+          "link": 235
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 177
+          "link": 236
         }
       ],
       "outputs": [
@@ -1675,9 +1668,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.29
+        0.992
       ],
-      "title": "插值 14 (K1→K2)"
+      "title": "插值 14 (K2→K3)"
     },
     {
       "id": 39,
@@ -1738,12 +1731,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 178
+          "link": 237
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 179
+          "link": 238
         }
       ],
       "outputs": [
@@ -1759,9 +1752,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.147
+        0.804
       ],
-      "title": "插值 15 (K1→K2)"
+      "title": "插值 15 (K2→K3)"
     },
     {
       "id": 41,
@@ -1822,12 +1815,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 180
+          "link": 239
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 181
+          "link": 240
         }
       ],
       "outputs": [
@@ -1843,9 +1836,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.004
+        0.604
       ],
-      "title": "插值 16 (K1→K2)"
+      "title": "插值 16 (K2→K3)"
     },
     {
       "id": 43,
@@ -1906,12 +1899,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 182
+          "link": 241
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 183
+          "link": 242
         }
       ],
       "outputs": [
@@ -1927,9 +1920,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.992
+        0.404
       ],
-      "title": "插值 17 (K2→K0)"
+      "title": "插值 17 (K2→K3)"
     },
     {
       "id": 45,
@@ -1990,12 +1983,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 184
+          "link": 243
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 185
+          "link": 244
         }
       ],
       "outputs": [
@@ -2011,9 +2004,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.853
+        0.204
       ],
-      "title": "插值 18 (K2→K0)"
+      "title": "插值 18 (K2→K3)"
     },
     {
       "id": 47,
@@ -2074,12 +2067,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 186
+          "link": 245
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 187
+          "link": 246
         }
       ],
       "outputs": [
@@ -2095,9 +2088,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.71
+        0.008
       ],
-      "title": "插值 19 (K2→K0)"
+      "title": "插值 19 (K2→K3)"
     },
     {
       "id": 49,
@@ -2158,12 +2151,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 188
+          "link": 247
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 189
+          "link": 248
         }
       ],
       "outputs": [
@@ -2179,9 +2172,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.567
+        0.988
       ],
-      "title": "插值 20 (K2→K0)"
+      "title": "插值 20 (K3→K0)"
     },
     {
       "id": 51,
@@ -2242,12 +2235,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 190
+          "link": 249
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 191
+          "link": 250
         }
       ],
       "outputs": [
@@ -2263,9 +2256,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.425
+        0.75
       ],
-      "title": "插值 21 (K2→K0)"
+      "title": "插值 21 (K3→K0)"
     },
     {
       "id": 53,
@@ -2326,12 +2319,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 192
+          "link": 251
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 193
+          "link": 252
         }
       ],
       "outputs": [
@@ -2347,9 +2340,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.282
+        0.504
       ],
-      "title": "插值 22 (K2→K0)"
+      "title": "插值 22 (K3→K0)"
     },
     {
       "id": 55,
@@ -2410,12 +2403,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 194
+          "link": 253
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 195
+          "link": 254
         }
       ],
       "outputs": [
@@ -2431,9 +2424,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.139
+        0.25
       ],
-      "title": "插值 23 (K2→K0)"
+      "title": "插值 23 (K3→K0)"
     },
     {
       "id": 57,
@@ -2494,12 +2487,12 @@
         {
           "name": "samples1",
           "type": "LATENT",
-          "link": 196
+          "link": 255
         },
         {
           "name": "samples2",
           "type": "LATENT",
-          "link": 197
+          "link": 256
         }
       ],
       "outputs": [
@@ -2515,9 +2508,9 @@
         "Node name for S&R": "LatentInterpolate"
       },
       "widgets_values": [
-        0.008
+        0.012
       ],
-      "title": "插值 24 (K2→K0)"
+      "title": "插值 24 (K3→K0)"
     },
     {
       "id": 59,
@@ -2747,7 +2740,7 @@
         "Node name for S&R": "SaveAnimatedPNG"
       },
       "widgets_values": [
-        "APNG/final/apng/anim24",
+        "APNG/final/apng/anim24-4beat",
         10,
         4
       ],
@@ -2785,7 +2778,7 @@
         "Node name for S&R": "SaveAnimatedWEBP"
       },
       "widgets_values": [
-        "APNG/final/webp/anim24",
+        "APNG/final/webp/anim24-4beat",
         10,
         true,
         90,
@@ -2827,7 +2820,7 @@
       "widgets_values": [
         10,
         0,
-        "APNG/final/gif/anim24",
+        "APNG/final/gif/anim24-4beat",
         "image/gif",
         false,
         true
@@ -2838,7 +2831,7 @@
       "id": 64,
       "type": "CLIPTextEncode",
       "pos": [
-        3230,
+        4050,
         100
       ],
       "size": [
@@ -2860,9 +2853,10 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            141,
-            144,
-            147
+            203,
+            204,
+            205,
+            206
           ]
         }
       ],
@@ -2892,7 +2886,7 @@
         {
           "name": "conditioning_1",
           "type": "CONDITIONING",
-          "link": 141
+          "link": 203
         },
         {
           "name": "conditioning_2",
@@ -2932,7 +2926,7 @@
         {
           "name": "conditioning_1",
           "type": "CONDITIONING",
-          "link": 144
+          "link": 204
         },
         {
           "name": "conditioning_2",
@@ -2972,7 +2966,7 @@
         {
           "name": "conditioning_1",
           "type": "CONDITIONING",
-          "link": 147
+          "link": 205
         },
         {
           "name": "conditioning_2",
@@ -2998,18 +2992,183 @@
       "id": 68,
       "type": "Note",
       "pos": [
-        3230,
+        4870,
         1080
       ],
       "size": [
         520,
-        360
+        380
       ],
       "flags": {},
       "order": 67,
       "mode": 0,
       "widgets_values": [
-        "【可调参数清单】\n全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n  关键帧 denoise 建议 0.30-0.40；越低越稳，越高越自由但容易出现色斑。\n节奏：24 个 LatentInterpolate 的 ratio 就是缓动曲线。线性最均匀，缓动两端慢。\n速度：三个保存节点的 fps 必须改成同一个值。10fps × 24 帧 = 2.4 秒。\n命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。"
+        "【可调参数清单】\n全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n  SDXL 关键帧 denoise 建议 0.35-0.45；Moss 0.50-0.80。越低越稳，越高越自由但容易出现色斑。\n节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长；24 @10fps = 2.4 秒，60 @30fps = 2 秒。\n命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。\n帧数与 fps 怎么配、提示词怎么写：看右边【提示词写法】这个 Note。"
+      ]
+    },
+    {
+      "id": 69,
+      "type": "CLIPTextEncode",
+      "pos": [
+        4050,
+        1160
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 68,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 198
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            207
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, flat expression, eyes half lidded, mouth closed, head straight"
+      ],
+      "title": "K3 提示"
+    },
+    {
+      "id": 70,
+      "type": "KSampler",
+      "pos": [
+        4430,
+        1160
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 69,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 199
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 208
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 201
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 202
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            236,
+            238,
+            240,
+            242,
+            244,
+            246,
+            247,
+            249,
+            251,
+            253,
+            255
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456789,
+        "fixed",
+        8,
+        1.0,
+        "euler",
+        "simple",
+        0.5
+      ],
+      "title": "K3 关键帧：flat expression"
+    },
+    {
+      "id": 71,
+      "type": "ConditioningCombine",
+      "pos": [
+        4450,
+        1440
+      ],
+      "size": [
+        315,
+        46
+      ],
+      "flags": {},
+      "order": 70,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_1",
+          "type": "CONDITIONING",
+          "link": 206
+        },
+        {
+          "name": "conditioning_2",
+          "type": "CONDITIONING",
+          "link": 207
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            208
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningCombine"
+      },
+      "title": "合并 K3（全局动作 + 本帧）"
+    },
+    {
+      "id": 72,
+      "type": "Note",
+      "pos": [
+        5450,
+        1080
+      ],
+      "size": [
+        760,
+        780
+      ],
+      "flags": {},
+      "order": 71,
+      "mode": 0,
+      "widgets_values": [
+        "【提示词写法（SDXL / MOSS 两套）】\n\n■ tags 模式 —— SDXL / 传统 CLIP\n  格式：角色与场景标签, 这一拍动作, 画风标签\n  · 英文逗号分隔，重要标签往前放。\n  · 画风必须放最后：anime screencap, clean lineart, flat cel shading。\n  · 写画面不写效果：写「eyes wide, pupils small」不写「shocked」。\n  · 负向单独一个 CLIPTextEncode，不要混进正向。\n  例：1girl, solo, full body, black short hair, blue eyes, beige hoodie,\n      sitting on floor, bedroom at night, warm lamp light /\n      这一拍动作 / anime screencap, clean lineart, flat cel shading\n\n■ moss_zh 模式 —— MOSS-Image / Qwen-VL 文本编码器\n  格式：中文散文，换行分段，每段以「。」结尾\n  · 不堆 quality tag：masterpiece / best quality 对它是噪声。\n  · 场景 → 人物 → 这一拍 → 画风，四件事说全。\n  · 用可测量的身体描述代替形容词：\n      震惊 = 双眼睁大、瞳孔缩小、嘴张开\n      疲惫嫌弃 = 眼半闭、瞳孔偏低、唇压成直线\n  · 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。\n  · 负向同样用中文，放单独的 CLIPTextEncode。\n\n■ 帧数与 fps（三个保存节点的 fps 必须一致）\n   8 帧  @ 8fps = 1.00s   单表情，体积最小\n  24 帧  @10fps = 2.40s   默认，聊天表情包\n  30 帧  @15fps = 2.00s   短动作\n  60 帧  @30fps = 2.00s   完整小故事，最顺\n  改帧数：python scripts/emit_workflow.py --frames N --segs a,b,c,...\n  segs 之和必须等于 N；每拍至少 1 帧。\n\n■ 换故事不改节点\n  只改三个地方：全局动作指导、K0..Kn 各自提示、segs。\n  节点数量、连线、保存路径都不用动。"
       ]
     }
   ],
@@ -3727,14 +3886,6 @@
       "CLIP"
     ],
     [
-      141,
-      64,
-      0,
-      65,
-      0,
-      "CONDITIONING"
-    ],
-    [
       142,
       4,
       0,
@@ -3748,14 +3899,6 @@
       0,
       7,
       1,
-      "CONDITIONING"
-    ],
-    [
-      144,
-      64,
-      0,
-      66,
-      0,
       "CONDITIONING"
     ],
     [
@@ -3775,14 +3918,6 @@
       "CONDITIONING"
     ],
     [
-      147,
-      64,
-      0,
-      67,
-      0,
-      "CONDITIONING"
-    ],
-    [
       148,
       10,
       0,
@@ -3799,7 +3934,87 @@
       "CONDITIONING"
     ],
     [
-      150,
+      198,
+      2,
+      0,
+      69,
+      0,
+      "CLIP"
+    ],
+    [
+      199,
+      1,
+      0,
+      70,
+      0,
+      "MODEL"
+    ],
+    [
+      201,
+      5,
+      0,
+      70,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      202,
+      7,
+      0,
+      70,
+      3,
+      "LATENT"
+    ],
+    [
+      203,
+      64,
+      0,
+      65,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      204,
+      64,
+      0,
+      66,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      205,
+      64,
+      0,
+      67,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      206,
+      64,
+      0,
+      71,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      207,
+      69,
+      0,
+      71,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      208,
+      71,
+      0,
+      70,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      209,
       7,
       0,
       12,
@@ -3807,7 +4022,7 @@
       "LATENT"
     ],
     [
-      151,
+      210,
       9,
       0,
       12,
@@ -3815,7 +4030,7 @@
       "LATENT"
     ],
     [
-      152,
+      211,
       7,
       0,
       14,
@@ -3823,7 +4038,7 @@
       "LATENT"
     ],
     [
-      153,
+      212,
       9,
       0,
       14,
@@ -3831,7 +4046,7 @@
       "LATENT"
     ],
     [
-      154,
+      213,
       7,
       0,
       16,
@@ -3839,7 +4054,7 @@
       "LATENT"
     ],
     [
-      155,
+      214,
       9,
       0,
       16,
@@ -3847,7 +4062,7 @@
       "LATENT"
     ],
     [
-      156,
+      215,
       7,
       0,
       18,
@@ -3855,7 +4070,7 @@
       "LATENT"
     ],
     [
-      157,
+      216,
       9,
       0,
       18,
@@ -3863,7 +4078,7 @@
       "LATENT"
     ],
     [
-      158,
+      217,
       7,
       0,
       20,
@@ -3871,7 +4086,7 @@
       "LATENT"
     ],
     [
-      159,
+      218,
       9,
       0,
       20,
@@ -3879,7 +4094,7 @@
       "LATENT"
     ],
     [
-      160,
+      219,
       7,
       0,
       22,
@@ -3887,7 +4102,7 @@
       "LATENT"
     ],
     [
-      161,
+      220,
       9,
       0,
       22,
@@ -3895,39 +4110,39 @@
       "LATENT"
     ],
     [
-      162,
-      7,
+      221,
+      9,
       0,
       24,
       0,
       "LATENT"
     ],
     [
-      163,
-      9,
+      222,
+      11,
       0,
       24,
       1,
       "LATENT"
     ],
     [
-      164,
-      7,
+      223,
+      9,
       0,
       26,
       0,
       "LATENT"
     ],
     [
-      165,
-      9,
+      224,
+      11,
       0,
       26,
       1,
       "LATENT"
     ],
     [
-      166,
+      225,
       9,
       0,
       28,
@@ -3935,7 +4150,7 @@
       "LATENT"
     ],
     [
-      167,
+      226,
       11,
       0,
       28,
@@ -3943,7 +4158,7 @@
       "LATENT"
     ],
     [
-      168,
+      227,
       9,
       0,
       30,
@@ -3951,7 +4166,7 @@
       "LATENT"
     ],
     [
-      169,
+      228,
       11,
       0,
       30,
@@ -3959,7 +4174,7 @@
       "LATENT"
     ],
     [
-      170,
+      229,
       9,
       0,
       32,
@@ -3967,7 +4182,7 @@
       "LATENT"
     ],
     [
-      171,
+      230,
       11,
       0,
       32,
@@ -3975,7 +4190,7 @@
       "LATENT"
     ],
     [
-      172,
+      231,
       9,
       0,
       34,
@@ -3983,7 +4198,7 @@
       "LATENT"
     ],
     [
-      173,
+      232,
       11,
       0,
       34,
@@ -3991,7 +4206,7 @@
       "LATENT"
     ],
     [
-      174,
+      233,
       9,
       0,
       36,
@@ -3999,7 +4214,7 @@
       "LATENT"
     ],
     [
-      175,
+      234,
       11,
       0,
       36,
@@ -4007,55 +4222,55 @@
       "LATENT"
     ],
     [
-      176,
-      9,
+      235,
+      11,
       0,
       38,
       0,
       "LATENT"
     ],
     [
-      177,
-      11,
+      236,
+      70,
       0,
       38,
       1,
       "LATENT"
     ],
     [
-      178,
-      9,
+      237,
+      11,
       0,
       40,
       0,
       "LATENT"
     ],
     [
-      179,
-      11,
+      238,
+      70,
       0,
       40,
       1,
       "LATENT"
     ],
     [
-      180,
-      9,
+      239,
+      11,
       0,
       42,
       0,
       "LATENT"
     ],
     [
-      181,
-      11,
+      240,
+      70,
       0,
       42,
       1,
       "LATENT"
     ],
     [
-      182,
+      241,
       11,
       0,
       44,
@@ -4063,15 +4278,15 @@
       "LATENT"
     ],
     [
-      183,
-      7,
+      242,
+      70,
       0,
       44,
       1,
       "LATENT"
     ],
     [
-      184,
+      243,
       11,
       0,
       46,
@@ -4079,15 +4294,15 @@
       "LATENT"
     ],
     [
-      185,
-      7,
+      244,
+      70,
       0,
       46,
       1,
       "LATENT"
     ],
     [
-      186,
+      245,
       11,
       0,
       48,
@@ -4095,23 +4310,23 @@
       "LATENT"
     ],
     [
-      187,
-      7,
+      246,
+      70,
       0,
       48,
       1,
       "LATENT"
     ],
     [
-      188,
-      11,
+      247,
+      70,
       0,
       50,
       0,
       "LATENT"
     ],
     [
-      189,
+      248,
       7,
       0,
       50,
@@ -4119,15 +4334,15 @@
       "LATENT"
     ],
     [
-      190,
-      11,
+      249,
+      70,
       0,
       52,
       0,
       "LATENT"
     ],
     [
-      191,
+      250,
       7,
       0,
       52,
@@ -4135,15 +4350,15 @@
       "LATENT"
     ],
     [
-      192,
-      11,
+      251,
+      70,
       0,
       54,
       0,
       "LATENT"
     ],
     [
-      193,
+      252,
       7,
       0,
       54,
@@ -4151,15 +4366,15 @@
       "LATENT"
     ],
     [
-      194,
-      11,
+      253,
+      70,
       0,
       56,
       0,
       "LATENT"
     ],
     [
-      195,
+      254,
       7,
       0,
       56,
@@ -4167,15 +4382,15 @@
       "LATENT"
     ],
     [
-      196,
-      11,
+      255,
+      70,
       0,
       58,
       0,
       "LATENT"
     ],
     [
-      197,
+      256,
       7,
       0,
       58,

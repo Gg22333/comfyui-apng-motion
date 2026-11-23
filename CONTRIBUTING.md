@@ -23,7 +23,7 @@ pytest -q
 ```bash
 python -m compileall -q scripts
 pytest -q
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
 ```
 
 输出必须是 `VALIDATE OK`。

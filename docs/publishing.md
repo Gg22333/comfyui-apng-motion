@@ -54,7 +54,7 @@ git push origin v1.1.0
 ```bash
 python -m compileall -q scripts tests
 pytest -q
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out /tmp/x.json
 python scripts/package.py
 ```
 

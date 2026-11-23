@@ -39,7 +39,7 @@ Frame count is a parameter, not a second workflow. `--frames` (or `"frames"` in 
 | --- | --- | --- | --- | --- |
 | 8 | 8 | 1.0 s | avatar twitch, chat reaction | `2,2,2,2` |
 | 12 | 12 | 1.0 s | light sticker | `3,3,3,3` |
-| 24 | 12 | 2.0 s | default; expression loop | `6,7,6,5` |
+| 24 | 10 | 2.4 s | default; expression loop | `6,7,6,5` |
 | 30 | 15 | 2.0 s | five-beat story, half-body action | `8,8,7,7` |
 | 60 | 30 | 2.0 s | smooth web/Discord preview, five-beat story | `15,15,15,15` |
 
@@ -47,21 +47,21 @@ Frame count is a parameter, not a second workflow. `--frames` (or `"frames"` in 
 first beats). At 24 frames the classic presets stay: 3 beats 8/8/8, 4 beats 6/7/6/5, 5 beats 5/6/5/4/4.
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-moss.json --story assets/story.preview.json \
+python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.preview.json \
   --frames 60 --segs 15,15,15,15 --fps 30 --out my-60f.json
 ```
 
 ## Generate a workflow
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json --out my.json
 ```
 
 | Beats | Segment split (24 frames) | Nodes (xl) | Nodes (moss) |
 | --- | --- | --- | --- |
-| 3 | 8/8/8 | 66 | 68 |
-| 4 | 6/7/6/5 | 69 | 71 |
-| 5 | 5/6/5/4/4 | 72 | 74 |
+| 3 | 8/8/8 | 67 | 69 |
+| 4 | 6/7/6/5 | 70 | 72 |
+| 5 | 5/6/5/4/4 | 73 | 75 |
 
 The node count grew with the global-motion layer: one `ConditioningCombine` per keyframe,
 plus one shared `CLIPTextEncode` and one `Note`.
@@ -69,7 +69,7 @@ plus one shared `CLIPTextEncode` and one `Note`.
 Straight from the command line:
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json   --beats 4 --segs 6,7,6,5   --lock "masterpiece, 1girl, silver hair" --style "anime"   --actions "neutral|notice|react|settle" --out my.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json   --beats 4 --segs 6,7,6,5   --lock "masterpiece, 1girl, silver hair" --style "anime"   --actions "neutral|notice|react|settle" --out my.json
 ```
 
 `--seed-mode same` (default) pins every keyframe to the same seed. `offset` adds +1 per keyframe and reintroduces flicker.
@@ -83,13 +83,15 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json   --beats 4 --s
 | Per keyframe sampling | each `KSampler` | seed, steps, cfg, sampler, scheduler, denoise |
 | Pacing | N x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
 | Speed | three save nodes `fps` | same value in all three; `fps x frames` = duration (24 @ 12 fps = 2 s) |
+| Prompt dialect | `--prompt-mode tags|moss_zh` / story-card `prompt_mode` | `tags` = English comma tags; `moss_zh` = Chinese prose |
+| Size | latent width/height or `--size 640` | Moss 512 or 640; SDXL 512–1024 |
 | Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` |
 | Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | size and playback |
 
 From the CLI:
 
 ```bash
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json \
   --motion "slow head tilt, stable lighting" \
   --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
   --curve linear --out my.json

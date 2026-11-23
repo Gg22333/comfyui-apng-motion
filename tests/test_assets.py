@@ -5,10 +5,15 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
+WORKFLOWS = ROOT / "workflows"
 
 
 def load(name):
     return json.loads((ASSETS / name).read_text(encoding="utf-8"))
+
+
+def load_wf(name):
+    return json.loads((WORKFLOWS / name).read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize("name", [
@@ -16,7 +21,7 @@ def load(name):
     "workflow-sdxl-4beat.json", "workflow-moss-4beat.json",
 ])
 def test_workflow_shape(name):
-    wf = load(name)
+    wf = load_wf(name)
     nodes = wf["nodes"]
     types = [n["type"] for n in nodes]
     assert types.count("LatentInterpolate") == 24
@@ -35,7 +40,7 @@ def test_workflow_shape(name):
 ])
 def test_ratios_unique_per_pair(name):
     """同一对 latent 上不能有重复 ratio；不同段之间可以同值。"""
-    wf = load(name)
+    wf = load_wf(name)
     links = {l[0]: l for l in wf["links"]}
     groups = {}
     for n in wf["nodes"]:
@@ -50,7 +55,7 @@ def test_ratios_unique_per_pair(name):
 
 @pytest.mark.parametrize("name", ["workflow-sdxl.json", "workflow-moss.json"])
 def test_keyframes_share_first_latent(name):
-    wf = load(name)
+    wf = load_wf(name)
     links = {l[0]: l for l in wf["links"]}
     samplers = [n for n in wf["nodes"] if n["type"] == "KSampler"]
     samplers.sort(key=lambda n: n.get("order", 0))

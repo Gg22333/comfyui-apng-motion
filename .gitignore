@@ -5,4 +5,5 @@ dist/
 *.bak-*
 *.pyc
 profiles/
-
+docs/assets/workflows/
+docs/assets/presets/

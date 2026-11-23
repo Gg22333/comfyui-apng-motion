@@ -31,7 +31,7 @@ One successful Queue produces **three deliverables**. The same-named `.png` insi
 | Profile | Output root |
 | --- | --- |
 | `profiles/xl.json` | `D:\ComfyUI-aki-v3.2-xl\ComfyUI\output` |
-| `profiles/dit.json` | `D:\ComfyUI-aki-v3.2-dit\ComfyUI\output` |
+| `profiles/dit.json` | `D:\ComfyUI-aki-v3.2-DiT\ComfyUI\output` |
 
 On another machine, regenerate paths with `detect_env.py`; do not copy the drive letters above.
 
@@ -68,7 +68,7 @@ Four common sources:
 | Source | Symptom | Fix |
 | --- | --- | --- |
 | Cached prefix in the browser | Artifact at `output/APNG/anim24_00001_.png` | Confirm all three prefixes → **F5** → rerun |
-| Old workflow | Old names such as `anim_base_*`, `anim24_1_*` | Regenerate from `assets/workflow-*.json` or `emit_workflow.py` |
+| Old workflow | Old names such as `anim_base_*`, `anim24_1_*` | Regenerate from `workflows/workflow-*.json` or `emit_workflow.py` |
 | Historical `SaveImage` | `output/anim_base_00001_.png` at the output root | Remove the save node; archive the file |
 | Old script intermediate frames | Names containing `_1_`, `_2_` | Historical frames; move to `archive/frames/` |
 
@@ -140,3 +140,24 @@ Expected: `frames=24`, `loop=0`, `identical_pairs=0`, `color_drift < 6`.
 | `archive/stray-<timestamp>/` | Strays and old-prefix leftovers | `check_output.py --fix` |
 
 Do not keep workflow backups in `ComfyUI/user/default/workflows/`. A same-named `-v1.json` shows up as a second workflow in the UI; keep backups under `archive/` and leave only the active file in the workflows directory.
+
+---
+
+## 7 · What must not land in the repo
+
+The repo and the skill folder hold **source and web assets only**. Run outputs stay in ComfyUI's own
+`output/`:
+
+| Path | Should contain | Should not contain |
+| --- | --- | --- |
+| `<ComfyUI>/output/APNG/final/` | the three finals | single-frame PNGs, stale prefixes |
+| repo `docs/assets/` | `preview.webp` / `preview.gif` / `storyboard-*.webp` | raw APNG, `_00001_` outputs |
+| repo root | sources, docs, `workflows/` | any copy of `output/` |
+| scratch dirs | one-off scripts, test renders | long-lived PNG / WebP |
+
+Only two scripts write into `docs/assets/`, and both write **web assets**, not finals:
+
+- `make_preview.py` → `docs/assets/preview.{webp,gif}`
+- `make_storyboard.py` → `docs/assets/storyboard-<name>.webp`
+
+Check: `git status` should show no image changes other than those two files.
