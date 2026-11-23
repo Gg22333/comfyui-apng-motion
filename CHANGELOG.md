@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 1.3.6 — 2026-11-24
+
+- **默认目标补 Claude Code**：`skill.json` 的 `targets` 增加 `~/.claude/skills/comfyui-apng-motion`，
+  不带 `--dest` 时只要 `~/.claude/skills` 存在就一并安装，不用手打路径。
+- **提示语改通用**：找不到目标时的提示不再只提 `~/.codex/skills`，改成 `--dest` 或任一客户端 skill 目录。
+- **修脏拷贝**：`install.py` / `package.py` 的跳过表补 `site`、`.venv`、`venv`、`node_modules`。
+  此前在仓库里跑过 `mkdocs build` 再安装/打包，会把整个 `site/` 站点（约 90 个文件）一起拷进去。
+- **版本号**：1.3.5 → 1.3.6。
+
 ## 1.3.5 — 2026-11-24
 
 - **安装说明补通用性**：`SKILL.md` 0.8 与 `docs/install.md`（中英）补上 Claude Code 与任意

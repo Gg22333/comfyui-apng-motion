@@ -19,7 +19,8 @@ if hasattr(sys.stdout, "reconfigure"):
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKIP_DIRS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".mypy_cache",
-             "dist", ".git", "profiles", ".github", "tests"}
+             "dist", ".git", "profiles", ".github", "tests",
+             "site", ".venv", "venv", "node_modules"}
 FIXED = (2020, 1, 1, 0, 0, 0)
 
 

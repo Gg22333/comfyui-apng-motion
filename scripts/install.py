@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""install.py — 把 skill 装到 Codex / magpie 的 skills 目录。
+"""install.py — 把 skill 装到 Codex / Claude Code / magpie 的 skills 目录。
 
 用法:
     python install.py                 # 装到 skill.json 里列的、且父目录存在的目标
@@ -20,7 +20,8 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {"__pycache__", "dist", ".git", ".github", "tests", ".pytest_cache", ".ruff_cache"}
+SKIP_DIRS = {"__pycache__", "dist", ".git", ".github", "tests", ".pytest_cache", ".ruff_cache",
+             "site", ".venv", "venv", "node_modules"}
 SKIP_SUFFIX = (".bak", ".pyc", ".tmp")
 
 
@@ -126,7 +127,7 @@ def main():
             if a.all or os.path.isdir(t) or os.path.isdir(os.path.dirname(t)):
                 targets.append(t)
     if not targets:
-        print("没有可用目标。用 --dest 指定，或先建好 ~/.codex/skills")
+        print("没有可用目标。用 --dest 指定，或先建好任一客户端的 skills 目录")
         return 2
     ts = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     fails = 0

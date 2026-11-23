@@ -7,3 +7,8 @@ dist/
 profiles/
 docs/assets/workflows/
 docs/assets/presets/
+site/
+.venv/
+venv/
+node_modules/
+

@@ -12,6 +12,7 @@ python scripts/install.py
 
 - `~/.codex/skills/comfyui-apng-motion`
 - `~/.config/magpie/library/skills/comfyui-apng-motion` (when the parent exists)
+- `~/.claude/skills/comfyui-apng-motion` (when `~/.claude/skills` exists)
 
 Custom location:
 
@@ -24,7 +25,7 @@ python scripts/install.py --dest /path/to/skills/comfyui-apng-motion
 | Client | Target |
 | --- | --- |
 | Codex | `~/.codex/skills/comfyui-apng-motion` |
-| Claude Code | `~/.claude/skills/comfyui-apng-motion` (or `.claude/skills/` inside a project; not exercised in this repo's CI) |
+| Claude Code | `~/.claude/skills/comfyui-apng-motion` (installed automatically when present; or `.claude/skills/` inside a project; not exercised in this repo's CI) |
 | Anything else | `python scripts/install.py --dest <dir>/comfyui-apng-motion` |
 
 Scripts need only Python ≥3.9 + Pillow and run on Windows and Linux; ComfyUI itself is installed separately on the target machine.
