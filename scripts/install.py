@@ -31,6 +31,8 @@ def parse_args():
     ap.add_argument("--with-profiles", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--check", action="store_true", help="只比对源目录与已安装目录的哈希，不写文件")
+    ap.add_argument("--keep-extra", action="store_true",
+                    help="安装时保留目标目录里源目录没有的文件（默认删除，保持与仓库一致）")
     ap.add_argument("--link", action="store_true",
                     help="把目标改成指向源目录的 junction/软链（物理只有一份；依赖源目录路径）")
     return ap.parse_args()
@@ -168,6 +170,17 @@ def main():
             print("  backup:", bak)
         n = copy_tree(SKILL, t, a.with_profiles, a.dry_run)
         print("  files:", n, "| profiles:", "yes" if a.with_profiles else "no")
+        if not a.dry_run and not a.keep_extra:
+            _f, _m, _d, extras = check_install(SKILL, t, a.with_profiles)
+            pruned = 0
+            for rel in extras:
+                try:
+                    os.remove(os.path.join(t, rel))
+                    pruned += 1
+                except OSError:
+                    pass
+            if pruned:
+                print("  pruned extra:", pruned)
     if a.check:
         print("\n漂移目录数:", fails)
         return 1 if fails else 0
