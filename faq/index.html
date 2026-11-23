@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../output/" class="md-nav__link">
         
   
@@ -524,10 +551,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -545,8 +572,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -627,6 +654,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -855,8 +910,8 @@
 <code>batch_size=N</code> 是 N 个互相独立的噪声样本。固定 seed 只保证可复现，不会让它们变成连续帧。</p>
 <p><strong>为什么不像视频那样逐帧生成？</strong>
 逐帧 img2img 要 24 次采样，且会累积漂移（黑发漂成青蓝）。插值只需 3–5 次采样，中间帧由数学过渡。</p>
-<p><strong>为什么是 24 帧？</strong>
-10fps 下 2.4 秒，够放「起 → 转 → 收」。低于 16 帧像幻灯片，高于 32 帧收益递减。</p>
+<p><strong>为什么默认 24 帧？</strong>
+24 帧 @10fps = 2.4 秒，够放「起 → 转 → 收」。但帧数是预算不是规格：8 帧做轮播，12 帧做轻动作，24 帧是默认甜点，30 帧给五拍故事，60 帧给网页/Discord 的顺滑预览。都用 <code>--frames</code> 改。</p>
 <p><strong>为什么默认 10fps？</strong>
 GIF 的延迟单位是 1/100 秒，10fps = 10cs 是精确值；12fps 会变成 8cs（12.5fps）。</p>
 <p><strong>为什么我的图动作很小？</strong>
@@ -864,7 +919,7 @@ GIF 的延迟单位是 1/100 秒，10fps = 10cs 是精确值；12fps 会变成 8
 <p><strong>能让角色走起来吗？</strong>
 不能。这条路线没有真实轨迹。走位、转身要用 ControlNet 骨骼序列或视频模型（Wan / LTX）。</p>
 <p><strong>支持 Flux / SD1.5 / 别的模型吗？</strong>
-支持。<code>emit_workflow.py</code> 只认结构（1 个 denoise=1 的 KSampler + ≥2 个关键帧 + 24 插值 + 24 解码 + 24 路合并 + 3 输出），模型名换成你自己的即可。</p>
+支持。<code>emit_workflow.py</code> 只认结构（1 个 denoise=1 的 KSampler + ≥2 个关键帧 + N 插值 + N 解码 + N 路合并 + 3 输出），模型名换成你自己的即可。</p>
 <p><strong>必须用 GPU 吗？</strong>
 出图需要。<code>detect_env</code> / <code>doctor</code> / <code>emit_workflow</code> / <code>check_anim</code> 都是 CPU 侧工具。</p>
 <p><strong>APNG 和 GIF 哪个好？</strong>

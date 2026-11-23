@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -395,6 +395,33 @@
   
   
     <li class="md-nav__item">
+      <a href="motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="output/" class="md-nav__link">
         
   
@@ -592,10 +619,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -613,8 +640,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -695,6 +722,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="en/motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -960,11 +1015,12 @@
 
 
 <h1 id="comfyui-apng-motion">comfyui-apng-motion<a class="headerlink" href="#comfyui-apng-motion" title="Permanent link">&para;</a></h1>
-<p>ComfyUI 里做 <strong>24 帧连贯 APNG / WebP / GIF</strong> 的 skill 与工具箱。</p>
+<p>ComfyUI 里做 <strong>连贯 APNG / WebP / GIF</strong> 的 skill 与工具箱，帧数 8 / 12 / 24 / 30 / 60 可选。</p>
 <p><a href="en/">English</a> · <strong>简体中文</strong></p>
 <p><img alt="preview" src="assets/preview.webp" /></p>
 <blockquote>
-<p>网页主预览用 WebP（真彩、体积约为 GIF 的 1/5）；<code>preview.gif</code> 保留给聊天工具。
+<p>预览：60 帧 / 30fps / Moss-DiT，配方是 <code>assets/story.preview.json</code>。
+网页主预览用 WebP q100（真彩、保住 60 帧；libwebp 在 q90 会把近重复帧并成 58 帧）；<code>preview.gif</code> 保留给聊天工具。
 GIF 用全局固定调色板 + 关抖动重编码，避免 256 色量化造成的色块闪动。细节见<a href="formats/#46-网页预览为什么最终用-webp">格式对比</a>。</p>
 </blockquote>
 <h2 id="_1">它解决什么<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -990,7 +1046,7 @@ GIF 用全局固定调色板 + 关抖动重编码，避免 256 色量化造成�
 </tr>
 </tbody>
 </table>
-<p>本项目的做法：<strong>首帧一次采样 → 关键帧全部从同一份首帧 latent 重绘 → 24 个 latent 插值 → 24 次解码 → 合并 → 三个成品文件。</strong></p>
+<p>本项目的做法：<strong>首帧一次采样 → 关键帧全部从同一份首帧 latent 重绘 → N 个 latent 插值 → N 次解码 → 合并 → 三个成品文件。</strong></p>
 <h2 id="_2">三步<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/detect_env.py
 python scripts/doctor.py
@@ -999,7 +1055,8 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 <h2 id="_3">进一步<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="install/">安装</a></li>
-<li><a href="usage/">用法</a></li>
+<li><a href="usage/">用法</a>（含 <a href="usage/">帧数怎么选</a>）</li>
+<li><a href="motion-presets/">动作库：16 组表情包动作</a></li>
 <li><a href="output/">成品落盘</a></li>
 <li><a href="synthesis-comparison/">方案对比：APNG / GIF / Live2D / 视频</a></li>
 <li><a href="formats/">APNG、GIF 与视频转 GIF</a></li>

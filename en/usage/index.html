@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -16,7 +16,7 @@
         <link rel="prev" href="../install/">
       
       
-        <link rel="next" href="../output/">
+        <link rel="next" href="../motion-presets/">
       
       
         
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../output/" class="md-nav__link">
         
   
@@ -516,10 +543,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -537,8 +564,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -682,6 +709,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#choosing-a-frame-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a frame count
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#generate-a-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -779,6 +817,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -997,6 +1063,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#choosing-a-frame-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a frame count
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#generate-a-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1113,6 +1190,7 @@
 <pre><code class="language-json">{
   &quot;name&quot;: &quot;anim24-4beat&quot;,
   &quot;beats&quot;: 4,
+  &quot;frames&quot;: 24,
   &quot;segs&quot;: [6, 7, 6, 5],
   &quot;fps&quot;: 10,
   &quot;denoise&quot;: 0.4,
@@ -1127,7 +1205,66 @@
   ]
 }
 </code></pre>
-<p>Compile rule: <code>keyframe_i = lock + style + actions[i]</code>, fixed order, only the action changes.</p>
+<p>Compile rule: <code>keyframe_i = lock + actions[i] + style</code>, fixed order, only the action changes.</p>
+<p><code>style</code> last is deliberate: Moss's LLM text encoder weights the tail tokens most, so
+<code>anime screencap, clean lineart, flat cel shading</code> placed mid-prompt gets buried by the action words
+and the render falls back to photographic mode (visible as collage frames and colour blotches).</p>
+<h2 id="choosing-a-frame-count">Choosing a frame count<a class="headerlink" href="#choosing-a-frame-count" title="Permanent link">&para;</a></h2>
+<p>Frame count is a parameter, not a second workflow. <code>--frames</code> (or <code>"frames"</code> in the story card) resizes
+<code>LatentInterpolate</code> / <code>VAEDecode</code> / <code>ImageBatchMulti</code> to N.</p>
+<table>
+<thead>
+<tr>
+<th>Frames</th>
+<th>fps</th>
+<th>Duration</th>
+<th>Best for</th>
+<th>4-beat segs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>8</td>
+<td>1.0 s</td>
+<td>avatar twitch, chat reaction</td>
+<td><code>2,2,2,2</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td>12</td>
+<td>1.0 s</td>
+<td>light sticker</td>
+<td><code>3,3,3,3</code></td>
+</tr>
+<tr>
+<td>24</td>
+<td>12</td>
+<td>2.0 s</td>
+<td>default; expression loop</td>
+<td><code>6,7,6,5</code></td>
+</tr>
+<tr>
+<td>30</td>
+<td>15</td>
+<td>2.0 s</td>
+<td>five-beat story, half-body action</td>
+<td><code>8,8,7,7</code></td>
+</tr>
+<tr>
+<td>60</td>
+<td>30</td>
+<td>2.0 s</td>
+<td>smooth web/Discord preview, five-beat story</td>
+<td><code>15,15,15,15</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>--segs</code> must sum to <code>frames</code>; omit it and the frames are split evenly across beats (remainder to the
+first beats). At 24 frames the classic presets stay: 3 beats 8/8/8, 4 beats 6/7/6/5, 5 beats 5/6/5/4/4.</p>
+<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-moss.json --story assets/story.preview.json \
+  --frames 60 --segs 15,15,15,15 --fps 30 --out my-60f.json
+</code></pre>
 <h2 id="generate-a-workflow">Generate a workflow<a class="headerlink" href="#generate-a-workflow" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
 </code></pre>
@@ -1135,8 +1272,9 @@
 <thead>
 <tr>
 <th>Beats</th>
-<th>Segment split</th>
-<th>Node count (xl)</th>
+<th>Segment split (24 frames)</th>
+<th>Nodes (xl)</th>
+<th>Nodes (moss)</th>
 </tr>
 </thead>
 <tbody>
@@ -1144,16 +1282,19 @@
 <td>3</td>
 <td>8/8/8</td>
 <td>66</td>
+<td>68</td>
 </tr>
 <tr>
 <td>4</td>
 <td>6/7/6/5</td>
 <td>69</td>
+<td>71</td>
 </tr>
 <tr>
 <td>5</td>
 <td>5/6/5/4/4</td>
 <td>72</td>
+<td>74</td>
 </tr>
 </tbody>
 </table>
@@ -1190,13 +1331,13 @@ plus one shared <code>CLIPTextEncode</code> and one <code>Note</code>.</p>
 </tr>
 <tr>
 <td>Pacing</td>
-<td>24 x <code>LatentInterpolate</code> ratio</td>
+<td>N x <code>LatentInterpolate</code> ratio</td>
 <td>easing curve; <code>linear</code> is the most even</td>
 </tr>
 <tr>
 <td>Speed</td>
 <td>three save nodes <code>fps</code></td>
-<td>same value in all three (10 fps x 24 = 2.4 s)</td>
+<td>same value in all three; <code>fps x frames</code> = duration (24 @ 12 fps = 2 s)</td>
 </tr>
 <tr>
 <td>Naming</td>
@@ -1281,7 +1422,8 @@ clothes and background, and latent interpolation turns that into colour blotches
 <h2 id="validate">Validate<a class="headerlink" href="#validate" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/emit_workflow.py --validate my.json
 </code></pre>
-<p>Checks: link integrity, 24 interpolations / 24 decodes, unique ratios within one latent pair, three outputs on the same source, keyframes sharing one latent, no <code>SaveImage</code>.</p>
+<p>Checks: link integrity, interpolation count = decode count = <code>ImageBatchMulti</code> links, unique ratios
+within one latent pair, three outputs on the same source, keyframes sharing one latent, no <code>SaveImage</code>.</p>
 <h2 id="run">Run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h2>
 <p>UI: drag the JSON into ComfyUI and press Queue.</p>
 <p>Headless:</p>
@@ -1289,9 +1431,11 @@ clothes and background, and latent interpolation turns that into colour blotches
 </code></pre>
 <p>It submits the API prompt, polls, prints the artifact paths and runs <code>check_anim.py</code> automatically.</p>
 <h2 id="inspect-the-artifacts">Inspect the artifacts<a class="headerlink" href="#inspect-the-artifacts" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">python scripts/check_anim.py output/APNG/final/apng/anim24_00001_.png --expect 24
+<pre><code class="language-bash">python scripts/check_anim.py output/APNG/final/apng/anim60_00001_.png --expect 60
 </code></pre>
-<p>Watch four values: <code>frames=24</code>, <code>loop=0</code>, <code>identical_pairs=0</code>, <code>color_drift</code> no higher than 6.</p>
+<p>Watch four values: <code>frames=N</code> (matching <code>--frames</code>), <code>loop=0</code>, <code>identical_pairs=0</code>, and <code>color_drift</code>.
+Moss at denoise 0.5 measures around 18 and still looks fine; SDXL at 0.35 measures about 2.6. Above 20
+means the keyframe redraw is changing too much.</p>
 <h2 id="where-files-land">Where files land<a class="headerlink" href="#where-files-land" title="Permanent link">&para;</a></h2>
 <p>See <a href="../output/">Output layout</a>. Short version: <code>output/APNG/final/{apng,webp,gif}/</code>, three files per run, plus one VHS first-frame preview PNG in <code>gif/</code>.</p>
 

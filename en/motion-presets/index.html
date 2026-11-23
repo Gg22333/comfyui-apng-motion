@@ -1,0 +1,1914 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+      
+      
+      
+        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/en/motion-presets/">
+      
+      
+        <link rel="prev" href="../usage/">
+      
+      
+        <link rel="next" href="../output/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Motion library - comfyui-apng-motion</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#motion-library-turning-one-action-into-composable-keyframes" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="comfyui-apng-motion" class="md-header__button md-logo" aria-label="comfyui-apng-motion" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            comfyui-apng-motion
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Motion library
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="暗色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="暗色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="亮色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="亮色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="comfyui-apng-motion" class="md-nav__button md-logo" aria-label="comfyui-apng-motion" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    comfyui-apng-motion
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    成品落盘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../synthesis-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    方案对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    格式对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    排错
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    发布
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    English
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    English
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-platform-specs-decide-the-length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Platform specs decide the length
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-five-beat-grammar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · The five-beat grammar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · The five-beat grammar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-segment-budgets-at-24-frames" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Segment budgets at 24 frames
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-how-to-write-the-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · How to write the prompt
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · How to write the prompt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-change-one-thing-per-beat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Change one thing per beat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-what-goes-into-the-global-motion-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 What goes into the global motion layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-keep-negatives-narrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Keep negatives narrow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-library-16-presets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · The library (16 presets)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · The library (16 presets)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-emotions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Emotions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-gestures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Gestures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-five-beat-stories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Five-beat stories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-action-vocabulary-paste-into-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Action vocabulary (paste into actions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-per-platform-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Per-platform settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-seven-common-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Seven common failures
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output layout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthesis-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Approach comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-platform-specs-decide-the-length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · Platform specs decide the length
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-five-beat-grammar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · The five-beat grammar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · The five-beat grammar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-segment-budgets-at-24-frames" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Segment budgets at 24 frames
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-how-to-write-the-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · How to write the prompt
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · How to write the prompt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-change-one-thing-per-beat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Change one thing per beat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-what-goes-into-the-global-motion-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 What goes into the global motion layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-keep-negatives-narrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Keep negatives narrow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-library-16-presets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · The library (16 presets)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · The library (16 presets)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-emotions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Emotions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-gestures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Gestures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-five-beat-stories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Five-beat stories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-action-vocabulary-paste-into-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Action vocabulary (paste into actions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-per-platform-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · Per-platform settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-seven-common-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · Seven common failures
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="motion-library-turning-one-action-into-composable-keyframes">Motion library: turning one action into composable keyframes<a class="headerlink" href="#motion-library-turning-one-action-into-composable-keyframes" title="Permanent link">&para;</a></h1>
+<p>This page is about content, not code: <strong>why the same pipeline produces a sticker in one run and a frozen slideshow in another.</strong></p>
+<p>Short answer: a sticker is not a tiny video. It is a <strong>1–3 second micro-performance whose first and last pose connect</strong>.
+It needs 2–4 key poses, anticipation and a hold — not more frames.</p>
+<hr />
+<h2 id="1-platform-specs-decide-the-length">1 · Platform specs decide the length<a class="headerlink" href="#1-platform-specs-decide-the-length" title="Permanent link">&para;</a></h2>
+<p>Check the destination before you render:</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Format and size</th>
+<th>Duration / frames</th>
+<th>Size cap</th>
+<th>Hard requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telegram animated sticker</td>
+<td>TGS (Lottie) 512×512</td>
+<td>≤ 3 s, <strong>60 fps</strong></td>
+<td>—</td>
+<td>must loop</td>
+</tr>
+<tr>
+<td>Telegram video sticker</td>
+<td>WebM 512×512</td>
+<td>≤ 3 s, ≤ 30 fps</td>
+<td>—</td>
+<td>loop recommended</td>
+</tr>
+<tr>
+<td>LINE animated sticker</td>
+<td><strong>APNG</strong> <code>.png</code></td>
+<td>5–20 frames, ≤ 4 s, 1–4 loops</td>
+<td>≤ 1 MB each</td>
+<td>frame 1 is the shop cover; identical frames get merged</td>
+</tr>
+<tr>
+<td>WeChat sticker</td>
+<td>GIF 240×240</td>
+<td>≤ 3 s per sticker</td>
+<td>≤ 500 KB each</td>
+<td>sets of 16 or 24</td>
+</tr>
+<tr>
+<td>Discord / web</td>
+<td>APNG / WebP</td>
+<td>no hard limit</td>
+<td>≤ 2 MB recommended</td>
+<td>still-image fallback, alpha preferred</td>
+</tr>
+</tbody>
+</table>
+<p>Sources at the end. Two consequences:</p>
+<ol>
+<li><strong>8–24 frames is enough.</strong> LINE caps at 20 frames; a 240² WeChat GIF gains nothing from more.
+   The project default, 24 frames @10 fps = 2.4 s, sits inside Telegram's 3 s line.</li>
+<li><strong>60 frames is for the web</strong>, Discord, GitHub previews and later WebM export — not for chat stickers.
+   Telegram's 60 fps refers to vector TGS, not 60 bitmap frames; 60 bitmaps only multiply file size by ~2.5.</li>
+</ol>
+<blockquote>
+<p>Frame-count trade-offs and size/sampling math: <a href="../usage/">Usage</a> and <a href="../formats/">Formats</a>.</p>
+</blockquote>
+<hr />
+<h2 id="2-the-five-beat-grammar">2 · The five-beat grammar<a class="headerlink" href="#2-the-five-beat-grammar" title="Permanent link">&para;</a></h2>
+<p>Treat <code>actions</code> as stage directions, not image descriptions. A loopable action has five beats:</p>
+<table>
+<thead>
+<tr>
+<th>Beat</th>
+<th>Role</th>
+<th>What to write</th>
+<th>Common mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K0 rest</td>
+<td>loop seam and chat-list cover</td>
+<td>neutral face, facing viewer, mouth closed</td>
+<td>starting at peak laugh, so the loop "changes face"</td>
+</tr>
+<tr>
+<td>K1 anticipation</td>
+<td>wind-up in the opposite direction</td>
+<td>inhale, eyebrow lift, hand half raised</td>
+<td>jumping straight to the action; reads as a teleport</td>
+</tr>
+<tr>
+<td>K2 action</td>
+<td>largest change; silhouette must change</td>
+<td>mouth open, lean back, hand at peak</td>
+<td>changing face, hands, body and background at once</td>
+</tr>
+<tr>
+<td>K3 settle</td>
+<td>overshoot and fall back</td>
+<td>head recentres, hand lowers, smile softens</td>
+<td>cutting straight to K0; the action looks clipped</td>
+</tr>
+<tr>
+<td>back to K0</td>
+<td>final segment interpolates home</td>
+<td>nothing to write</td>
+<td>using <code>snap</code>, so the last frames rush</td>
+</tr>
+</tbody>
+</table>
+<p>Workflow mapping:</p>
+<pre><code>K0 ──seg1──► K1 ──seg2──► K2 ──seg3──► K3 ──seg4──► K0
+</code></pre>
+<p><code>beats=4</code> means 4 keyframes and 4 segments; the last segment wraps to K0 (<code>dst = chain[(seg+1) % len(chain)]</code>).
+So <strong>K0 must be a pose that can end the clip</strong>, or the seam jumps.</p>
+<h3 id="21-segment-budgets-at-24-frames">2.1 Segment budgets at 24 frames<a class="headerlink" href="#21-segment-budgets-at-24-frames" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Beats</th>
+<th>segs</th>
+<th>Feel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>8 / 8 / 8</td>
+<td>rest → one action → settle; safest</td>
+</tr>
+<tr>
+<td>4</td>
+<td>6 / 7 / 6 / 5</td>
+<td>rest → wind-up → burst → settle; recommended</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5 / 6 / 5 / 4 / 4</td>
+<td>story-shaped, but crowded at 24; use 30/60</td>
+</tr>
+</tbody>
+</table>
+<p>Rule: <strong>short anticipation, long burst, medium settle.</strong> <code>shock</code> uses 5/6/7/6 so the scare lands fast and holds.</p>
+<hr />
+<h2 id="3-how-to-write-the-prompt">3 · How to write the prompt<a class="headerlink" href="#3-how-to-write-the-prompt" title="Permanent link">&para;</a></h2>
+<p>A keyframe prompt is assembled in a fixed order:</p>
+<pre><code>lock (constant) + action (what changes this beat) + style (look, last)
+</code></pre>
+<p>That is exactly what <code>compile_prompt()</code> does. Why:</p>
+<ol>
+<li><strong>lock first</strong> pins face, hair, outfit and framing; interpolation cannot swap the character.</li>
+<li><strong>action in the middle</strong> describes only the delta; do not repeat the lock.</li>
+<li><strong>style last</strong> because Moss's text encoder weights trailing tokens most; style at the end survives action words.</li>
+</ol>
+<h3 id="31-change-one-thing-per-beat">3.1 Change one thing per beat<a class="headerlink" href="#31-change-one-thing-per-beat" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Write</th>
+<th>Avoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>laugh</td>
+<td><code>big smile, eyes half closed</code></td>
+<td><code>laughing, jumping, waving, background changes</code></td>
+</tr>
+<tr>
+<td>shock</td>
+<td><code>eyes wide, mouth slightly open</code></td>
+<td><code>turning around, camera zoom</code></td>
+</tr>
+<tr>
+<td>angry</td>
+<td><code>frowning, cheeks puffed</code></td>
+<td><code>whole body shaking, red background</code></td>
+</tr>
+<tr>
+<td>wave</td>
+<td><code>raising right hand, palm open</code></td>
+<td><code>walking toward viewer</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>At most two body parts per beat</strong> (eyes + mouth, or hand + brow). Three or more fight each other and produce ghosts and colour blotches in the in-betweens.</p>
+<h3 id="32-what-goes-into-the-global-motion-layer">3.2 What goes into the global motion layer<a class="headerlink" href="#32-what-goes-into-the-global-motion-layer" title="Permanent link">&para;</a></h3>
+<p><code>motion</code> (the "全局动作指导" node) is not a second action; it is a <strong>shared constraint</strong>:</p>
+<pre><code>same camera, same framing, stable lighting, no zoom, no camera move
+</code></pre>
+<p>You may add <code>subtle head motion</code>, <code>rain falling</code>, <code>steam rising</code>, <code>warm morning light</code>.
+Do not write <code>camera pans</code>, <code>zoom in</code>, <code>character walks</code> — interpolation cannot handle camera motion and will smear the frame.</p>
+<p>Leaving it empty is fine: the workflow bypasses <code>ConditioningCombine</code> so the per-frame prompt is not diluted (since 1.3.0).</p>
+<h3 id="33-keep-negatives-narrow">3.3 Keep negatives narrow<a class="headerlink" href="#33-keep-negatives-narrow" title="Permanent link">&para;</a></h3>
+<p>The default negative already covers <code>photo, photorealistic, 3d render, collage, grid, multiple girls, different outfit, camera move, zoom, color shift</code>.
+Do not pile on <code>ugly, bad</code>; that suppresses ordinary expressions too.</p>
+<hr />
+<h2 id="4-the-library-16-presets">4 · The library (16 presets)<a class="headerlink" href="#4-the-library-16-presets" title="Permanent link">&para;</a></h2>
+<p><code>assets/motion-presets.json</code> ships with the repo. Each preset carries beats, frames, segments, fps, denoise, four actions, a motion layer and a scene hint.</p>
+<h3 id="41-emotions">4.1 Emotions<a class="headerlink" href="#41-emotions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>Name</th>
+<th>Beats</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>laugh</code></td>
+<td>Laugh</td>
+<td>hold back → burst → lean back → settle</td>
+<td>laughing hard</td>
+</tr>
+<tr>
+<td><code>cry</code></td>
+<td>Cry</td>
+<td>pout → tears → sob → wipe</td>
+<td>comfort me</td>
+</tr>
+<tr>
+<td><code>shock</code></td>
+<td>Shock</td>
+<td>calm → pupils shrink → lean back → freeze</td>
+<td>outrageous news</td>
+</tr>
+<tr>
+<td><code>angry</code></td>
+<td>Angry</td>
+<td>frown → puff cheeks → fists → turn away</td>
+<td>fake anger</td>
+</tr>
+<tr>
+<td><code>smug</code></td>
+<td>Smug</td>
+<td>brow raise → side-eye → arms crossed → chuckle</td>
+<td>"told you so"</td>
+</tr>
+<tr>
+<td><code>sigh</code></td>
+<td>Sigh</td>
+<td>half-lidded → exhale → shoulders drop → deadpan</td>
+<td>dead air</td>
+</tr>
+<tr>
+<td><code>panic</code></td>
+<td>Panic</td>
+<td>blank → look around → hands on cheeks → forced smile</td>
+<td>everything is on fire</td>
+</tr>
+<tr>
+<td><code>sleepy</code></td>
+<td>Sleepy</td>
+<td>yawn → doze → jolt awake</td>
+<td>early shift</td>
+</tr>
+<tr>
+<td><code>love</code></td>
+<td>Heart hands</td>
+<td>shy → raise hands → heart → hold</td>
+<td>affection</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-gestures">4.2 Gestures<a class="headerlink" href="#42-gestures" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>Name</th>
+<th>Beats</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wave</code></td>
+<td>Wave</td>
+<td>raise → wave → lower</td>
+<td>greeting</td>
+</tr>
+<tr>
+<td><code>nod</code></td>
+<td>Nod</td>
+<td>smile → nod → nod again → settle</td>
+<td>agreed</td>
+</tr>
+<tr>
+<td><code>shake</code></td>
+<td>Shake</td>
+<td>sigh → shake → shake again → resigned</td>
+<td>nope</td>
+</tr>
+<tr>
+<td><code>thumbsup</code></td>
+<td>Thumbs up</td>
+<td>raise → thumb → wink → lower</td>
+<td>approval</td>
+</tr>
+<tr>
+<td><code>think</code></td>
+<td>Think</td>
+<td>look up → chin → idea → nod</td>
+<td>let me think</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-five-beat-stories">4.3 Five-beat stories<a class="headerlink" href="#43-five-beat-stories" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>Name</th>
+<th>Beats</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rainy-walk</code></td>
+<td>Rainy walk</td>
+<td>notice rain → umbrella → puddle → look back</td>
+<td>60 frames / 30 fps scene</td>
+</tr>
+<tr>
+<td><code>morning-coffee</code></td>
+<td>Morning coffee</td>
+<td>desk → find coffee → drink → refreshed → stand</td>
+<td>five-beat emotional curve</td>
+</tr>
+</tbody>
+</table>
+<p>Stories are not "one expression"; they act out a <strong>state change</strong>: sleepy → awake, calm → delighted.
+The structure is unchanged: one step per beat, and the last segment still interpolates back to K0.</p>
+<h3 id="44-action-vocabulary-paste-into-actions">4.4 Action vocabulary (paste into <code>actions</code>)<a class="headerlink" href="#44-action-vocabulary-paste-into-actions" title="Permanent link">&para;</a></h3>
+<p>Popular sticker packs reuse a small vocabulary. Use <strong>one action phrase + one expression phrase per beat</strong>;
+do not copy a whole list into every beat.</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Ready-to-use phrases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Greeting / farewell</td>
+<td><code>wave hello</code> · <code>salute</code> · <code>bow</code> · <code>peace sign</code> · <code>blowing a kiss</code> · <code>goodbye wave</code></td>
+</tr>
+<tr>
+<td>Yes / approval</td>
+<td><code>nod</code> · <code>thumbs up</code> · <code>OK sign</code> · <code>clapping</code> · <code>fist pump</code> · <code>arms crossed with a nod</code></td>
+</tr>
+<tr>
+<td>No / refusal</td>
+<td><code>shake head</code> · <code>palm out</code> · <code>cross arms</code> · <code>turn away</code> · <code>shrug</code> · <code>push away</code></td>
+</tr>
+<tr>
+<td>Emotional burst</td>
+<td><code>laughing hard</code> · <code>crying</code> · <code>screaming</code> · <code>gasping</code> · <code>jaw dropped</code> · <code>rage</code> · <code>pouting</code> · <code>sulking</code></td>
+</tr>
+<tr>
+<td>Daily state</td>
+<td><code>yawning</code> · <code>sleepy</code> · <code>eating</code> · <code>drinking</code> · <code>working</code> · <code>studying</code> · <code>gaming</code> · <code>scrolling phone</code></td>
+</tr>
+<tr>
+<td>Affection</td>
+<td><code>heart hands</code> · <code>hug</code> · <code>headpat</code> · <code>blushing</code> · <code>shy look</code> · <code>wink</code> · <code>leaning on shoulder</code></td>
+</tr>
+<tr>
+<td>Comedy / meme</td>
+<td><code>facepalm</code> · <code>sweat drop</code> · <code>anger vein</code> · <code>blank stare</code> · <code>side-eye</code> · <code>smirk</code> · <code>dizzy swirls</code></td>
+</tr>
+<tr>
+<td>Rhythm / body</td>
+<td><code>bounce</code> · <code>sway</code> · <code>tilt head</code> · <code>lean back</code> · <code>lean forward</code> · <code>recoil</code> · <code>freeze</code> · <code>tremble</code></td>
+</tr>
+</tbody>
+</table>
+<p>Three hard rules:</p>
+<ol>
+<li><strong>Sticker motion is symbolic, not anatomical.</strong> <code>sweat drop</code>, <code>anger vein</code>, <code>blank stare</code> work better than millimetre-level brow descriptions.</li>
+<li><strong>One action phrase per beat.</strong> <code>waving, jumping, winking</code> together only produces mush after interpolation.</li>
+<li><strong>Action words go in action; camera words go in motion.</strong> <code>close-up</code> and <code>from above</code> are framing changes, not actions.</li>
+</ol>
+<hr />
+<h2 id="5-usage">5 · Usage<a class="headerlink" href="#5-usage" title="Permanent link">&para;</a></h2>
+<p>List presets:</p>
+<pre><code class="language-bash">python scripts/make_story.py --list
+</code></pre>
+<p>Build a story card, then hand it to <code>emit_workflow.py</code>:</p>
+<pre><code class="language-bash">python scripts/make_story.py \
+  --preset laugh \
+  --lock &quot;masterpiece, best quality, 1girl, solo, upper body, silver hair, blue eyes, school uniform, simple background&quot; \
+  --name my-laugh \
+  --out assets/story.my-laugh.json
+
+python scripts/emit_workflow.py \
+  --base assets/workflow-sdxl.json \
+  --story assets/story.my-laugh.json \
+  --out my-laugh.json \
+  --run
+</code></pre>
+<p>Override frames, fps or segment budgets:</p>
+<pre><code class="language-bash">python scripts/make_story.py --preset wave --lock &quot;...&quot; --frames 12 --fps 12 --out story.wave12.json
+python scripts/make_story.py --preset rainy-walk --lock &quot;...&quot; --frames 60 --fps 30 --out story.rain60.json
+python scripts/make_story.py --preset shock --lock &quot;...&quot; --frames 24 --segs 4,6,8,6 --out story.shock.json
+</code></pre>
+<p><code>make_story.py</code> validates <code>frames &gt;= beats</code>, <code>len(segs) == beats</code>, <code>sum(segs) == frames</code>, and that every preset has one action per beat.
+Scene presets append their <code>lock_hint</code> to your lock; pass <code>--no-hint</code> to suppress it.</p>
+<hr />
+<h2 id="6-per-platform-settings">6 · Per-platform settings<a class="headerlink" href="#6-per-platform-settings" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>frames</th>
+<th>fps</th>
+<th>Extra steps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telegram animated sticker</td>
+<td>24–60</td>
+<td>30 (then convert to TGS/WebM)</td>
+<td>512×512, ≤ 3 s</td>
+</tr>
+<tr>
+<td>LINE animated sticker</td>
+<td>8–20</td>
+<td>8–10</td>
+<td>fit within 370×320, compress to ≤ 1 MB</td>
+</tr>
+<tr>
+<td>WeChat sticker</td>
+<td>24</td>
+<td>10</td>
+<td>240×240, GIF ≤ 500 KB</td>
+</tr>
+<tr>
+<td>Discord / web</td>
+<td>24–60</td>
+<td>15–30</td>
+<td>WebP preferred, transparent</td>
+</tr>
+<tr>
+<td>GitHub preview</td>
+<td>24–60</td>
+<td>15–30</td>
+<td>384², see <code>make_preview.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>Size rules of thumb: for the same content, 60 frames ≈ 2.5× the 24-frame clip; WebP q90 ≈ 1/7 of APNG. See <a href="../formats/">Formats</a>.</p>
+<hr />
+<h2 id="7-seven-common-failures">7 · Seven common failures<a class="headerlink" href="#7-seven-common-failures" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loop seam "changes face"</td>
+<td>K0 is not a rest pose, or the last beat does not return</td>
+<td>put a neutral pose in <code>actions[0]</code>; use the 4-beat template</td>
+</tr>
+<tr>
+<td>ghosting / blotches in between</td>
+<td>three or more body parts changed in one beat</td>
+<td>change 1–2 parts; drop denoise to 0.4</td>
+</tr>
+<tr>
+<td>hands melt</td>
+<td>large hand motion at low frame count</td>
+<td>denoise 0.5 for hand beats; crop to upper body</td>
+</tr>
+<tr>
+<td>frame smears</td>
+<td><code>motion</code> contains camera move / zoom</td>
+<td>keep <code>same camera, same framing</code></td>
+</tr>
+<tr>
+<td>style eaten by action words</td>
+<td>style before action</td>
+<td>keep <code>lock + action + style</code></td>
+</tr>
+<tr>
+<td>24 frames exported as 19</td>
+<td>duplicate ratios on the same latent pair</td>
+<td>use <code>make_curve.py</code>; never hand-write duplicates</td>
+</tr>
+<tr>
+<td>GIF colour blocks flicker</td>
+<td>per-frame palette plus dithering</td>
+<td>use <code>make_preview.py</code>'s global palette and <code>dither=NONE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-references">8 · References<a class="headerlink" href="#8-references" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Telegram Stickers (512×512, ≤ 3 s, must loop, 60 fps): <a href="https://core.telegram.org/stickers">https://core.telegram.org/stickers</a></li>
+<li>LINE Creators Market · Animated Stickers (APNG, 5–20 frames, ≤ 4 s, ≤ 1 MB, first frame is the cover):
+  <a href="https://creator.line.me/en/guideline/animationsticker/">https://creator.line.me/en/guideline/animationsticker/</a></li>
+<li>WeChat Sticker Open Platform (GIF 240×240, ≤ 500 KB, sets of 16 or 24): <a href="https://sticker.weixin.qq.com/">https://sticker.weixin.qq.com/</a></li>
+<li>APNG spec and GIF89a delay units: see the references in <a href="../formats/">Formats</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

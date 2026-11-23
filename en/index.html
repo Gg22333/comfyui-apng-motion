@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../output/" class="md-nav__link">
         
   
@@ -516,10 +543,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -537,8 +564,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -699,6 +726,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -964,10 +1019,11 @@
 
 
 <h1 id="comfyui-apng-motion">comfyui-apng-motion<a class="headerlink" href="#comfyui-apng-motion" title="Permanent link">&para;</a></h1>
-<p>A ComfyUI skill and toolkit for <strong>24-frame, coherent APNG / WebP / GIF</strong> animations.</p>
+<p>A ComfyUI skill and toolkit for <strong>coherent APNG / WebP / GIF</strong> animations — 8, 12, 24, 30 or 60 frames.</p>
 <p><img alt="preview" src="../assets/preview.webp" /></p>
 <blockquote>
-<p>The primary preview is WebP (true colour, about 1/5 the size of GIF); <code>preview.gif</code> remains for
+<p>Preview: 60 frames at 30 fps, Moss/DiT — recipe in <code>assets/story.preview.json</code>.
+The primary preview is WebP q100 (true colour, all 60 frames; libwebp merges near-duplicates at q90); <code>preview.gif</code> remains for
 chat apps. The GIF is re-encoded with one global palette and dithering off, so 256-colour
 quantisation no longer reads as flicker. See <a href="formats/#46-why-the-web-preview-is-webp">formats</a>.</p>
 </blockquote>
@@ -994,7 +1050,7 @@ quantisation no longer reads as flicker. See <a href="formats/#46-why-the-web-pr
 </tr>
 </tbody>
 </table>
-<p>This project instead: <strong>sample the first frame once → redraw every keyframe from that same first latent → interpolate 24 latents → decode 24 times → merge → write three files.</strong></p>
+<p>This project instead: <strong>sample the first frame once → redraw every keyframe from that same first latent → interpolate N latents → decode N times → merge → write three files.</strong></p>
 <h2 id="three-steps">Three steps<a class="headerlink" href="#three-steps" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/detect_env.py
 python scripts/doctor.py
@@ -1004,6 +1060,7 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 <ul>
 <li><a href="install/">Install</a></li>
 <li><a href="usage/">Usage</a></li>
+<li><a href="motion-presets/">Motion library: 16 sticker actions</a></li>
 <li><a href="output/">Output layout</a></li>
 <li><a href="synthesis-comparison/">Approach comparison: APNG / GIF / Live2D / video</a></li>
 <li><a href="formats/">APNG, GIF and video-to-GIF</a></li>

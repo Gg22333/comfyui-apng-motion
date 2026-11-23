@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -315,6 +315,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../output/" class="md-nav__link">
         
   
@@ -514,10 +541,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -535,8 +562,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -617,6 +644,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -855,8 +910,8 @@
 <code>batch_size=N</code> is N independent noise samples. A fixed seed makes them reproducible, not continuous.</p>
 <p><strong>Why not generate every frame like a video?</strong>
 Frame-by-frame img2img needs 24 samples and accumulates drift (black hair turning cyan). Interpolation needs 3–5 samples; in-between frames come from a mathematical transition.</p>
-<p><strong>Why 24 frames?</strong>
-2.4 s at 10 fps, enough for "start → turn → settle". Below 16 frames looks like a slideshow; above 32 the returns diminish.</p>
+<p><strong>Why 24 frames by default?</strong>
+24 frames at 10 fps is 2.4 s, enough for "start → turn → settle". Frame count is a budget, not a spec: 8 for a flipbook, 12 for small motion, 24 as the default sweet spot, 30 for five-beat stories, 60 for smooth web/Discord previews. Change it with <code>--frames</code>.</p>
 <p><strong>Why 10 fps by default?</strong>
 GIF delay is in 1/100 s; 10 fps = 10cs exactly. 12 fps becomes 8cs (12.5 fps).</p>
 <p><strong>Why is the motion so small?</strong>
@@ -864,7 +919,7 @@ Raise keyframe <code>denoise</code> (xl 0.4 → 0.45, Moss 0.5 → 0.55) or incr
 <p><strong>Can the character walk?</strong>
 No. This route has no real trajectory. Walking and turning need a ControlNet pose sequence or a video model (Wan / LTX).</p>
 <p><strong>Does it support Flux / SD1.5 / other models?</strong>
-Yes. <code>emit_workflow.py</code> only cares about structure (one denoise=1 KSampler + ≥2 keyframes + 24 interpolations + 24 decodes + a 24-way merge + 3 outputs); swap the model names.</p>
+Yes. <code>emit_workflow.py</code> only cares about structure (one denoise=1 KSampler + ≥2 keyframes + N interpolations + N decodes + an N-way merge + 3 outputs); swap the model names.</p>
 <p><strong>Is a GPU required?</strong>
 For rendering, yes. <code>detect_env</code> / <code>doctor</code> / <code>emit_workflow</code> / <code>check_anim</code> / <code>check_output</code> are CPU-side tools.</p>
 <p><strong>APNG or GIF?</strong>

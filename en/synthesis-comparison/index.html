@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../output/" class="md-nav__link">
         
   
@@ -516,10 +543,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -537,8 +564,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -619,6 +646,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -883,10 +938,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#53-file-size-measured-here-5122-24-frames" class="md-nav__link">
+  <a href="#53-file-size-measured-here-5122" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.3 File size (measured here, 512² × 24 frames)
+        5.3 File size (measured here, 512²)
       
     </span>
   </a>
@@ -1242,10 +1297,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#53-file-size-measured-here-5122-24-frames" class="md-nav__link">
+  <a href="#53-file-size-measured-here-5122" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.3 File size (measured here, 512² × 24 frames)
+        5.3 File size (measured here, 512²)
       
     </span>
   </a>
@@ -1330,10 +1385,10 @@
 <tbody>
 <tr>
 <td><strong>This project</strong></td>
-<td>3–5 keyframes → latent interpolation → 24 frames → APNG/WebP/GIF</td>
+<td>3–5 keyframes → latent interpolation → N frames (8–60, default 24) → APNG/WebP/GIF</td>
 <td>No</td>
 <td>None; browsers and chat apps play it</td>
-<td><strong>Low</strong>: K samples + 24 decodes</td>
+<td><strong>Low</strong>: K samples + N decodes</td>
 <td>Stickers, micro-performance, docs</td>
 </tr>
 <tr>
@@ -1559,7 +1614,7 @@
 <tr>
 <th>Route</th>
 <th>Sampling passes</th>
-<th>Versus 24-frame frame-by-frame</th>
+<th>Versus 24-frame frame-by-frame (baseline 480)</th>
 </tr>
 </thead>
 <tbody>
@@ -1585,20 +1640,22 @@
 </tr>
 </tbody>
 </table>
-<p>Interpolation itself is 24 linear blends on latents and calls no model. Decoding is still 24 passes; that part is not saved.</p>
+<p>Interpolation itself is N linear blends on latents and calls no model. Decoding is still N passes; that part is not saved.
+Key point: <strong>going from 24 to 60 frames does not add sampling passes</strong> (only beat count matters); only decode time and file size grow.</p>
 <h3 id="52-vram-and-memory">5.2 VRAM and memory<a class="headerlink" href="#52-vram-and-memory" title="Permanent link">&para;</a></h3>
 <p>An SDXL 512×512 latent is <code>64×64×4</code>:</p>
 <ul>
-<li>one fp16 latent ≈ 32 KB; 24 ≈ 768 KB;</li>
-<li>24 decoded 512×512 RGBA images ≈ 25 MB;</li>
+<li>one fp16 latent ≈ 32 KB; 24 ≈ 768 KB, 60 ≈ 1.9 MB;</li>
+<li>24 decoded 512×512 RGBA images ≈ 25 MB, 60 ≈ 63 MB;</li>
 <li>interpolation nodes hold latents, not decoded images.</li>
 </ul>
 <p>So the added footprint is <strong>tens of megabytes of image buffers, not gigabytes of model or video cache</strong>. The real cost remains one model load plus K sampling passes.</p>
-<h3 id="53-file-size-measured-here-5122-24-frames">5.3 File size (measured here, 512² × 24 frames)<a class="headerlink" href="#53-file-size-measured-here-5122-24-frames" title="Permanent link">&para;</a></h3>
+<h3 id="53-file-size-measured-here-5122">5.3 File size (measured here, 512²)<a class="headerlink" href="#53-file-size-measured-here-5122" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Stack</th>
+<th>Stack / content</th>
+<th>Frames</th>
 <th>APNG</th>
 <th>GIF</th>
 <th>WebP (lossless)</th>
@@ -1606,16 +1663,25 @@
 </thead>
 <tbody>
 <tr>
-<td>SDXL</td>
+<td>SDXL / silver hair</td>
+<td>24</td>
 <td>6.61 MB</td>
 <td>2.41 MB</td>
 <td>0.80 MB</td>
 </tr>
 <tr>
-<td>Moss</td>
+<td>Moss / silver hair</td>
+<td>24</td>
 <td>4.15 MB</td>
 <td>2.72 MB</td>
 <td>2.88 MB</td>
+</tr>
+<tr>
+<td>Moss / rainy neon</td>
+<td>60</td>
+<td>17.23 MB</td>
+<td>7.21 MB</td>
+<td>12.76 MB</td>
 </tr>
 </tbody>
 </table>

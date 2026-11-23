@@ -1,0 +1,1924 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+      
+      
+      
+        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/motion-presets/">
+      
+      
+        <link rel="prev" href="../usage/">
+      
+      
+        <link rel="next" href="../output/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>动作库 - comfyui-apng-motion</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="comfyui-apng-motion" class="md-header__button md-logo" aria-label="comfyui-apng-motion" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            comfyui-apng-motion
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              动作库
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="暗色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="暗色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="亮色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="亮色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="comfyui-apng-motion" class="md-nav__button md-logo" aria-label="comfyui-apng-motion" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    comfyui-apng-motion
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · 平台规范决定了动作长度
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · 五拍语法：表情包的动作都是同一个骨架
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · 五拍语法：表情包的动作都是同一个骨架">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 四拍怎么分配帧
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · 提示词怎么写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · 提示词怎么写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 每拍只改一件事
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 全局动作指导写什么
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-negative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 negative 只写会坏事的词
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · 动作库（16 组，直接调用）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · 动作库（16 组，直接调用）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 情绪类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 动作类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 五拍小故事
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 动作词汇表（直接粘进 actions）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · 用法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · 按平台改参数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 七个常见错误
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · 参考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    成品落盘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthesis-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    方案对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    格式对比
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    排错
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    发布
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    English
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    English
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output layout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/synthesis-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Approach comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 · 平台规范决定了动作长度
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 · 五拍语法：表情包的动作都是同一个骨架
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2 · 五拍语法：表情包的动作都是同一个骨架">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 四拍怎么分配帧
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 · 提示词怎么写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 · 提示词怎么写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 每拍只改一件事
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 全局动作指导写什么
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-negative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 negative 只写会坏事的词
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 · 动作库（16 组，直接调用）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4 · 动作库（16 组，直接调用）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 情绪类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 动作类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 五拍小故事
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 动作词汇表（直接粘进 actions）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 · 用法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 · 按平台改参数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 七个常见错误
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 · 参考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">表情包动作库：怎么把「一个动作」写成可合成的关键帧<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>这一页解决的是内容问题，不是代码问题：<strong>同一条流水线，为什么有的片像表情包，有的片像卡住的 PPT。</strong></p>
+<p>结论先给：表情包不是「小视频」，是<strong>一个 1–3 秒、首尾能接上的微表演</strong>。
+它只需要 2–4 个关键姿势，靠预备动作和停顿把动作读出来，不靠帧数堆。</p>
+<hr />
+<h2 id="1">1 · 平台规范决定了动作长度<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>做之前先看发给谁。三家主流平台的实际验收线：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>格式与尺寸</th>
+<th>时长 / 帧数</th>
+<th>体积</th>
+<th>硬性要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telegram 动态贴纸</td>
+<td>TGS（Lottie）512×512</td>
+<td>≤ 3 秒，<strong>60fps</strong></td>
+<td>—</td>
+<td>必须循环</td>
+</tr>
+<tr>
+<td>Telegram 视频贴纸</td>
+<td>WebM 512×512</td>
+<td>≤ 3 秒，≤ 30fps</td>
+<td>—</td>
+<td>建议循环</td>
+</tr>
+<tr>
+<td>LINE 动态贴纸</td>
+<td><strong>APNG</strong> .png</td>
+<td>5–20 帧，≤ 4 秒，1–4 次循环</td>
+<td>≤ 1 MB/张</td>
+<td>第一帧是商店封面；相同帧会被合并</td>
+</tr>
+<tr>
+<td>微信表情</td>
+<td>GIF 240×240</td>
+<td>单张 ≤ 3 秒（按平台当期规范）</td>
+<td>≤ 500 KB/张</td>
+<td>一套 16 或 24 张</td>
+</tr>
+<tr>
+<td>Discord / 网页</td>
+<td>APNG / WebP</td>
+<td>无硬限制</td>
+<td>建议 ≤ 2 MB</td>
+<td>首帧兜底、透明优先 WebP</td>
+</tr>
+</tbody>
+</table>
+<p>来源见文末。两个直接推论：</p>
+<ol>
+<li><strong>8–24 帧就够</strong>。LINE 上限只有 20 帧；微信 240² 的 GIF 再高帧数也看不出来。
+   本项目默认 24 帧 @10fps = 2.4 秒，正好落在 Telegram 的 3 秒线内。</li>
+<li><strong>60 帧不是给聊天软件用的</strong>，是给网页、Discord、GitHub 预览、后续转 WebM 用的。
+   Telegram 的 60fps 指的是 TGS 矢量动画，不是 60 张位图；位图 60 帧只会让体积翻 2.5 倍。</li>
+</ol>
+<blockquote>
+<p>帧数怎么选、各帧数的体积与算力账，见 <a href="../usage/">用法</a> 的「帧数怎么选」和 <a href="../formats/">格式对比</a>。</p>
+</blockquote>
+<hr />
+<h2 id="2">2 · 五拍语法：表情包的动作都是同一个骨架<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>把 <code>actions</code> 想成舞台提示，不是画面描述。一个能循环的动作只有五拍：</p>
+<table>
+<thead>
+<tr>
+<th>拍</th>
+<th>作用</th>
+<th>提示词里写什么</th>
+<th>常见错误</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K0 静息</td>
+<td>循环接点，也是聊天列表封面</td>
+<td>中性表情、正对镜头、嘴闭</td>
+<td>一上来就是大笑，循环回 K0 会「变脸」</td>
+</tr>
+<tr>
+<td>K1 预备</td>
+<td>反方向蓄力，告诉观众要动了</td>
+<td>吸气、挑眉、手抬起一半</td>
+<td>直接跳到主动作，看起来像瞬移</td>
+</tr>
+<tr>
+<td>K2 主动作</td>
+<td>全片最大变化，剪影必须变</td>
+<td>张嘴、后仰、手举到最高</td>
+<td>同时改脸、手、身体、背景，插值必糊</td>
+</tr>
+<tr>
+<td>K3 余震</td>
+<td>过冲后回落，给动作重量</td>
+<td>头回正、手放下、笑收一半</td>
+<td>直接切回 K0，动作像被剪断</td>
+</tr>
+<tr>
+<td>回到 K0</td>
+<td>最后一段自动插回第一帧</td>
+<td>不用写</td>
+<td>曲线设成 <code>snap</code>，末帧冲太快</td>
+</tr>
+</tbody>
+</table>
+<p>工作流里的对应关系：</p>
+<pre><code>K0 ──段1──► K1 ──段2──► K2 ──段3──► K3 ──段4──► K0
+</code></pre>
+<p><code>beats=4</code> 就是 4 个关键帧、4 段，最后一段自动插回 K0（<code>emit_workflow.py</code> 的 <code>dst = chain[(seg+1) % len(chain)]</code>）。
+所以 <strong>K0 必须是一个能收尾的姿势</strong>，不然循环接点会跳。</p>
+<h3 id="21">2.1 四拍怎么分配帧<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<p><code>frames=24</code> 的默认分配：</p>
+<table>
+<thead>
+<tr>
+<th>拍数</th>
+<th>segs</th>
+<th>节奏感觉</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>8 / 8 / 8</td>
+<td>起 → 一个动作 → 回落，最稳</td>
+</tr>
+<tr>
+<td>4</td>
+<td>6 / 7 / 6 / 5</td>
+<td>起 → 预备 → 爆发 → 收，推荐</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5 / 6 / 5 / 4 / 4</td>
+<td>有剧情，但 24 帧会赶，建议加到 30/60</td>
+</tr>
+</tbody>
+</table>
+<p>规律：<strong>预备短、爆发长、收尾中等</strong>。上面 <code>shock</code> 用 5/6/7/6，就是让惊吓来得快、停顿留得久。</p>
+<hr />
+<h2 id="3">3 · 提示词怎么写<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>一条关键帧提示由三段拼成，顺序固定：</p>
+<pre><code>lock（不变） + action（这一拍变什么） + style（画风，放最后）
+</code></pre>
+<p><code>emit_workflow.py</code> 的 <code>compile_prompt()</code> 就是这么拼的。三个理由：</p>
+<ol>
+<li><strong>lock 放最前</strong>：脸、发型、服装、构图锚死，插值才不会换人。</li>
+<li><strong>action 放中间</strong>：只写这一拍<strong>变化的部分</strong>，不要重复 lock 里已有的内容。</li>
+<li><strong>style 放最后</strong>：Moss 的文本编码器对末尾 token 权重最高，风格词放末尾才压得住动作词。</li>
+</ol>
+<h3 id="31">3.1 每拍只改一件事<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>想让人物…</th>
+<th>写</th>
+<th>不要写</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>笑</td>
+<td><code>big smile, eyes half closed</code></td>
+<td><code>laughing, jumping, waving, background changes</code></td>
+</tr>
+<tr>
+<td>惊讶</td>
+<td><code>eyes wide, mouth slightly open</code></td>
+<td><code>turning around, camera zoom</code></td>
+</tr>
+<tr>
+<td>生气</td>
+<td><code>frowning, cheeks puffed</code></td>
+<td><code>whole body shaking, red background</code></td>
+</tr>
+<tr>
+<td>打招呼</td>
+<td><code>raising right hand, palm open</code></td>
+<td><code>walking toward viewer</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>最多同时改两个部位</strong>（例如「眼 + 嘴」或「手 + 眉」）。改三样以上，中间帧就会互相打架，出现重影和色斑。</p>
+<h3 id="32">3.2 全局动作指导写什么<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<p><code>motion</code>（工作流里的「全局动作指导」）不是第二个动作，是<strong>全片共享的约束</strong>：</p>
+<pre><code>same camera, same framing, stable lighting, no zoom, no camera move
+</code></pre>
+<p>可以加：<code>subtle head motion</code>、<code>rain falling</code>、<code>steam rising</code>、<code>warm morning light</code>。
+不要写：<code>camera pans</code>、<code>zoom in</code>、<code>character walks</code>——插值处理不了镜头运动，只会把画面拉花。</p>
+<p>留空也可以。留空时工作流会<strong>旁路</strong> <code>ConditioningCombine</code>，不稀释每帧提示（1.3.0 起）。</p>
+<h3 id="33-negative">3.3 negative 只写会坏事的词<a class="headerlink" href="#33-negative" title="Permanent link">&para;</a></h3>
+<p>默认 negative 已经包含：<code>photo, photorealistic, 3d render, collage, grid, multiple girls, different outfit, camera move, zoom, color shift</code>。
+不要往里堆 <code>ugly, bad</code>，那会连正常表情一起压掉。</p>
+<hr />
+<h2 id="4-16">4 · 动作库（16 组，直接调用）<a class="headerlink" href="#4-16" title="Permanent link">&para;</a></h2>
+<p><code>assets/motion-presets.json</code> 是随包的动作库。每组都带：拍数、帧数、段数、fps、denoise、四条动作、全局指导、场景提示。</p>
+<h3 id="41">4.1 情绪类<a class="headerlink" href="#41" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>名称</th>
+<th>节拍</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>laugh</code></td>
+<td>大笑</td>
+<td>忍笑 → 爆发 → 后仰 → 收</td>
+<td>聊天里表示笑到不行</td>
+</tr>
+<tr>
+<td><code>cry</code></td>
+<td>大哭</td>
+<td>委屈 → 泪涌 → 抽泣 → 擦眼</td>
+<td>求安慰、装可怜</td>
+</tr>
+<tr>
+<td><code>shock</code></td>
+<td>震惊</td>
+<td>平静 → 瞳孔缩 → 后仰 → 僵住</td>
+<td>听到离谱消息</td>
+</tr>
+<tr>
+<td><code>angry</code></td>
+<td>生气</td>
+<td>皱眉 → 鼓脸 → 握拳 → 别头</td>
+<td>假装生气</td>
+</tr>
+<tr>
+<td><code>smug</code></td>
+<td>得意</td>
+<td>挑眉 → 斜眼 → 抱臂 → 轻笑</td>
+<td>「我早就说了」</td>
+</tr>
+<tr>
+<td><code>sigh</code></td>
+<td>无语</td>
+<td>半睁眼 → 呼气 → 垂肩 → 死鱼眼</td>
+<td>冷场、无奈</td>
+</tr>
+<tr>
+<td><code>panic</code></td>
+<td>慌张</td>
+<td>呆住 → 左右看 → 抱头 → 强笑</td>
+<td>翻车现场</td>
+</tr>
+<tr>
+<td><code>sleepy</code></td>
+<td>困</td>
+<td>哈欠 → 打盹 → 惊醒</td>
+<td>早八、加班</td>
+</tr>
+<tr>
+<td><code>love</code></td>
+<td>比心</td>
+<td>害羞 → 抬手 → 比心 → 收</td>
+<td>表白、撒娇</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42">4.2 动作类<a class="headerlink" href="#42" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>名称</th>
+<th>节拍</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wave</code></td>
+<td>打招呼</td>
+<td>抬手 → 挥两下 → 收回</td>
+<td>开场、打招呼</td>
+</tr>
+<tr>
+<td><code>nod</code></td>
+<td>点头</td>
+<td>微笑 → 点头 → 再点 → 定住</td>
+<td>同意、收到</td>
+</tr>
+<tr>
+<td><code>shake</code></td>
+<td>摇头</td>
+<td>叹气 → 摇头 → 再摇 → 无奈</td>
+<td>拒绝、不行</td>
+</tr>
+<tr>
+<td><code>thumbsup</code></td>
+<td>点赞</td>
+<td>抬手 → 竖拇指 → 眨眼 → 收</td>
+<td>认可、加油</td>
+</tr>
+<tr>
+<td><code>think</code></td>
+<td>思考</td>
+<td>抬头 → 摸下巴 → 灵光 → 点头</td>
+<td>「让我想想」</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43">4.3 五拍小故事<a class="headerlink" href="#43" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>名称</th>
+<th>节拍</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rainy-walk</code></td>
+<td>雨天出门</td>
+<td>看雨 → 撑伞 → 踩水 → 回头</td>
+<td>60 帧 / 30fps 的完整场景</td>
+</tr>
+<tr>
+<td><code>morning-coffee</code></td>
+<td>早八续命</td>
+<td>趴桌 → 找咖啡 → 喝 → 满血 → 起身</td>
+<td>五拍情绪曲线</td>
+</tr>
+</tbody>
+</table>
+<p>故事类不要求「一个表情」，它演的是<strong>状态变化</strong>：困 → 清醒、平静 → 惊喜。
+但结构不变：每一拍仍然只推进一步，最后一拍仍然插回 K0。</p>
+<h3 id="44-actions">4.4 动作词汇表（直接粘进 <code>actions</code>）<a class="headerlink" href="#44-actions" title="Permanent link">&para;</a></h3>
+<p>热门表情包的动作高度套路化，翻来覆去就是下面这些。用法：<strong>每拍取「1 个动作短语 + 1 个表情短语」</strong>，
+不要整句照抄，也不要一拍拍全用。</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>可直接用的英文短语</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>问候 / 告别</td>
+<td><code>wave hello</code> · <code>salute</code> · <code>bow</code> · <code>peace sign</code> · <code>blowing a kiss</code> · <code>goodbye wave</code></td>
+</tr>
+<tr>
+<td>肯定 / 同意</td>
+<td><code>nod</code> · <code>thumbs up</code> · <code>OK sign</code> · <code>clapping</code> · <code>fist pump</code> · <code>arms crossed with a nod</code></td>
+</tr>
+<tr>
+<td>否定 / 拒绝</td>
+<td><code>shake head</code> · <code>palm out</code> · <code>cross arms</code> · <code>turn away</code> · <code>shrug</code> · <code>push away</code></td>
+</tr>
+<tr>
+<td>情绪爆发</td>
+<td><code>laughing hard</code> · <code>crying</code> · <code>screaming</code> · <code>gasping</code> · <code>jaw dropped</code> · <code>rage</code> · <code>pouting</code> · <code>sulking</code></td>
+</tr>
+<tr>
+<td>日常状态</td>
+<td><code>yawning</code> · <code>sleepy</code> · <code>eating</code> · <code>drinking</code> · <code>working</code> · <code>studying</code> · <code>gaming</code> · <code>scrolling phone</code></td>
+</tr>
+<tr>
+<td>亲密 / 撒娇</td>
+<td><code>heart hands</code> · <code>hug</code> · <code>headpat</code> · <code>blushing</code> · <code>shy look</code> · <code>wink</code> · <code>leaning on shoulder</code></td>
+</tr>
+<tr>
+<td>搞笑 / 梗</td>
+<td><code>facepalm</code> · <code>sweat drop</code> · <code>anger vein</code> · <code>blank stare</code> · <code>side-eye</code> · <code>smirk</code> · <code>dizzy swirls</code></td>
+</tr>
+<tr>
+<td>节奏 / 身体</td>
+<td><code>bounce</code> · <code>sway</code> · <code>tilt head</code> · <code>lean back</code> · <code>lean forward</code> · <code>recoil</code> · <code>freeze</code> · <code>tremble</code></td>
+</tr>
+</tbody>
+</table>
+<p>三条硬规则：</p>
+<ol>
+<li><strong>表情包的动作是符号，不是解剖</strong>。写 <code>sweat drop</code>、<code>anger vein</code>、<code>blank stare</code> 比写「眉头下压 3 毫米」有效。</li>
+<li><strong>一个 beat 只取一个动作短语</strong>。<code>waving, jumping, winking</code> 三条一起写，插值只会糊。</li>
+<li><strong>动作词放 action，镜头词放 motion</strong>。<code>close-up</code>、<code>from above</code> 不属于动作，写了会换构图。</li>
+</ol>
+<hr />
+<h2 id="5">5 · 用法<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<p>列出全部动作：</p>
+<pre><code class="language-bash">python scripts/make_story.py --list
+</code></pre>
+<p>用动作库生成剧情卡，再交给 <code>emit_workflow.py</code>：</p>
+<pre><code class="language-bash">python scripts/make_story.py \
+  --preset laugh \
+  --lock &quot;masterpiece, best quality, 1girl, solo, upper body, silver hair, blue eyes, school uniform, simple background&quot; \
+  --name my-laugh \
+  --out assets/story.my-laugh.json
+
+python scripts/emit_workflow.py \
+  --base assets/workflow-sdxl.json \
+  --story assets/story.my-laugh.json \
+  --out my-laugh.json \
+  --run
+</code></pre>
+<p>改帧数 / 帧率 / 段数：</p>
+<pre><code class="language-bash"># 12 帧轻量版（LINE 风格）
+python scripts/make_story.py --preset wave --lock &quot;...&quot; --frames 12 --fps 12 --out story.wave12.json
+
+# 五拍故事拉到 60 帧
+python scripts/make_story.py --preset rainy-walk --lock &quot;...&quot; --frames 60 --fps 30 --out story.rain60.json
+
+# 手动分配段数（必须满足 sum(segs) == frames）
+python scripts/make_story.py --preset shock --lock &quot;...&quot; --frames 24 --segs 4,6,8,6 --out story.shock.json
+</code></pre>
+<p><code>make_story.py</code> 会校验：</p>
+<ul>
+<li><code>frames &gt;= beats</code>；</li>
+<li><code>segs</code> 段数 = 拍数；</li>
+<li><code>sum(segs) == frames</code>；</li>
+<li>每拍动作数与拍数一致。</li>
+</ul>
+<p>场景类动作（<code>rainy-walk</code>、<code>morning-coffee</code>）会自动把 <code>lock_hint</code> 追加到 <code>lock</code> 后面；不想要就加 <code>--no-hint</code>。</p>
+<hr />
+<h2 id="6">6 · 按平台改参数<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>frames</th>
+<th>fps</th>
+<th>额外动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telegram 动态贴纸</td>
+<td>24–60</td>
+<td>30（导出后转 TGS/WebM）</td>
+<td>512×512，≤3 秒</td>
+</tr>
+<tr>
+<td>LINE 动态贴纸</td>
+<td>8–20</td>
+<td>8–10</td>
+<td>缩到 370×320 内，压到 ≤1 MB</td>
+</tr>
+<tr>
+<td>微信表情</td>
+<td>24</td>
+<td>10</td>
+<td>缩到 240×240，GIF ≤500 KB</td>
+</tr>
+<tr>
+<td>Discord / 网页</td>
+<td>24–60</td>
+<td>15–30</td>
+<td>优先 WebP，透明背景</td>
+</tr>
+<tr>
+<td>GitHub 预览</td>
+<td>24–60</td>
+<td>15–30</td>
+<td>384²，见 <code>make_preview.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>体积换算：60 帧约为 24 帧的 2.5 倍；WebP q90 约为 APNG 的 1/7。详见 <a href="../formats/">格式对比</a>。</p>
+<hr />
+<h2 id="7">7 · 七个常见错误<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>修法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>循环接点「变脸」</td>
+<td>K0 不是静息姿势，或末拍没回 K0</td>
+<td><code>actions[0]</code> 写中性；用四拍模板</td>
+</tr>
+<tr>
+<td>中间帧重影 / 色斑</td>
+<td>一拍里改了三个以上部位</td>
+<td>每拍只改 1–2 个部位；denoise 降到 0.4</td>
+</tr>
+<tr>
+<td>手部糊成一团</td>
+<td>手部大幅动作 + 低帧数</td>
+<td>手部动作给 0.5 denoise；裁到上半身</td>
+</tr>
+<tr>
+<td>画面被拉花</td>
+<td><code>motion</code> 里写了 camera move / zoom</td>
+<td>只写 <code>same camera, same framing</code></td>
+</tr>
+<tr>
+<td>风格被动作词吃掉</td>
+<td>style 写在 action 前面</td>
+<td>固定顺序 <code>lock + action + style</code></td>
+</tr>
+<tr>
+<td>排了 24 帧只剩 19 帧</td>
+<td>同一对 latent 上 ratio 重复</td>
+<td>用 <code>make_curve.py</code>，别手填重复值</td>
+</tr>
+<tr>
+<td>GIF 有色块闪</td>
+<td>逐帧调色板 + 抖动</td>
+<td>用 <code>make_preview.py</code> 的全局调色板 + <code>dither=NONE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8">8 · 参考<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Telegram Stickers（512×512、≤3 秒、必须循环、60fps）：<a href="https://core.telegram.org/stickers">https://core.telegram.org/stickers</a></li>
+<li>LINE Creators Market · Animated Stickers（APNG、5–20 帧、≤4 秒、≤1 MB、首帧为封面）：
+  <a href="https://creator.line.me/en/guideline/animationsticker/">https://creator.line.me/en/guideline/animationsticker/</a></li>
+<li>微信表情开放平台投稿指南（GIF 240×240、≤500 KB、16 或 24 张一套）：<a href="https://sticker.weixin.qq.com/">https://sticker.weixin.qq.com/</a></li>
+<li>APNG 规范与 GIF89a 延迟单位：见 <a href="../formats/">格式对比</a> 的参考一节</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

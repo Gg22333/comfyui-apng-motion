@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../output/" class="md-nav__link">
         
   
@@ -560,10 +587,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#53-5122-24" class="md-nav__link">
+  <a href="#53-5122" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.3 文件体积（本机实测，512² × 24 帧）
+        5.3 文件体积（本机实测，512²）
       
     </span>
   </a>
@@ -766,10 +793,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -787,8 +814,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -869,6 +896,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -1240,10 +1295,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#53-5122-24" class="md-nav__link">
+  <a href="#53-5122" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5.3 文件体积（本机实测，512² × 24 帧）
+        5.3 文件体积（本机实测，512²）
       
     </span>
   </a>
@@ -1328,10 +1383,10 @@
 <tbody>
 <tr>
 <td><strong>本项目</strong></td>
-<td>3–5 个关键帧 → latent 插值 → 24 帧 → APNG/WebP/GIF</td>
+<td>3–5 个关键帧 → latent 插值 → N 帧（8–60，默认 24）→ APNG/WebP/GIF</td>
 <td>否</td>
 <td>无，浏览器/聊天软件直接播</td>
-<td><strong>低</strong>：K 次采样 + 24 次解码</td>
+<td><strong>低</strong>：K 次采样 + N 次解码</td>
 <td>表情包、微表演、文档插图</td>
 </tr>
 <tr>
@@ -1558,7 +1613,7 @@
 <tr>
 <th>路线</th>
 <th>采样次数</th>
-<th>相对 24 帧逐帧</th>
+<th>相对 24 帧逐帧（基准 480）</th>
 </tr>
 </thead>
 <tbody>
@@ -1584,20 +1639,22 @@
 </tr>
 </tbody>
 </table>
-<p>插值本身是 24 次 latent 线性混合，不调用模型；解码仍然是 24 次（这一点和逐帧路线相同，省不掉）。</p>
+<p>插值本身是 N 次 latent 线性混合，不调用模型；解码仍然是 N 次（这一点和逐帧路线相同，省不掉）。
+关键点：<strong>帧数从 24 加到 60，采样次数不变</strong>（只跟拍数有关），涨的只有解码次数和体积。</p>
 <h3 id="52">5.2 显存与内存<a class="headerlink" href="#52" title="Permanent link">&para;</a></h3>
 <p>SDXL 512×512 的 latent 是 <code>64×64×4</code>：</p>
 <ul>
-<li>单个 latent fp16 ≈ 32 KB，24 个 ≈ 768 KB；</li>
-<li>解码后的 24 张 512×512 RGBA ≈ 25 MB；</li>
+<li>单个 latent fp16 ≈ 32 KB，24 个 ≈ 768 KB，60 个 ≈ 1.9 MB；</li>
+<li>解码后的 24 张 512×512 RGBA ≈ 25 MB，60 张 ≈ 63 MB；</li>
 <li>插值节点只持有 latent，不持有解码图。</li>
 </ul>
 <p>也就是说，<strong>这条路线增加的是几十 MB 级的图像缓冲，不是几 GB 的模型或视频缓存</strong>。真正的开销仍然是一次模型加载和 K 次采样。</p>
-<h3 id="53-5122-24">5.3 文件体积（本机实测，512² × 24 帧）<a class="headerlink" href="#53-5122-24" title="Permanent link">&para;</a></h3>
+<h3 id="53-5122">5.3 文件体积（本机实测，512²）<a class="headerlink" href="#53-5122" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>环境</th>
+<th>环境 / 内容</th>
+<th>帧数</th>
 <th>APNG</th>
 <th>GIF</th>
 <th>WebP（lossless）</th>
@@ -1605,16 +1662,25 @@
 </thead>
 <tbody>
 <tr>
-<td>SDXL</td>
+<td>SDXL / 银发校服</td>
+<td>24</td>
 <td>6.61 MB</td>
 <td>2.41 MB</td>
 <td>0.80 MB</td>
 </tr>
 <tr>
-<td>Moss</td>
+<td>Moss / 银发校服</td>
+<td>24</td>
 <td>4.15 MB</td>
 <td>2.72 MB</td>
 <td>2.88 MB</td>
+</tr>
+<tr>
+<td>Moss / 雨夜霓虹</td>
+<td>60</td>
+<td>17.23 MB</td>
+<td>7.21 MB</td>
+<td>12.76 MB</td>
 </tr>
 </tbody>
 </table>

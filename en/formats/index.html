@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../output/" class="md-nav__link">
         
   
@@ -516,10 +543,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -537,8 +564,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -619,6 +646,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -871,10 +926,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-two-sources-of-colour-flicker" class="md-nav__link">
+  <a href="#5-two-sources-of-colour-flicker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7 · Two sources of colour flicker
+        5 · Two sources of colour flicker
       
     </span>
   </a>
@@ -882,10 +937,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-which-format-to-ship" class="md-nav__link">
+  <a href="#6-which-format-to-ship" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · Which format to ship
+        6 · Which format to ship
       
     </span>
   </a>
@@ -893,10 +948,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-references" class="md-nav__link">
+  <a href="#7-references" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6 · References
+        7 · References
       
     </span>
   </a>
@@ -1146,10 +1201,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-two-sources-of-colour-flicker" class="md-nav__link">
+  <a href="#5-two-sources-of-colour-flicker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7 · Two sources of colour flicker
+        5 · Two sources of colour flicker
       
     </span>
   </a>
@@ -1157,10 +1212,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-which-format-to-ship" class="md-nav__link">
+  <a href="#6-which-format-to-ship" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · Which format to ship
+        6 · Which format to ship
       
     </span>
   </a>
@@ -1168,10 +1223,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-references" class="md-nav__link">
+  <a href="#7-references" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6 · References
+        7 · References
       
     </span>
   </a>
@@ -1324,7 +1379,7 @@ The former suits real action, the latter suits <strong>sticker-style micro-perfo
 </tr>
 <tr>
 <td>Large</td>
-<td>Full PNG per frame; 512² × 24 frames is usually 4–7 MB</td>
+<td>Full PNG per frame; 512² × 24 frames is 4–7 MB, 60 frames is 10–18 MB depending on detail</td>
 </tr>
 <tr>
 <td>No audio</td>
@@ -1397,11 +1452,12 @@ producing hard or white edges. For transparency, prefer WebP or APNG.</p>
 <p>Browsers also clamp very short delays, so <strong>8–12 fps</strong> is the practical range for stickers.</p>
 <h3 id="44-size-not-necessarily-larger">4.4 Size: not necessarily larger<a class="headerlink" href="#44-size-not-necessarily-larger" title="Permanent link">&para;</a></h3>
 <p>GIF is worse in quality, so it feels like it should be bigger, but the opposite is common: LZW plus 256 colours is very kind to flat anime shading.
-Measured here (512² × 24 frames):</p>
+Measured here (512², straight from ComfyUI):</p>
 <table>
 <thead>
 <tr>
-<th>Stack</th>
+<th>Stack / content</th>
+<th>Frames</th>
 <th>APNG</th>
 <th>GIF</th>
 <th>WebP (lossless)</th>
@@ -1409,19 +1465,29 @@ Measured here (512² × 24 frames):</p>
 </thead>
 <tbody>
 <tr>
-<td>SDXL</td>
+<td>SDXL / silver hair</td>
+<td>24</td>
 <td>6.61 MB</td>
 <td>2.41 MB</td>
 <td>0.80 MB</td>
 </tr>
 <tr>
-<td>Moss</td>
+<td>Moss / silver hair</td>
+<td>24</td>
 <td>4.15 MB</td>
 <td>2.72 MB</td>
 <td>2.88 MB</td>
 </tr>
+<tr>
+<td>Moss / rainy neon</td>
+<td>60</td>
+<td>17.23 MB</td>
+<td>7.21 MB</td>
+<td>12.76 MB</td>
+</tr>
 </tbody>
 </table>
+<p>Size is roughly linear for the same content (60 frames ≈ 2.5× of 24); across different content it is not comparable.</p>
 <p>Conclusion: <strong>GIF is usually smaller than lossless APNG, but lossless WebP is not always smaller than GIF</strong>; for size, turn lossless off and use quality 80–90.</p>
 <h3 id="45-two-more-details">4.5 Two more details<a class="headerlink" href="#45-two-more-details" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1435,6 +1501,7 @@ Measured here (512² × 24 frames):</p>
 <tr>
 <th>File</th>
 <th>Size</th>
+<th>Frames</th>
 <th>Bytes</th>
 <th>Adjacent-frame diff (avg)</th>
 </tr>
@@ -1443,30 +1510,38 @@ Measured here (512² × 24 frames):</p>
 <tr>
 <td>Old GIF (VHS direct, 512, <code>sierra2_4a</code>)</td>
 <td>512x512</td>
+<td>24</td>
 <td>3.45 MB</td>
 <td>2.49</td>
 </tr>
 <tr>
-<td>New GIF (global palette + <code>dither=none</code>, 384)</td>
+<td>New GIF (global palette + <code>dither=none</code>)</td>
 <td>384x384</td>
-<td>0.76 MB</td>
-<td>1.03</td>
+<td>60</td>
+<td>1.53 MB</td>
+<td>0.72</td>
 </tr>
 <tr>
-<td>New WebP (quality 90, 384)</td>
+<td>New WebP (quality 100, keeps all 60 frames)</td>
 <td>384x384</td>
-<td>0.57 MB</td>
-<td>1.07</td>
+<td>60</td>
+<td>1.78 MB</td>
+<td>0.78</td>
 </tr>
 </tbody>
 </table>
+<p>The current preview is 60 frames / 30 fps / Moss-DiT, recipe in <code>assets/story.preview.json</code>.</p>
+<p>WebP has a frame-count trap: libwebp's animation encoder merges adjacent frames that are nearly identical after compression.
+At quality 90, 60 frames become 58 (same duration, wrong metadata); quality 100 keeps all 60, at the cost of
+growing from ~0.6 MB to 1.8 MB. <code>make_preview.py</code> defaults to 100 and verifies the frame count after saving,
+falling back to lossless if needed.</p>
 <p>GIF has 256 colours. VHS runs <code>palettegen</code> + <code>paletteuse</code> per frame with <code>sierra2_4a</code> dithering:
 every frame gets its own palette and its own dither grain. On playback that reads as <strong>blocks
 flickering</strong>, independent of whether the artwork moves.</p>
 <p><code>scripts/make_preview.py</code> fixes it by sharing one palette across all frames, disabling dither,
 and downscaling to 384 px. The per-frame quantisation error stays around 2.3/255, but the
 <strong>error becomes consistent between frames</strong>, so the flicker disappears.</p>
-<h2 id="7-two-sources-of-colour-flicker">7 · Two sources of colour flicker<a class="headerlink" href="#7-two-sources-of-colour-flicker" title="Permanent link">&para;</a></h2>
+<h2 id="5-two-sources-of-colour-flicker">5 · Two sources of colour flicker<a class="headerlink" href="#5-two-sources-of-colour-flicker" title="Permanent link">&para;</a></h2>
 <p>Check the APNG first, then the GIF.</p>
 <table>
 <thead>
@@ -1506,7 +1581,7 @@ diff 1.08 and drift 2.63. Re-encoding the GIF removes another ~0.05.</p>
 <p>For how this route compares with Live2D, frame-by-frame AI and video generation, including the
 compute bill, see <a href="../synthesis-comparison/">Animation approaches compared</a>.</p>
 </blockquote>
-<h2 id="5-which-format-to-ship">5 · Which format to ship<a class="headerlink" href="#5-which-format-to-ship" title="Permanent link">&para;</a></h2>
+<h2 id="6-which-format-to-ship">6 · Which format to ship<a class="headerlink" href="#6-which-format-to-ship" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1539,7 +1614,7 @@ compute bill, see <a href="../synthesis-comparison/">Animation approaches compar
 </tbody>
 </table>
 <hr />
-<h2 id="6-references">6 · References<a class="headerlink" href="#6-references" title="Permanent link">&para;</a></h2>
+<h2 id="7-references">7 · References<a class="headerlink" href="#7-references" title="Permanent link">&para;</a></h2>
 <ul>
 <li>APNG specification: <a href="https://wiki.mozilla.org/APNG_Specification">https://wiki.mozilla.org/APNG_Specification</a></li>
 <li>GIF89a Graphic Control Extension (1/100 s delay)</li>

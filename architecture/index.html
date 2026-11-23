@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../output/" class="md-nav__link">
         
   
@@ -472,7 +499,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        脚本分工
+        帧数不是写死的
       
     </span>
   </a>
@@ -481,6 +508,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        脚本分工
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         曲线
@@ -502,7 +540,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         为什么不用脚本逐帧生成
@@ -616,10 +654,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -637,8 +675,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -719,6 +757,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -948,7 +1014,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        脚本分工
+        帧数不是写死的
       
     </span>
   </a>
@@ -957,6 +1023,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        脚本分工
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         曲线
@@ -978,7 +1055,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         为什么不用脚本逐帧生成
@@ -1020,11 +1097,11 @@
                      KSampler K1/K2/K3  positive 走合并后的条件
                      denoise 0.35-0.4，与 K0 同 seed、同首帧 latent
                                           │
-        24 × LatentInterpolate（每帧一个 ratio；同一对 latent 内不重复）
+        N × LatentInterpolate（N = frames，8–60；每帧一个 ratio；同一对 latent 内不重复）
                                           │
-        24 × VAEDecode ◄── VAE
+        N × VAEDecode ◄── VAE
                                           │
-        ImageBatchMulti(inputcount=24)
+        ImageBatchMulti(inputcount=N)
                 ├──► SaveAnimatedPNG   → output/APNG/final/apng/
                 ├──► SaveAnimatedWEBP  → output/APNG/final/webp/
                 └──► VHS_VideoCombine  → output/APNG/final/gif/
@@ -1036,7 +1113,16 @@
 <li><strong>同一对 latent 上的 ratio 唯一</strong>。不同段（K0→K1 与 K1→K2）可以同值，样本对不同画面就不同；同一段里撞值才会被 Pillow 合并。</li>
 <li><strong>三个输出接同一个 batch</strong>，否则三种格式的帧序会不一致。</li>
 </ol>
-<h2 id="_3">脚本分工<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">帧数不是写死的<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>--frames N</code>（或剧情卡的 <code>"frames": N</code>）决定整条链的长度，<code>--segs</code> 之和必须等于 N：</p>
+<ul>
+<li>24 帧保留旧预设：3 拍 <code>8/8/8</code>、4 拍 <code>6/7/6/5</code>、5 拍 <code>5/6/5/4/4</code>；</li>
+<li>其它帧数按拍数平均分，余数给前几拍（30 帧 4 拍 → <code>8/8/7/7</code>）；</li>
+<li><code>ensure_frames()</code> 会把 <code>LatentInterpolate</code> + <code>VAEDecode</code> 克隆到 N 个或删到 N 个，
+  再重建 <code>ImageBatchMulti</code> 的 <code>image_1..image_N</code> 与 <code>widgets_values=[N]</code>，并按 6 列重排画布位置。</li>
+</ul>
+<p>校验口径也改了：不再硬编码 24，而是要求「插值数 = 解码数 = batch 接线数」，且 batch 的计数值必须等于实际接线数。</p>
+<h2 id="_4">脚本分工<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1072,9 +1158,14 @@
 <td>帧数/时长/循环/差异/颜色漂移</td>
 </tr>
 <tr>
+<td><code>make_story.py</code></td>
+<td>动作库 + 角色锁定句</td>
+<td>剧情卡 JSON（frames/segs/fps/actions）</td>
+</tr>
+<tr>
 <td><code>make_curve.py</code></td>
 <td>段数</td>
-<td>24 个 ratio</td>
+<td>N 个 ratio（N = sum(segs)）</td>
 </tr>
 <tr>
 <td><code>make_preview.py</code></td>
@@ -1088,7 +1179,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_4">曲线<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">曲线<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>默认 <code>linear</code>：每段从 1.0 均匀降到 0.0，每帧步长恒定。</p>
 <pre><code>段1: 1.0 0.857 0.714 0.571 0.429 0.286 0.143 0.0
 段2: 0.996 0.861 ... 0.004        （段首与上一段末几乎相接）
@@ -1105,8 +1196,8 @@
 <li>遇到 <code>control_after_generate</code>（如 KSampler 的 seed）多跳一格；</li>
 <li>每个输入写成 <code>[origin_node_id, origin_slot]</code>。</li>
 </ol>
-<h2 id="_5">为什么不用脚本逐帧生成<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>逐帧 img2img 需要每帧一次采样，24 帧就是 24 次采样；插值只需要 3–5 次采样 + 24 次解码，
+<h2 id="_6">为什么不用脚本逐帧生成<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>逐帧 img2img 需要每帧一次采样，N 帧就是 N 次采样；插值只需要 3–5 次采样 + N 次解码，
 显存不变、耗时线性下降，而且中间帧由数学过渡，差异更均匀。
 代价是没有真实运动轨迹，所以只适合微表演。</p>
 

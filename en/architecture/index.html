@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../output/" class="md-nav__link">
         
   
@@ -516,10 +543,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -537,8 +564,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -619,6 +646,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -794,6 +849,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#frame-count-is-not-hard-coded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame count is not hard-coded
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#scripts" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -947,6 +1013,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#frame-count-is-not-hard-coded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frame count is not hard-coded
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#scripts" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1022,11 +1099,11 @@
                      KSampler K1/K2/K3 take the merged conditioning
                      denoise 0.35-0.4, same seed and same first latent
                                           │
-        24 × LatentInterpolate (one ratio per frame; unique within a latent pair)
+        N × LatentInterpolate (N = frames, 8–60; one ratio per frame; unique within a latent pair)
                                           │
-        24 × VAEDecode ◄── VAE
+        N × VAEDecode ◄── VAE
                                           │
-        ImageBatchMulti(inputcount=24)
+        ImageBatchMulti(inputcount=N)
                 ├──► SaveAnimatedPNG   → output/APNG/final/apng/
                 ├──► SaveAnimatedWEBP  → output/APNG/final/webp/
                 └──► VHS_VideoCombine  → output/APNG/final/gif/
@@ -1038,6 +1115,16 @@
 <li><strong>Ratios within one latent pair are unique.</strong> Different segments may reuse a value because the pair of images differs; only a collision inside one segment makes Pillow merge frames.</li>
 <li><strong>All three outputs read the same batch</strong>, otherwise frame order diverges.</li>
 </ol>
+<h2 id="frame-count-is-not-hard-coded">Frame count is not hard-coded<a class="headerlink" href="#frame-count-is-not-hard-coded" title="Permanent link">&para;</a></h2>
+<p><code>--frames N</code> (or <code>"frames": N</code> in the story card) sets the chain length, and <code>--segs</code> must sum to N:</p>
+<ul>
+<li>24 frames keeps the legacy presets: 3 beats <code>8/8/8</code>, 4 beats <code>6/7/6/5</code>, 5 beats <code>5/6/5/4/4</code>;</li>
+<li>other counts are split evenly with the remainder on the first beats (30 frames / 4 beats → <code>8/8/7/7</code>);</li>
+<li><code>ensure_frames()</code> clones or deletes <code>LatentInterpolate</code> + <code>VAEDecode</code> nodes to reach N,
+  rebuilds <code>ImageBatchMulti</code>'s <code>image_1..image_N</code> and <code>widgets_values=[N]</code>, and re-lays the canvas in six columns.</li>
+</ul>
+<p>Validation no longer hard-codes 24: it requires interpolation count = decode count = batch wiring count,
+and the batch counter must match the actual number of connected inputs.</p>
 <h2 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1079,9 +1166,14 @@
 <td>stray files, incomplete trios, archive suggestions</td>
 </tr>
 <tr>
+<td><code>make_story.py</code></td>
+<td>motion preset + character lock</td>
+<td>story card JSON (frames/segs/fps/actions)</td>
+</tr>
+<tr>
 <td><code>make_curve.py</code></td>
 <td>segment counts</td>
-<td>24 ratios</td>
+<td>N ratios (N = sum(segs))</td>
 </tr>
 <tr>
 <td><code>make_preview.py</code></td>
@@ -1113,7 +1205,7 @@ the end, easily read as a jump. Segments keep a 0.004 gap so Pillow never merges
 <li>writes each input as <code>[origin_node_id, origin_slot]</code>.</li>
 </ol>
 <h2 id="why-not-generate-every-frame-with-a-script">Why not generate every frame with a script<a class="headerlink" href="#why-not-generate-every-frame-with-a-script" title="Permanent link">&para;</a></h2>
-<p>Frame-by-frame img2img needs one sample per frame: 24 samples for 24 frames. Interpolation needs 3–5 samples plus 24 decodes; VRAM is unchanged and time grows linearly, while in-between frames come from a mathematical transition and are more evenly spaced.
+<p>Frame-by-frame img2img needs one sample per frame: N samples for N frames. Interpolation needs 3–5 samples plus N decodes; VRAM is unchanged and time grows linearly, while in-between frames come from a mathematical transition and are more evenly spaced.
 The trade-off is no real motion trajectory, which is why this route is for micro-performance only.</p>
 
 

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="24-frame coherent APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
       
       
       
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动作库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../output/" class="md-nav__link">
         
   
@@ -547,21 +574,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7 · 色块闪动的两个来源
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · 选型建议
+        5 · 色块闪动的两个来源
       
     </span>
   </a>
@@ -572,7 +588,18 @@
   <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6 · 参考
+        6 · 选型建议
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 参考
       
     </span>
   </a>
@@ -710,10 +737,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -731,8 +758,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -813,6 +840,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/motion-presets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motion library
   
 
     
@@ -1144,21 +1199,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7 · 色块闪动的两个来源
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5 · 选型建议
+        5 · 色块闪动的两个来源
       
     </span>
   </a>
@@ -1169,7 +1213,18 @@
   <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6 · 参考
+        6 · 选型建议
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 参考
       
     </span>
   </a>
@@ -1237,7 +1292,7 @@
 <blockquote>
 <p>备注：APNG 规范允许用 <code>x_offset</code> / <code>y_offset</code> + <code>dispose_op</code> 只更新帧的局部区域，
 但 Pillow（ComfyUI 的 <code>SaveAnimatedPNG</code> 用的就是它）默认按整帧写，并且会把<strong>像素完全相同</strong>的相邻帧
-合并、把时长累加到上一帧。这就是"排了 24 帧只导出 19 帧"的根因，也是本项目要求同一对 latent 上比例不重复的原因。</p>
+合并、把时长累加到上一帧。这就是"排了 N 帧只导出更少帧"的根因（实测 24 帧导出 19 帧），也是本项目要求同一对 latent 上比例不重复的原因。</p>
 </blockquote>
 <hr />
 <h2 id="2-gif">2 · 和「视频转 GIF」的本质区别<a class="headerlink" href="#2-gif" title="Permanent link">&para;</a></h2>
@@ -1248,7 +1303,7 @@
 
 本项目（APNG 路线）：
   首帧采样 → 3–5 个关键帧（同一 latent 重绘）
-      → LatentInterpolate 插出 24 帧 → VAE 解码（每帧都是完整 RGBA）
+      → LatentInterpolate 插出 N 帧（8–60，默认 24）→ VAE 解码（每帧都是完整 RGBA）
       → APNG / WebP / GIF 三路独立编码
 </code></pre>
 <table>
@@ -1321,7 +1376,7 @@
 </tr>
 <tr>
 <td>体积偏大</td>
-<td>每帧整帧 PNG，512² × 24 帧通常 4–7 MB</td>
+<td>每帧整帧 PNG；512² × 24 帧约 4–7 MB，60 帧约 10–18 MB（随画面复杂度浮动）</td>
 </tr>
 <tr>
 <td>无音频</td>
@@ -1394,11 +1449,12 @@
 <p>另外多数浏览器对过短延迟有下限钳制，所以做表情包 <strong>8–12fps</strong> 就够，再高既看不出来也不准。</p>
 <h3 id="44">4.4 体积：不一定变大<a class="headerlink" href="#44" title="Permanent link">&para;</a></h3>
 <p>直觉上 GIF 更差所以更大，实际常常相反——因为 GIF 的 LZW + 256 色对平涂动漫非常友好。
-本项目实测（512² × 24 帧）：</p>
+本项目实测（512²，ComfyUI 直出）：</p>
 <table>
 <thead>
 <tr>
-<th>环境</th>
+<th>环境 / 内容</th>
+<th>帧数</th>
 <th>APNG</th>
 <th>GIF</th>
 <th>WebP（lossless）</th>
@@ -1406,19 +1462,29 @@
 </thead>
 <tbody>
 <tr>
-<td>SDXL</td>
+<td>SDXL / 银发校服</td>
+<td>24</td>
 <td>6.61 MB</td>
 <td>2.41 MB</td>
 <td>0.80 MB</td>
 </tr>
 <tr>
-<td>Moss</td>
+<td>Moss / 银发校服</td>
+<td>24</td>
 <td>4.15 MB</td>
 <td>2.72 MB</td>
 <td>2.88 MB</td>
 </tr>
+<tr>
+<td>Moss / 雨夜霓虹</td>
+<td>60</td>
+<td>17.23 MB</td>
+<td>7.21 MB</td>
+<td>12.76 MB</td>
+</tr>
 </tbody>
 </table>
+<p>同内容下体积近似线性（60 帧 ≈ 24 帧的 2.5 倍）；跨内容不可直接比，雨夜霓虹的单帧细节多，24 帧也会更大。</p>
 <p>结论：<strong>GIF 通常比无损 APNG 小，但 WebP 开 lossless 时不一定比 GIF 小</strong>；要小就关掉 lossless、quality 80–90。</p>
 <h3 id="45">4.5 还有两个细节<a class="headerlink" href="#45" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1433,6 +1499,7 @@
 <tr>
 <th>文件</th>
 <th>尺寸</th>
+<th>帧数</th>
 <th>体积</th>
 <th>相邻帧差（avg）</th>
 </tr>
@@ -1441,23 +1508,31 @@
 <tr>
 <td>旧 GIF（VHS 直出，512，<code>sierra2_4a</code>）</td>
 <td>512×512</td>
+<td>24</td>
 <td>3.45 MB</td>
 <td>2.49</td>
 </tr>
 <tr>
-<td>新 GIF（全局调色板 + <code>dither=none</code>，384）</td>
+<td>新 GIF（全局调色板 + <code>dither=none</code>）</td>
 <td>384×384</td>
-<td>0.76 MB</td>
-<td>1.03</td>
+<td>60</td>
+<td>1.53 MB</td>
+<td>0.72</td>
 </tr>
 <tr>
-<td>新 WebP（quality 90，384）</td>
+<td>新 WebP（quality 100，保住 60 帧）</td>
 <td>384×384</td>
-<td>0.57 MB</td>
-<td>1.07</td>
+<td>60</td>
+<td>1.78 MB</td>
+<td>0.78</td>
 </tr>
 </tbody>
 </table>
+<p>当前预览是 60 帧 / 30fps / Moss-DiT，配方 <code>assets/story.preview.json</code>。</p>
+<p>WebP 的帧数有个坑：libwebp 的动画编码器会把「压缩后几乎一样」的相邻帧合并。
+质量 90 时 60 帧会变成 58 帧（时长不变，但元数据不是 60）；质量 100 能保住 60 帧，
+代价是体积从约 0.6 MB 涨到 1.8 MB。<code>make_preview.py</code> 默认用 100，并在保存后核对帧数，
+对不上就回退 lossless。</p>
 <p>GIF 只有 256 色。VHS 默认用 <code>palettegen</code> + <code>paletteuse</code>，抖动算法 <code>sierra2_4a</code>：
 <strong>每一帧单独量化，调色板随帧变化，误差扩散的颗粒也在变</strong>。播放时人眼看到的就是「色块在闪」，
 它和画面本身有没有动是两件事。</p>
@@ -1468,7 +1543,7 @@
 <li>缩到 384×384，颗粒更细、体积更小。</li>
 </ol>
 <p>单帧量化误差均值仍在 2.3/255 左右，但<strong>帧与帧之间的量化噪声变一致</strong>，所以不再有闪烁感。</p>
-<h2 id="7">7 · 色块闪动的两个来源<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
+<h2 id="5">5 · 色块闪动的两个来源<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <p>排查顺序：先看 APNG，再看 GIF。</p>
 <table>
 <thead>
@@ -1508,7 +1583,7 @@ GIF 重编码后再降约 0.05。</p>
 <p>想看这条路线和 Live2D、逐帧 AI、视频生成的定位差异与算力账，见
 <a href="../synthesis-comparison/">动图合成方案对比</a>。</p>
 </blockquote>
-<h2 id="5">5 · 选型建议<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<h2 id="6">6 · 选型建议<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1541,7 +1616,7 @@ GIF 重编码后再降约 0.05。</p>
 </tbody>
 </table>
 <hr />
-<h2 id="6">6 · 参考<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<h2 id="7">7 · 参考<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>APNG 规范：<a href="https://wiki.mozilla.org/APNG_Specification">https://wiki.mozilla.org/APNG_Specification</a></li>
 <li>GIF89a（Graphic Control Extension，1/100 秒延迟）</li>
