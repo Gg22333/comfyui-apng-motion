@@ -18,7 +18,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {"__pycache__", "dist", ".git", "profiles"}
+SKIP_DIRS = {"__pycache__", "dist", ".git", "profiles", ".github", "tests"}
 FIXED = (2020, 1, 1, 0, 0, 0)
 
 
@@ -42,6 +42,8 @@ def main():
             if f.endswith((".bak", ".pyc", ".tmp")) or ".bak-" in f:
                 continue
             if rel == "profiles" and not a.with_profiles:
+                continue
+            if rel.replace("\\", "/") == "docs/assets":
                 continue
             files.append(os.path.relpath(os.path.join(root, f), SKILL))
     files.sort()
@@ -73,3 +75,5 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+

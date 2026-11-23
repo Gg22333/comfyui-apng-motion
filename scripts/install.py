@@ -20,7 +20,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 SKILL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {"__pycache__", "dist", ".git"}
+SKIP_DIRS = {"__pycache__", "dist", ".git", ".github", "tests"}
 SKIP_SUFFIX = (".bak", ".pyc", ".tmp")
 
 
@@ -42,6 +42,9 @@ def walk_files(src, with_profiles):
         dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
         rel = os.path.relpath(root, src)
         if rel == "profiles" and not with_profiles:
+            dirs[:] = []
+            continue
+        if rel.replace("\\", "/") == "docs/assets":
             dirs[:] = []
             continue
         for f in files:
@@ -71,6 +74,9 @@ def check_install(src, dst, with_profiles):
         if rel == "profiles" and not with_profiles:
             dirs[:] = []
             continue
+        if rel.replace("\\", "/") == "docs/assets":
+            dirs[:] = []
+            continue
         for f in fs:
             if f.endswith(SKIP_SUFFIX) or ".bak-" in f:
                 continue
@@ -86,6 +92,9 @@ def copy_tree(src, dst, with_profiles, dry):
         dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
         rel = os.path.relpath(root, src)
         if rel == "profiles" and not with_profiles:
+            dirs[:] = []
+            continue
+        if rel.replace("\\", "/") == "docs/assets":
             dirs[:] = []
             continue
         out = os.path.join(dst, rel) if rel != "." else dst
@@ -168,5 +177,7 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
 
 
