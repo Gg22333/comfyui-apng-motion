@@ -34,6 +34,10 @@
 - **测试**：新增 `tests/test_timing.py` 10 项；全仓 69 项通过。
 - **预览重出**：`docs/assets/preview.webp` / `preview.gif` 从重定时后的 APNG 重新编码，
   60 帧 / 3.00 秒 / 384×384。
+- **README 合并为单文件双语言**：GitHub 一次只渲染一个文件，`README.md` ↔ `README.zh-CN.md`
+  互链必然是整页跳转，没法原地切换。现在中文全文放进 `README.md` 的 `<details>` 折叠块，
+  点 summary 原地展开；顶部的「简体中文」改成页内锚点 `#简体中文`，锚点落在折叠块外面的
+  可见标题上，不会跳进一段看不见的内容。`README.zh-CN.md` 保留为十几行指针页，旧链接不断。
 
 
 - **许可与署名加固**：`LICENSE` 的版权主体从 `comfyui-apng-motion contributors` 改为
