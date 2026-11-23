@@ -1306,6 +1306,8 @@ python<span class="w"> </span>scripts/install.py
 <li><code>~/.codex/skills/comfyui-apng-motion</code></li>
 <li><code>~/.config/magpie/library/skills/comfyui-apng-motion</code>（父目录存在时）</li>
 <li><code>~/.claude/skills/comfyui-apng-motion</code>（<code>~/.claude/skills</code> 存在时）</li>
+<li><code>~/.dsh/skills/comfyui-apng-motion</code>（<code>~/.dsh/skills</code> 存在时，DSH / DeepSeek harness）</li>
+<li><code>~/.workbuddy/skills/comfyui-apng-motion</code>（<code>~/.workbuddy/skills</code> 存在时）</li>
 </ul>
 <p>指定位置：</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/install.py<span class="w"> </span>--dest<span class="w"> </span>/path/to/skills/comfyui-apng-motion
@@ -1326,6 +1328,14 @@ python<span class="w"> </span>scripts/install.py
 <tr>
 <td>Claude Code</td>
 <td><code>~/.claude/skills/comfyui-apng-motion</code>（bootstrap 自动装；或项目内 <code>.claude/skills/</code>；未在本仓库 CI 实测）</td>
+</tr>
+<tr>
+<td>DSH（DeepSeek harness）</td>
+<td><code>~/.dsh/skills/comfyui-apng-motion</code>（bootstrap 自动装）</td>
+</tr>
+<tr>
+<td>WorkBuddy</td>
+<td><code>~/.workbuddy/skills/comfyui-apng-motion</code>（用户级 skills 目录；bootstrap 自动装）</td>
 </tr>
 <tr>
 <td>任意目录</td>
