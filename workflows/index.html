@@ -18,7 +18,7 @@
         <link rel="prev" href="../prompting/">
       
       
-        <link rel="next" href="../motion-presets/">
+        <link rel="next" href="../dynamic/">
       
       
         
@@ -952,6 +952,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dynamic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    动态帧数
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../motion-presets/" class="md-nav__link">
         
   
@@ -1534,6 +1562,18 @@
 <td><a href="../assets/workflows/workflow-moss-preview.json">workflow-moss-preview.json</a></td>
 <td>生成仓库那张预览图，同 seed、<code>denoise 0.85</code>、20fps、3.00 秒</td>
 </tr>
+<tr>
+<td>动态帧数（UNet，3 拍 24 帧）</td>
+<td><a href="../assets/workflows/workflow-sdxl-dynamic.json">workflow-sdxl-dynamic.json</a></td>
+<td>—</td>
+<td>先跑 <code>install_nodes.py</code> 装 <code>comfyui_nodes</code>，重启 ComfyUI；每拍 <code>frames</code> 是图上 widget</td>
+</tr>
+<tr>
+<td>动态帧数（DiT，3 拍 24 帧）</td>
+<td><a href="../assets/workflows/workflow-moss-dynamic.json">workflow-moss-dynamic.json</a></td>
+<td>—</td>
+<td>同上；换 FLUX / SD3 / Krea / Anima 只换三个加载器</td>
+</tr>
 </tbody>
 </table>
 <p>24 帧是默认。想要 8 / 30 / 60 帧不用换文件：</p>
@@ -1541,6 +1581,7 @@
 <span class="w">    </span>--story<span class="w"> </span>assets/story.diet.json<span class="w"> </span>--size<span class="w"> </span><span class="m">640</span><span class="w"> </span>--out<span class="w"> </span>my-60.json
 </code></pre></div>
 <p><code>--frames</code> 会改写插值、解码、合批三件套的节点数量，其它连线不动。</p>
+<p>要在图上直接改每拍帧数、并在存盘前看相邻帧差与接缝，用<a href="../dynamic/">动态帧数模式</a>：每拍一个 <code>APNG Latent Interpolate N</code>，<code>frames</code> 是 widget。</p>
 <h2 id="结构">结构<a class="headerlink" href="#结构" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>K 个关键帧（KSampler，共用首帧 latent、同 seed）
   → N × LatentInterpolate
@@ -1956,13 +1997,13 @@ python<span class="w"> </span>scripts/make_preview.py<span class="w"> </span>out
         
         
           
-          <a href="../motion-presets/" class="md-footer__link md-footer__link--next" aria-label="下一页: 动作库">
+          <a href="../dynamic/" class="md-footer__link md-footer__link--next" aria-label="下一页: 动态帧数">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 下一页
               </span>
               <div class="md-ellipsis">
-                动作库
+                动态帧数
               </div>
             </div>
             <div class="md-footer__button md-icon">

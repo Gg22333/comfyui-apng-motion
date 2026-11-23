@@ -15,6 +15,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/architecture/"/>
     </url>
     <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/dynamic/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/dynamic/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/dynamic/"/>
+    </url>
+    <url>
         <loc>https://gg22333.github.io/comfyui-apng-motion/faq/</loc>
         <lastmod>2026-11-23</lastmod>
         <changefreq>daily</changefreq>
@@ -111,6 +118,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/architecture/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/architecture/"/>
+    </url>
+    <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/dynamic/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/dynamic/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/dynamic/"/>
     </url>
     <url>
         <loc>https://gg22333.github.io/comfyui-apng-motion/en/faq/</loc>
