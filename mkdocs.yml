@@ -1,0 +1,30 @@
+site_name: comfyui-apng-motion
+site_description: 24-frame coherent APNG/WebP/GIF for ComfyUI
+docs_dir: docs
+theme:
+  name: material
+  language: zh
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: 暗色
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: 亮色
+nav:
+  - 首页: index.md
+  - 安装: install.md
+  - 用法: usage.md
+  - 格式对比: formats.md
+  - 架构: architecture.md
+  - 排错: troubleshooting.md
+  - FAQ: faq.md
+  - 发布: publishing.md
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+

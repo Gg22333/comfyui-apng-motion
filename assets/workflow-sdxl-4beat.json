@@ -1,0 +1,4042 @@
+{
+  "id": "2543b49a-2503-40f5-8d13-f67450434d6f",
+  "revision": 0,
+  "last_node_id": 63,
+  "last_link_id": 192,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        40,
+        120
+      ],
+      "size": [
+        320,
+        100
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1,
+            9,
+            13,
+            141
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            2,
+            3,
+            4,
+            5,
+            140
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            20,
+            24,
+            28,
+            32,
+            36,
+            40,
+            44,
+            48,
+            52,
+            56,
+            60,
+            64,
+            68,
+            72,
+            76,
+            80,
+            84,
+            88,
+            92,
+            96,
+            100,
+            104,
+            108,
+            112
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "NovaAnimeILV190.safetensors"
+      ],
+      "title": "SDXL 模型"
+    },
+    {
+      "id": 2,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        60
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, neutral expression, mouth closed, head straight"
+      ],
+      "title": "首帧：中性表情"
+    },
+    {
+      "id": 3,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        240
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            7,
+            11,
+            15,
+            143
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views"
+      ],
+      "title": "负向提示词"
+    },
+    {
+      "id": 4,
+      "type": "EmptyLatentImage",
+      "pos": [
+        420,
+        420
+      ],
+      "size": [
+        320,
+        110
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        512,
+        512,
+        1
+      ],
+      "title": "尺寸"
+    },
+    {
+      "id": 5,
+      "type": "KSampler",
+      "pos": [
+        870,
+        60
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            12,
+            16,
+            144,
+            145,
+            147,
+            149,
+            151,
+            153,
+            155,
+            184,
+            186,
+            188,
+            190,
+            192
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456789,
+        "fixed",
+        20,
+        6.0,
+        "euler_ancestral",
+        "normal",
+        1.0
+      ],
+      "title": "首帧 采样"
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        620
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, eyes widened, eyebrows raised, head tilted 8 degrees"
+      ],
+      "title": "关键帧 A：大笑"
+    },
+    {
+      "id": 7,
+      "type": "KSampler",
+      "pos": [
+        870,
+        600
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 9
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 10
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 11
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            146,
+            148,
+            150,
+            152,
+            154,
+            156,
+            157,
+            159,
+            161,
+            163,
+            165,
+            167,
+            169
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456790,
+        "fixed",
+        20,
+        6.0,
+        "euler_ancestral",
+        "normal",
+        0.4
+      ],
+      "title": "关键帧 1 重绘"
+    },
+    {
+      "id": 8,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        900
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            14
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, eyes half closed, mouth open, head tilted back 12 degrees"
+      ],
+      "title": "关键帧 B：张嘴笑"
+    },
+    {
+      "id": 9,
+      "type": "KSampler",
+      "pos": [
+        870,
+        880
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 13
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 14
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 15
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            158,
+            160,
+            162,
+            164,
+            166,
+            168,
+            170,
+            171,
+            173,
+            175,
+            177,
+            179,
+            181
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456791,
+        "fixed",
+        20,
+        6.0,
+        "euler_ancestral",
+        "normal",
+        0.4
+      ],
+      "title": "关键帧 2 重绘"
+    },
+    {
+      "id": 10,
+      "type": "LatentInterpolate",
+      "pos": [
+        1280,
+        60
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 145
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 146
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        1.0
+      ],
+      "title": "插值 1 (K0→K1)"
+    },
+    {
+      "id": 11,
+      "type": "VAEDecode",
+      "pos": [
+        1310,
+        170
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 19
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            113
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 1"
+    },
+    {
+      "id": 12,
+      "type": "LatentInterpolate",
+      "pos": [
+        1580,
+        60
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 147
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 148
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            23
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.948
+      ],
+      "title": "插值 2 (K0→K1)"
+    },
+    {
+      "id": 13,
+      "type": "VAEDecode",
+      "pos": [
+        1610,
+        170
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 23
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            114
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 2"
+    },
+    {
+      "id": 14,
+      "type": "LatentInterpolate",
+      "pos": [
+        1880,
+        60
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 149
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 150
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            27
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.817
+      ],
+      "title": "插值 3 (K0→K1)"
+    },
+    {
+      "id": 15,
+      "type": "VAEDecode",
+      "pos": [
+        1910,
+        170
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 27
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            115
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 3"
+    },
+    {
+      "id": 16,
+      "type": "LatentInterpolate",
+      "pos": [
+        2180,
+        60
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 151
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 152
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            31
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.621
+      ],
+      "title": "插值 4 (K0→K1)"
+    },
+    {
+      "id": 17,
+      "type": "VAEDecode",
+      "pos": [
+        2210,
+        170
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 31
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 32
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            116
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 4"
+    },
+    {
+      "id": 18,
+      "type": "LatentInterpolate",
+      "pos": [
+        2480,
+        60
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 153
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 154
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            35
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.364
+      ],
+      "title": "插值 5 (K0→K1)"
+    },
+    {
+      "id": 19,
+      "type": "VAEDecode",
+      "pos": [
+        2510,
+        170
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 35
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 36
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            117
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 5"
+    },
+    {
+      "id": 20,
+      "type": "LatentInterpolate",
+      "pos": [
+        2780,
+        60
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 155
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 156
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            39
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.05
+      ],
+      "title": "插值 6 (K0→K1)"
+    },
+    {
+      "id": 21,
+      "type": "VAEDecode",
+      "pos": [
+        2810,
+        170
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 39
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 40
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            118
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 6"
+    },
+    {
+      "id": 22,
+      "type": "LatentInterpolate",
+      "pos": [
+        1280,
+        280
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 157
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 158
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            43
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.94
+      ],
+      "title": "插值 7 (K1→K2)"
+    },
+    {
+      "id": 23,
+      "type": "VAEDecode",
+      "pos": [
+        1310,
+        390
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 43
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            119
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 7"
+    },
+    {
+      "id": 24,
+      "type": "LatentInterpolate",
+      "pos": [
+        1580,
+        280
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 159
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 160
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            47
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.904
+      ],
+      "title": "插值 8 (K1→K2)"
+    },
+    {
+      "id": 25,
+      "type": "VAEDecode",
+      "pos": [
+        1610,
+        390
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 47
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 48
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            120
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 8"
+    },
+    {
+      "id": 26,
+      "type": "LatentInterpolate",
+      "pos": [
+        1880,
+        280
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 161
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 162
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            51
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.815
+      ],
+      "title": "插值 9 (K1→K2)"
+    },
+    {
+      "id": 27,
+      "type": "VAEDecode",
+      "pos": [
+        1910,
+        390
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 51
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            121
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 9"
+    },
+    {
+      "id": 28,
+      "type": "LatentInterpolate",
+      "pos": [
+        2180,
+        280
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 163
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 164
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            55
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.682
+      ],
+      "title": "插值 10 (K1→K2)"
+    },
+    {
+      "id": 29,
+      "type": "VAEDecode",
+      "pos": [
+        2210,
+        390
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 55
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 56
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            122
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 10"
+    },
+    {
+      "id": 30,
+      "type": "LatentInterpolate",
+      "pos": [
+        2480,
+        280
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 165
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 166
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            59
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.506
+      ],
+      "title": "插值 11 (K1→K2)"
+    },
+    {
+      "id": 31,
+      "type": "VAEDecode",
+      "pos": [
+        2510,
+        390
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 59
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 60
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            123
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 11"
+    },
+    {
+      "id": 32,
+      "type": "LatentInterpolate",
+      "pos": [
+        2780,
+        280
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 167
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 168
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            63
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.292
+      ],
+      "title": "插值 12 (K1→K2)"
+    },
+    {
+      "id": 33,
+      "type": "VAEDecode",
+      "pos": [
+        2810,
+        390
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 63
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 64
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            124
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 12"
+    },
+    {
+      "id": 34,
+      "type": "LatentInterpolate",
+      "pos": [
+        1280,
+        500
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 169
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 170
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            67
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.04
+      ],
+      "title": "插值 13 (K1→K2)"
+    },
+    {
+      "id": 35,
+      "type": "VAEDecode",
+      "pos": [
+        1310,
+        610
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 67
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 68
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            125
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 13"
+    },
+    {
+      "id": 36,
+      "type": "LatentInterpolate",
+      "pos": [
+        1580,
+        500
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 171
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 172
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            71
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.92
+      ],
+      "title": "插值 14 (K2→K3)"
+    },
+    {
+      "id": 37,
+      "type": "VAEDecode",
+      "pos": [
+        1610,
+        610
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 71
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 72
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            126
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 14"
+    },
+    {
+      "id": 38,
+      "type": "LatentInterpolate",
+      "pos": [
+        1880,
+        500
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 173
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 174
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            75
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.871
+      ],
+      "title": "插值 15 (K2→K3)"
+    },
+    {
+      "id": 39,
+      "type": "VAEDecode",
+      "pos": [
+        1910,
+        610
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 75
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            127
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 15"
+    },
+    {
+      "id": 40,
+      "type": "LatentInterpolate",
+      "pos": [
+        2180,
+        500
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 175
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 176
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            79
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.749
+      ],
+      "title": "插值 16 (K2→K3)"
+    },
+    {
+      "id": 41,
+      "type": "VAEDecode",
+      "pos": [
+        2210,
+        610
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 40,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 79
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 80
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            128
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 16"
+    },
+    {
+      "id": 42,
+      "type": "LatentInterpolate",
+      "pos": [
+        2480,
+        500
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 41,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 177
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 178
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            83
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.565
+      ],
+      "title": "插值 17 (K2→K3)"
+    },
+    {
+      "id": 43,
+      "type": "VAEDecode",
+      "pos": [
+        2510,
+        610
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 42,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 83
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 84
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            129
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 17"
+    },
+    {
+      "id": 44,
+      "type": "LatentInterpolate",
+      "pos": [
+        2780,
+        500
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 43,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 179
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 180
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            87
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.324
+      ],
+      "title": "插值 18 (K2→K3)"
+    },
+    {
+      "id": 45,
+      "type": "VAEDecode",
+      "pos": [
+        2810,
+        610
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 44,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 87
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 88
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            130
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 18"
+    },
+    {
+      "id": 46,
+      "type": "LatentInterpolate",
+      "pos": [
+        1280,
+        720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 45,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 181
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 182
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            91
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.03
+      ],
+      "title": "插值 19 (K2→K3)"
+    },
+    {
+      "id": 47,
+      "type": "VAEDecode",
+      "pos": [
+        1310,
+        830
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 46,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 91
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 92
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            131
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 19"
+    },
+    {
+      "id": 48,
+      "type": "LatentInterpolate",
+      "pos": [
+        1580,
+        720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 47,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 183
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 184
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            95
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.9
+      ],
+      "title": "插值 20 (K3→K0)"
+    },
+    {
+      "id": 49,
+      "type": "VAEDecode",
+      "pos": [
+        1610,
+        830
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 48,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 95
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            132
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 20"
+    },
+    {
+      "id": 50,
+      "type": "LatentInterpolate",
+      "pos": [
+        1880,
+        720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 49,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 185
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 186
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            99
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.827
+      ],
+      "title": "插值 21 (K3→K0)"
+    },
+    {
+      "id": 51,
+      "type": "VAEDecode",
+      "pos": [
+        1910,
+        830
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 50,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 99
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 100
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            133
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 21"
+    },
+    {
+      "id": 52,
+      "type": "LatentInterpolate",
+      "pos": [
+        2180,
+        720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 51,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 187
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 188
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            103
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.644
+      ],
+      "title": "插值 22 (K3→K0)"
+    },
+    {
+      "id": 53,
+      "type": "VAEDecode",
+      "pos": [
+        2210,
+        830
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 52,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 103
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 104
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            134
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 22"
+    },
+    {
+      "id": 54,
+      "type": "LatentInterpolate",
+      "pos": [
+        2480,
+        720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 53,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 189
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 190
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            107
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.37
+      ],
+      "title": "插值 23 (K3→K0)"
+    },
+    {
+      "id": 55,
+      "type": "VAEDecode",
+      "pos": [
+        2510,
+        830
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 54,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 107
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 108
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            135
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 23"
+    },
+    {
+      "id": 56,
+      "type": "LatentInterpolate",
+      "pos": [
+        2780,
+        720
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "flags": {},
+      "order": 55,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 191
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 192
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            111
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentInterpolate"
+      },
+      "widgets_values": [
+        0.01
+      ],
+      "title": "插值 24 (K3→K0)"
+    },
+    {
+      "id": 57,
+      "type": "VAEDecode",
+      "pos": [
+        2810,
+        830
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "flags": {},
+      "order": 56,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 111
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 112
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            136
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "帧 24"
+    },
+    {
+      "id": 58,
+      "type": "ImageBatchMulti",
+      "pos": [
+        1280,
+        1000
+      ],
+      "size": [
+        360,
+        700
+      ],
+      "flags": {},
+      "order": 57,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_1",
+          "type": "IMAGE",
+          "link": 113
+        },
+        {
+          "name": "image_2",
+          "type": "IMAGE",
+          "link": 114
+        },
+        {
+          "name": "image_3",
+          "type": "IMAGE",
+          "link": 115
+        },
+        {
+          "name": "image_4",
+          "type": "IMAGE",
+          "link": 116
+        },
+        {
+          "name": "image_5",
+          "type": "IMAGE",
+          "link": 117
+        },
+        {
+          "name": "image_6",
+          "type": "IMAGE",
+          "link": 118
+        },
+        {
+          "name": "image_7",
+          "type": "IMAGE",
+          "link": 119
+        },
+        {
+          "name": "image_8",
+          "type": "IMAGE",
+          "link": 120
+        },
+        {
+          "name": "image_9",
+          "type": "IMAGE",
+          "link": 121
+        },
+        {
+          "name": "image_10",
+          "type": "IMAGE",
+          "link": 122
+        },
+        {
+          "name": "image_11",
+          "type": "IMAGE",
+          "link": 123
+        },
+        {
+          "name": "image_12",
+          "type": "IMAGE",
+          "link": 124
+        },
+        {
+          "name": "image_13",
+          "type": "IMAGE",
+          "link": 125
+        },
+        {
+          "name": "image_14",
+          "type": "IMAGE",
+          "link": 126
+        },
+        {
+          "name": "image_15",
+          "type": "IMAGE",
+          "link": 127
+        },
+        {
+          "name": "image_16",
+          "type": "IMAGE",
+          "link": 128
+        },
+        {
+          "name": "image_17",
+          "type": "IMAGE",
+          "link": 129
+        },
+        {
+          "name": "image_18",
+          "type": "IMAGE",
+          "link": 130
+        },
+        {
+          "name": "image_19",
+          "type": "IMAGE",
+          "link": 131
+        },
+        {
+          "name": "image_20",
+          "type": "IMAGE",
+          "link": 132
+        },
+        {
+          "name": "image_21",
+          "type": "IMAGE",
+          "link": 133
+        },
+        {
+          "name": "image_22",
+          "type": "IMAGE",
+          "link": 134
+        },
+        {
+          "name": "image_23",
+          "type": "IMAGE",
+          "link": 135
+        },
+        {
+          "name": "image_24",
+          "type": "IMAGE",
+          "link": 136
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            137,
+            138,
+            139
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageBatchMulti"
+      },
+      "widgets_values": [
+        24
+      ],
+      "title": "合并 24 帧"
+    },
+    {
+      "id": 59,
+      "type": "SaveAnimatedPNG",
+      "pos": [
+        1690,
+        1000
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {},
+      "order": 58,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 137
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveAnimatedPNG"
+      },
+      "widgets_values": [
+        "APNG/final/apng/anim24-4beat",
+        10,
+        4
+      ],
+      "title": "输出 APNG（24 帧 10fps）"
+    },
+    {
+      "id": 60,
+      "type": "SaveAnimatedWEBP",
+      "pos": [
+        2150,
+        1000
+      ],
+      "size": [
+        340,
+        200
+      ],
+      "flags": {},
+      "order": 59,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 138
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveAnimatedWEBP"
+      },
+      "widgets_values": [
+        "APNG/final/webp/anim24-4beat",
+        10,
+        true,
+        90,
+        "default"
+      ],
+      "title": "输出 WebP"
+    },
+    {
+      "id": 61,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        2150,
+        1230
+      ],
+      "size": [
+        360,
+        300
+      ],
+      "flags": {},
+      "order": 60,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 139
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": [
+        10,
+        0,
+        "APNG/final/gif/anim24-4beat",
+        "image/gif",
+        false,
+        true
+      ],
+      "title": "输出 GIF"
+    },
+    {
+      "id": 62,
+      "type": "CLIPTextEncode",
+      "pos": [
+        3230,
+        1160
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 61,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 140
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            142
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, anime screencap, clean lineart, flat cel shading, flat expression, eyes half lidded, mouth closed, head straight"
+      ],
+      "title": "关键帧 A：大笑"
+    },
+    {
+      "id": 63,
+      "type": "KSampler",
+      "pos": [
+        3610,
+        1160
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 62,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 141
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 142
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 143
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 144
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            172,
+            174,
+            176,
+            178,
+            180,
+            182,
+            183,
+            185,
+            187,
+            189,
+            191
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456792,
+        "fixed",
+        20,
+        6.0,
+        "euler_ancestral",
+        "normal",
+        0.4
+      ],
+      "title": "关键帧 3 重绘"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      5,
+      0,
+      "MODEL"
+    ],
+    [
+      2,
+      1,
+      1,
+      2,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      1,
+      1,
+      3,
+      0,
+      "CLIP"
+    ],
+    [
+      4,
+      1,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      5,
+      1,
+      1,
+      8,
+      0,
+      "CLIP"
+    ],
+    [
+      6,
+      2,
+      0,
+      5,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      3,
+      0,
+      5,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      4,
+      0,
+      5,
+      3,
+      "LATENT"
+    ],
+    [
+      9,
+      1,
+      0,
+      7,
+      0,
+      "MODEL"
+    ],
+    [
+      10,
+      6,
+      0,
+      7,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      11,
+      3,
+      0,
+      7,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      12,
+      5,
+      0,
+      7,
+      3,
+      "LATENT"
+    ],
+    [
+      13,
+      1,
+      0,
+      9,
+      0,
+      "MODEL"
+    ],
+    [
+      14,
+      8,
+      0,
+      9,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      15,
+      3,
+      0,
+      9,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      16,
+      5,
+      0,
+      9,
+      3,
+      "LATENT"
+    ],
+    [
+      19,
+      10,
+      0,
+      11,
+      0,
+      "LATENT"
+    ],
+    [
+      20,
+      1,
+      2,
+      11,
+      1,
+      "VAE"
+    ],
+    [
+      23,
+      12,
+      0,
+      13,
+      0,
+      "LATENT"
+    ],
+    [
+      24,
+      1,
+      2,
+      13,
+      1,
+      "VAE"
+    ],
+    [
+      27,
+      14,
+      0,
+      15,
+      0,
+      "LATENT"
+    ],
+    [
+      28,
+      1,
+      2,
+      15,
+      1,
+      "VAE"
+    ],
+    [
+      31,
+      16,
+      0,
+      17,
+      0,
+      "LATENT"
+    ],
+    [
+      32,
+      1,
+      2,
+      17,
+      1,
+      "VAE"
+    ],
+    [
+      35,
+      18,
+      0,
+      19,
+      0,
+      "LATENT"
+    ],
+    [
+      36,
+      1,
+      2,
+      19,
+      1,
+      "VAE"
+    ],
+    [
+      39,
+      20,
+      0,
+      21,
+      0,
+      "LATENT"
+    ],
+    [
+      40,
+      1,
+      2,
+      21,
+      1,
+      "VAE"
+    ],
+    [
+      43,
+      22,
+      0,
+      23,
+      0,
+      "LATENT"
+    ],
+    [
+      44,
+      1,
+      2,
+      23,
+      1,
+      "VAE"
+    ],
+    [
+      47,
+      24,
+      0,
+      25,
+      0,
+      "LATENT"
+    ],
+    [
+      48,
+      1,
+      2,
+      25,
+      1,
+      "VAE"
+    ],
+    [
+      51,
+      26,
+      0,
+      27,
+      0,
+      "LATENT"
+    ],
+    [
+      52,
+      1,
+      2,
+      27,
+      1,
+      "VAE"
+    ],
+    [
+      55,
+      28,
+      0,
+      29,
+      0,
+      "LATENT"
+    ],
+    [
+      56,
+      1,
+      2,
+      29,
+      1,
+      "VAE"
+    ],
+    [
+      59,
+      30,
+      0,
+      31,
+      0,
+      "LATENT"
+    ],
+    [
+      60,
+      1,
+      2,
+      31,
+      1,
+      "VAE"
+    ],
+    [
+      63,
+      32,
+      0,
+      33,
+      0,
+      "LATENT"
+    ],
+    [
+      64,
+      1,
+      2,
+      33,
+      1,
+      "VAE"
+    ],
+    [
+      67,
+      34,
+      0,
+      35,
+      0,
+      "LATENT"
+    ],
+    [
+      68,
+      1,
+      2,
+      35,
+      1,
+      "VAE"
+    ],
+    [
+      71,
+      36,
+      0,
+      37,
+      0,
+      "LATENT"
+    ],
+    [
+      72,
+      1,
+      2,
+      37,
+      1,
+      "VAE"
+    ],
+    [
+      75,
+      38,
+      0,
+      39,
+      0,
+      "LATENT"
+    ],
+    [
+      76,
+      1,
+      2,
+      39,
+      1,
+      "VAE"
+    ],
+    [
+      79,
+      40,
+      0,
+      41,
+      0,
+      "LATENT"
+    ],
+    [
+      80,
+      1,
+      2,
+      41,
+      1,
+      "VAE"
+    ],
+    [
+      83,
+      42,
+      0,
+      43,
+      0,
+      "LATENT"
+    ],
+    [
+      84,
+      1,
+      2,
+      43,
+      1,
+      "VAE"
+    ],
+    [
+      87,
+      44,
+      0,
+      45,
+      0,
+      "LATENT"
+    ],
+    [
+      88,
+      1,
+      2,
+      45,
+      1,
+      "VAE"
+    ],
+    [
+      91,
+      46,
+      0,
+      47,
+      0,
+      "LATENT"
+    ],
+    [
+      92,
+      1,
+      2,
+      47,
+      1,
+      "VAE"
+    ],
+    [
+      95,
+      48,
+      0,
+      49,
+      0,
+      "LATENT"
+    ],
+    [
+      96,
+      1,
+      2,
+      49,
+      1,
+      "VAE"
+    ],
+    [
+      99,
+      50,
+      0,
+      51,
+      0,
+      "LATENT"
+    ],
+    [
+      100,
+      1,
+      2,
+      51,
+      1,
+      "VAE"
+    ],
+    [
+      103,
+      52,
+      0,
+      53,
+      0,
+      "LATENT"
+    ],
+    [
+      104,
+      1,
+      2,
+      53,
+      1,
+      "VAE"
+    ],
+    [
+      107,
+      54,
+      0,
+      55,
+      0,
+      "LATENT"
+    ],
+    [
+      108,
+      1,
+      2,
+      55,
+      1,
+      "VAE"
+    ],
+    [
+      111,
+      56,
+      0,
+      57,
+      0,
+      "LATENT"
+    ],
+    [
+      112,
+      1,
+      2,
+      57,
+      1,
+      "VAE"
+    ],
+    [
+      113,
+      11,
+      0,
+      58,
+      0,
+      "IMAGE"
+    ],
+    [
+      114,
+      13,
+      0,
+      58,
+      1,
+      "IMAGE"
+    ],
+    [
+      115,
+      15,
+      0,
+      58,
+      2,
+      "IMAGE"
+    ],
+    [
+      116,
+      17,
+      0,
+      58,
+      3,
+      "IMAGE"
+    ],
+    [
+      117,
+      19,
+      0,
+      58,
+      4,
+      "IMAGE"
+    ],
+    [
+      118,
+      21,
+      0,
+      58,
+      5,
+      "IMAGE"
+    ],
+    [
+      119,
+      23,
+      0,
+      58,
+      6,
+      "IMAGE"
+    ],
+    [
+      120,
+      25,
+      0,
+      58,
+      7,
+      "IMAGE"
+    ],
+    [
+      121,
+      27,
+      0,
+      58,
+      8,
+      "IMAGE"
+    ],
+    [
+      122,
+      29,
+      0,
+      58,
+      9,
+      "IMAGE"
+    ],
+    [
+      123,
+      31,
+      0,
+      58,
+      10,
+      "IMAGE"
+    ],
+    [
+      124,
+      33,
+      0,
+      58,
+      11,
+      "IMAGE"
+    ],
+    [
+      125,
+      35,
+      0,
+      58,
+      12,
+      "IMAGE"
+    ],
+    [
+      126,
+      37,
+      0,
+      58,
+      13,
+      "IMAGE"
+    ],
+    [
+      127,
+      39,
+      0,
+      58,
+      14,
+      "IMAGE"
+    ],
+    [
+      128,
+      41,
+      0,
+      58,
+      15,
+      "IMAGE"
+    ],
+    [
+      129,
+      43,
+      0,
+      58,
+      16,
+      "IMAGE"
+    ],
+    [
+      130,
+      45,
+      0,
+      58,
+      17,
+      "IMAGE"
+    ],
+    [
+      131,
+      47,
+      0,
+      58,
+      18,
+      "IMAGE"
+    ],
+    [
+      132,
+      49,
+      0,
+      58,
+      19,
+      "IMAGE"
+    ],
+    [
+      133,
+      51,
+      0,
+      58,
+      20,
+      "IMAGE"
+    ],
+    [
+      134,
+      53,
+      0,
+      58,
+      21,
+      "IMAGE"
+    ],
+    [
+      135,
+      55,
+      0,
+      58,
+      22,
+      "IMAGE"
+    ],
+    [
+      136,
+      57,
+      0,
+      58,
+      23,
+      "IMAGE"
+    ],
+    [
+      137,
+      58,
+      0,
+      59,
+      0,
+      "IMAGE"
+    ],
+    [
+      138,
+      58,
+      0,
+      60,
+      0,
+      "IMAGE"
+    ],
+    [
+      139,
+      58,
+      0,
+      61,
+      0,
+      "IMAGE"
+    ],
+    [
+      140,
+      1,
+      1,
+      62,
+      0,
+      "CLIP"
+    ],
+    [
+      141,
+      1,
+      0,
+      63,
+      0,
+      "MODEL"
+    ],
+    [
+      142,
+      62,
+      0,
+      63,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      143,
+      3,
+      0,
+      63,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      144,
+      5,
+      0,
+      63,
+      3,
+      "LATENT"
+    ],
+    [
+      145,
+      5,
+      0,
+      10,
+      0,
+      "LATENT"
+    ],
+    [
+      146,
+      7,
+      0,
+      10,
+      1,
+      "LATENT"
+    ],
+    [
+      147,
+      5,
+      0,
+      12,
+      0,
+      "LATENT"
+    ],
+    [
+      148,
+      7,
+      0,
+      12,
+      1,
+      "LATENT"
+    ],
+    [
+      149,
+      5,
+      0,
+      14,
+      0,
+      "LATENT"
+    ],
+    [
+      150,
+      7,
+      0,
+      14,
+      1,
+      "LATENT"
+    ],
+    [
+      151,
+      5,
+      0,
+      16,
+      0,
+      "LATENT"
+    ],
+    [
+      152,
+      7,
+      0,
+      16,
+      1,
+      "LATENT"
+    ],
+    [
+      153,
+      5,
+      0,
+      18,
+      0,
+      "LATENT"
+    ],
+    [
+      154,
+      7,
+      0,
+      18,
+      1,
+      "LATENT"
+    ],
+    [
+      155,
+      5,
+      0,
+      20,
+      0,
+      "LATENT"
+    ],
+    [
+      156,
+      7,
+      0,
+      20,
+      1,
+      "LATENT"
+    ],
+    [
+      157,
+      7,
+      0,
+      22,
+      0,
+      "LATENT"
+    ],
+    [
+      158,
+      9,
+      0,
+      22,
+      1,
+      "LATENT"
+    ],
+    [
+      159,
+      7,
+      0,
+      24,
+      0,
+      "LATENT"
+    ],
+    [
+      160,
+      9,
+      0,
+      24,
+      1,
+      "LATENT"
+    ],
+    [
+      161,
+      7,
+      0,
+      26,
+      0,
+      "LATENT"
+    ],
+    [
+      162,
+      9,
+      0,
+      26,
+      1,
+      "LATENT"
+    ],
+    [
+      163,
+      7,
+      0,
+      28,
+      0,
+      "LATENT"
+    ],
+    [
+      164,
+      9,
+      0,
+      28,
+      1,
+      "LATENT"
+    ],
+    [
+      165,
+      7,
+      0,
+      30,
+      0,
+      "LATENT"
+    ],
+    [
+      166,
+      9,
+      0,
+      30,
+      1,
+      "LATENT"
+    ],
+    [
+      167,
+      7,
+      0,
+      32,
+      0,
+      "LATENT"
+    ],
+    [
+      168,
+      9,
+      0,
+      32,
+      1,
+      "LATENT"
+    ],
+    [
+      169,
+      7,
+      0,
+      34,
+      0,
+      "LATENT"
+    ],
+    [
+      170,
+      9,
+      0,
+      34,
+      1,
+      "LATENT"
+    ],
+    [
+      171,
+      9,
+      0,
+      36,
+      0,
+      "LATENT"
+    ],
+    [
+      172,
+      63,
+      0,
+      36,
+      1,
+      "LATENT"
+    ],
+    [
+      173,
+      9,
+      0,
+      38,
+      0,
+      "LATENT"
+    ],
+    [
+      174,
+      63,
+      0,
+      38,
+      1,
+      "LATENT"
+    ],
+    [
+      175,
+      9,
+      0,
+      40,
+      0,
+      "LATENT"
+    ],
+    [
+      176,
+      63,
+      0,
+      40,
+      1,
+      "LATENT"
+    ],
+    [
+      177,
+      9,
+      0,
+      42,
+      0,
+      "LATENT"
+    ],
+    [
+      178,
+      63,
+      0,
+      42,
+      1,
+      "LATENT"
+    ],
+    [
+      179,
+      9,
+      0,
+      44,
+      0,
+      "LATENT"
+    ],
+    [
+      180,
+      63,
+      0,
+      44,
+      1,
+      "LATENT"
+    ],
+    [
+      181,
+      9,
+      0,
+      46,
+      0,
+      "LATENT"
+    ],
+    [
+      182,
+      63,
+      0,
+      46,
+      1,
+      "LATENT"
+    ],
+    [
+      183,
+      63,
+      0,
+      48,
+      0,
+      "LATENT"
+    ],
+    [
+      184,
+      5,
+      0,
+      48,
+      1,
+      "LATENT"
+    ],
+    [
+      185,
+      63,
+      0,
+      50,
+      0,
+      "LATENT"
+    ],
+    [
+      186,
+      5,
+      0,
+      50,
+      1,
+      "LATENT"
+    ],
+    [
+      187,
+      63,
+      0,
+      52,
+      0,
+      "LATENT"
+    ],
+    [
+      188,
+      5,
+      0,
+      52,
+      1,
+      "LATENT"
+    ],
+    [
+      189,
+      63,
+      0,
+      54,
+      0,
+      "LATENT"
+    ],
+    [
+      190,
+      5,
+      0,
+      54,
+      1,
+      "LATENT"
+    ],
+    [
+      191,
+      63,
+      0,
+      56,
+      0,
+      "LATENT"
+    ],
+    [
+      192,
+      5,
+      0,
+      56,
+      1,
+      "LATENT"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

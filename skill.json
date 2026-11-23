@@ -1,0 +1,50 @@
+{
+  "name": "comfyui-apng-motion",
+  "version": "1.1.0",
+  "schema": 1,
+  "summary": "ComfyUI 24 帧连贯 APNG/WebP/GIF：三关键帧 latent 插值、剧情卡、3–5 拍、双环境可移植",
+  "license": "MIT",
+  "requires": {
+    "python": ">=3.9",
+    "python_packages": {
+      "Pillow": ">=9.0"
+    },
+    "optional_tools": {
+      "curl": "仅 --run 在 urllib 被重置时兜底"
+    },
+    "comfyui": ">=0.3 (需要原生 SaveAnimatedPNG / SaveAnimatedWEBP)",
+    "custom_nodes": {
+      "comfyui-kjnodes": {
+        "required": true,
+        "provides": ["ImageBatchMulti"],
+        "install": "https://github.com/kijai/ComfyUI-KJNodes"
+      },
+      "ComfyUI-VideoHelperSuite": {
+        "required": false,
+        "provides": ["VHS_VideoCombine"],
+        "note": "只影响 GIF 输出；缺了仍能出 APNG/WebP",
+        "install": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
+      }
+    }
+  },
+  "entrypoints": {
+    "detect": "scripts/detect_env.py",
+    "doctor": "scripts/doctor.py",
+    "emit": "scripts/emit_workflow.py",
+    "check": "scripts/check_anim.py",
+    "curve": "scripts/make_curve.py",
+    "deps": "scripts/check_deps.py",
+    "install": "scripts/install.py",
+    "package": "scripts/package.py"
+  },
+  "targets": [
+    "~/.codex/skills/comfyui-apng-motion",
+    "~/.config/magpie/library/skills/comfyui-apng-motion"
+  ],
+  "exclude_from_package": [
+    "profiles/*.json",
+    "**/*.bak*",
+    "**/__pycache__/**",
+    "dist/**"
+  ]
+}
