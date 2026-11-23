@@ -36,6 +36,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/install/"/>
     </url>
     <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/models/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/models/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/models/"/>
+    </url>
+    <url>
         <loc>https://gg22333.github.io/comfyui-apng-motion/motion-presets/</loc>
         <lastmod>2026-11-23</lastmod>
         <changefreq>daily</changefreq>
@@ -48,6 +55,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/output/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/output/"/>
+    </url>
+    <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/prompting/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/prompting/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/prompting/"/>
     </url>
     <url>
         <loc>https://gg22333.github.io/comfyui-apng-motion/publishing/</loc>
@@ -120,6 +134,13 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/install/"/>
     </url>
     <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/models/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/models/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/models/"/>
+    </url>
+    <url>
         <loc>https://gg22333.github.io/comfyui-apng-motion/en/motion-presets/</loc>
         <lastmod>2026-11-23</lastmod>
         <changefreq>daily</changefreq>
@@ -132,6 +153,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/output/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/output/"/>
+    </url>
+    <url>
+        <loc>https://gg22333.github.io/comfyui-apng-motion/en/prompting/</loc>
+        <lastmod>2026-11-23</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://gg22333.github.io/comfyui-apng-motion/en/prompting/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://gg22333.github.io/comfyui-apng-motion/prompting/"/>
     </url>
     <url>
         <loc>https://gg22333.github.io/comfyui-apng-motion/en/publishing/</loc>

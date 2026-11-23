@@ -18,7 +18,7 @@
         <link rel="prev" href="../install/">
       
       
-        <link rel="next" href="../workflows/">
+        <link rel="next" href="../models/">
       
       
         
@@ -268,6 +268,26 @@
   
   
   开始
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../models/" class="md-tabs__link">
+          
+  
+  
+  模型与提示词
 
         </a>
       </li>
@@ -721,7 +741,7 @@
   <span class="md-ellipsis">
     
   
-    工作流
+    模型与提示词
   
 
     
@@ -734,6 +754,121 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    模型与提示词
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型与架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    提示词写法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -826,10 +961,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
@@ -847,8 +982,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -997,10 +1132,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1018,8 +1153,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1321,13 +1456,14 @@
 <tr>
 <td><code>moss_zh</code></td>
 <td><code>lock。\n action。\n style。</code> 中文散文，换行分段</td>
-<td>MOSS / Qwen-VL</td>
+<td>MOSS-Image / Krea / Qwen-Image（Qwen-VL 系）</td>
 </tr>
 </tbody>
 </table>
 <p><code>tags</code> 模式下 <code>style</code> 必须放最后：CLIP 对末尾 token 权重最高，画风写在中段会被动作词挤掉，
 出图会掉进写实照相模式（表现为拼贴照、色块闪）。</p>
-<p><code>moss_zh</code> 模式下三段都写中文，每段以「。」结尾；不要混英文标签，也不要堆 <code>masterpiece</code>。</p>
+<p><code>moss_zh</code> 模式下三段都写中文，每段以「。」结尾；不要混英文标签，也不要堆 <code>masterpiece</code>。
+三种方言的完整规则见 <a href="../prompting/">提示词写法</a>。</p>
 <p><code>assets/story.diet.json</code> 是完整范例：</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span>--base<span class="w"> </span>workflows/workflow-moss.json<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--story<span class="w"> </span>assets/story.diet.json<span class="w"> </span>--size<span class="w"> </span><span class="m">640</span><span class="w"> </span>--out<span class="w"> </span>diet60.json
@@ -1396,8 +1532,8 @@
 <tr>
 <th>拍数</th>
 <th>段数分配（24 帧）</th>
-<th>节点数（SDXL）</th>
-<th>节点数（Moss）</th>
+<th>节点数（UNet/SDXL）</th>
+<th>节点数（DiT/MOSS）</th>
 </tr>
 </thead>
 <tbody>
@@ -1464,17 +1600,22 @@
 <tr>
 <td>速度</td>
 <td>三个保存节点的 <code>fps</code></td>
-<td>必须改成同一个值；<code>fps × 帧数</code> = 时长（24 帧 @10fps = 2.4 秒，60 帧 @30fps = 2 秒）</td>
+<td>必须改成同一个值；<code>fps × 帧数</code> = 时长（24 帧 @10fps = 2.4 秒，60 帧 @20fps = 3 秒）</td>
+</tr>
+<tr>
+<td>每拍停留</td>
+<td>剧情卡 <code>dwell</code> + <code>ease</code></td>
+<td>每拍停多久。ComfyUI 只能给一个全局 fps，停留由 <code>retime.py</code> 在导出后施加</td>
 </tr>
 <tr>
 <td>提示词方言</td>
 <td><code>--prompt-mode tags|moss_zh</code> / 剧情卡 <code>prompt_mode</code></td>
-<td><code>tags</code> = 英文标签；<code>moss_zh</code> = 中文散文</td>
+<td><code>tags</code> = CLIP 英文标签；<code>moss_zh</code> = Qwen-VL 中文散文</td>
 </tr>
 <tr>
 <td>尺寸</td>
 <td>latent 宽高 / <code>--size 640</code></td>
-<td>Moss 512 或 640；SDXL 512–1024</td>
+<td>MOSS-Image 512 或 640；SDXL 512–1024</td>
 </tr>
 <tr>
 <td>命名</td>
@@ -1527,6 +1668,8 @@
 <thead>
 <tr>
 <th>模型族</th>
+<th>架构</th>
+<th>文本编码器</th>
 <th>加载器</th>
 <th>关键帧 denoise</th>
 </tr>
@@ -1534,26 +1677,57 @@
 <tbody>
 <tr>
 <td>SD 1.5</td>
+<td>UNet</td>
+<td>CLIP</td>
 <td><code>CheckpointLoaderSimple</code></td>
 <td>0.45–0.55</td>
 </tr>
 <tr>
 <td>SDXL / Illustrious / NoobAI</td>
+<td>UNet</td>
+<td>CLIP-L + CLIP-G</td>
 <td><code>CheckpointLoaderSimple</code></td>
 <td>0.35–0.45</td>
 </tr>
 <tr>
 <td>FLUX.1</td>
+<td>DiT</td>
+<td>CLIP-L + T5-XXL</td>
 <td><code>UNETLoader</code> + <code>DualCLIPLoader</code> + <code>VAELoader</code></td>
 <td>0.45–0.55</td>
 </tr>
 <tr>
-<td>Moss / DiT</td>
+<td>SD3 / SD3.5</td>
+<td>MMDiT</td>
+<td>CLIP-L + CLIP-G + T5-XXL</td>
+<td><code>CheckpointLoaderSimple</code> 或三件套</td>
+<td>0.40–0.50</td>
+</tr>
+<tr>
+<td>MOSS-Image</td>
+<td>DiT + 8 步 DMD</td>
+<td>Qwen3.5-9B</td>
 <td><code>UNETLoader</code> + <code>CLIPLoader</code>（<code>type=moss_image</code>）+ <code>VAELoader</code></td>
 <td>0.82–0.90</td>
 </tr>
+<tr>
+<td>Krea 2</td>
+<td>DiT</td>
+<td>Qwen3-VL 4B</td>
+<td><code>UNETLoader</code> + <code>CLIPLoader</code> + <code>VAELoader</code></td>
+<td>0.45–0.55</td>
+</tr>
+<tr>
+<td>Anima 2B</td>
+<td>DiT</td>
+<td>Qwen3-0.6B</td>
+<td><code>UNETLoader</code> + <code>CLIPLoader</code> + <code>VAELoader</code></td>
+<td>0.45–0.55</td>
+</tr>
 </tbody>
 </table>
+<p><strong>DiT 是架构，MOSS 是模型</strong>——MOSS-Image 本身就属于 DiT 家族，不是 DiT 之外的另一个选项。
+逐个模型的说明见 <a href="../models/">模型与架构</a>。</p>
 <p>denoise 是经验值。同 seed 下 SDXL 超过 0.42 就开始改衣服和背景，插值时出现色斑；
 要更大表情用 0.45–0.5 并接受漂移，或改用面部局部重绘。</p>
 <h2 id="校验">校验<a class="headerlink" href="#校验" title="Permanent link">&para;</a></h2>
@@ -1571,7 +1745,7 @@
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>check_anim.py<span class="w"> </span>output/APNG/final/apng/anim60_00001_.png<span class="w"> </span>--expect<span class="w"> </span><span class="m">60</span>
 </code></pre></div>
 <p>关注四项：<code>frames=N</code>（与 <code>--frames</code> 一致）、<code>loop=0</code>、<code>identical_pairs=0</code>、<code>color_drift</code> 尽量低
-（Moss 0.85 档实测 9–15，换冷光或闭眼关键帧会更高；SDXL 0.35 档约 2.6；超过 20 基本就是关键帧重绘过头）。</p>
+（MOSS-Image 0.85 档实测 9–15，换冷光或闭眼关键帧会更高；SDXL 0.35 档约 2.6；超过 20 基本就是关键帧重绘过头）。</p>
 <h2 id="落盘验收">落盘验收<a class="headerlink" href="#落盘验收" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/check_output.py<span class="w"> </span>--profile<span class="w"> </span>profiles/xl.json
 </code></pre></div>
@@ -1628,13 +1802,13 @@
         
         
           
-          <a href="../workflows/" class="md-footer__link md-footer__link--next" aria-label="下一页: 五份工作流">
+          <a href="../models/" class="md-footer__link md-footer__link--next" aria-label="下一页: 模型与架构">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 下一页
               </span>
               <div class="md-ellipsis">
-                五份工作流
+                模型与架构
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -277,6 +277,26 @@
   
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../models/" class="md-tabs__link">
+          
+  
+  
+  模型与提示词
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -527,6 +547,121 @@
       
   
   
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型与提示词
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    模型与提示词
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型与架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    提示词写法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -548,10 +683,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -569,8 +704,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -915,10 +1050,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
@@ -936,8 +1071,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1086,10 +1221,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1107,8 +1242,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1613,7 +1748,7 @@
 <ol>
 <li><strong>lock 放最前</strong>：脸、发型、服装、构图锚死，插值才不会换人。</li>
 <li><strong>action 放中间</strong>：只写这一拍<strong>变化的部分</strong>，不要重复 lock 里已有的内容。</li>
-<li><strong>style 放最后</strong>：Moss 的文本编码器对末尾 token 权重最高，风格词放末尾才压得住动作词。</li>
+<li><strong>style 放最后</strong>：Qwen-VL 系编码器对末尾 token 权重最高，风格词放末尾才压得住动作词。</li>
 </ol>
 <h3 id="31-每拍只改一件事">3.1 每拍只改一件事<a class="headerlink" href="#31-每拍只改一件事" title="Permanent link">&para;</a></h3>
 <table>
@@ -1799,7 +1934,9 @@
 <p>故事类不要求「一个表情」，它演的是<strong>状态变化</strong>：困 → 清醒、平静 → 惊喜。
 但结构不变：每一拍仍然只推进一步，最后一拍仍然插回 K0。</p>
 <h3 id="431-十一拍全身故事moss_zh">4.3.1 十一拍全身故事（<code>moss_zh</code>）<a class="headerlink" href="#431-十一拍全身故事moss_zh" title="Permanent link">&para;</a></h3>
-<p><code>diet-betrayal</code>｜减肥破功｜60 帧 / 30fps / 640×640｜<code>prompt_mode: moss_zh</code>｜<code>segs = 5,5,4,7,6,7,5,6,5,5,5</code></p>
+<p><code>diet-betrayal</code>｜减肥破功｜60 帧 / 20fps / 3.0 秒 / 640×640｜<code>prompt_mode: moss_zh</code>｜<code>segs = 5,5,4,7,6,7,5,6,5,5,5</code></p>
+<p>每拍停留 <code>dwell = 0.95, 0.95, 1.1, 1.3, 1.0, 1.3, 0.95, 1.0, 0.9, 0.95, 0.95</code>，<code>ease = 0.3</code>：
+够手机和抱桶这两拍多停，只动肩头的拍快过。总时长仍是 3.0 秒。</p>
 <table>
 <thead>
 <tr>
@@ -1884,7 +2021,7 @@ python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span>--
 <li><strong>每个动作都以「矮木桌前，」开头</strong>。场景锚点放在句首，模型更不容易把桌子、白碗画丢；
   背景只留墙面、台灯、矮桌，减少每拍重绘的自由度。</li>
 <li><strong>下半身全程固定在矮桌后面</strong>。腿的位置一变，latent 插值就会出现「双重腿」残影。</li>
-<li><strong>关键帧 denoise 0.85（范围 0.82–0.90）</strong>。MOSS 是 8 步 DMD 蒸馏模型，低于 0.80 关键帧几乎不动
+<li><strong>关键帧 denoise 0.85（范围 0.82–0.90）</strong>。MOSS-Image 是 DiT + 8 步 DMD 蒸馏，低于 0.80 关键帧几乎不动
   （实测整片相邻帧差 0.03）；动作幅度靠提示词和分帧，不靠继续抬 denoise。</li>
 <li><strong><code>motion</code> 留空</strong>。写「不要推镜头 / 不要换角度」这类否定句，模型会理解成「保持原样」，
   把本帧动作一起压掉。</li>

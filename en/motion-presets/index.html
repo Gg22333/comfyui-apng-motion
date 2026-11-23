@@ -277,6 +277,26 @@
   
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../models/" class="md-tabs__link">
+          
+  
+  
+  Models and prompting
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -527,6 +547,121 @@
       
   
   
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models and prompting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Models and prompting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models and architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -548,10 +683,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -569,8 +704,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -915,10 +1050,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
@@ -936,8 +1071,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1086,10 +1221,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1107,8 +1242,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1612,7 +1747,7 @@ So <strong>K0 must be a pose that can end the clip</strong>, or the seam jumps.<
 <ol>
 <li><strong>lock first</strong> pins face, hair, outfit and framing; interpolation cannot swap the character.</li>
 <li><strong>action in the middle</strong> describes only the delta; do not repeat the lock.</li>
-<li><strong>style last</strong> because Moss's text encoder weights trailing tokens most; style at the end survives action words.</li>
+<li><strong>style last</strong> because Qwen-VL-family encoders weight trailing tokens most; style at the end survives action words.</li>
 </ol>
 <h3 id="31-change-one-thing-per-beat">3.1 Change one thing per beat<a class="headerlink" href="#31-change-one-thing-per-beat" title="Permanent link">&para;</a></h3>
 <table>
@@ -1798,7 +1933,9 @@ Do not pile on <code>ugly, bad</code>; that suppresses ordinary expressions too.
 <p>Stories are not "one expression"; they act out a <strong>state change</strong>: sleepy → awake, calm → delighted.
 The structure is unchanged: one step per beat, and the last segment still interpolates back to K0.</p>
 <h3 id="431-eleven-beat-full-body-story-moss_zh">4.3.1 Eleven-beat full-body story (<code>moss_zh</code>)<a class="headerlink" href="#431-eleven-beat-full-body-story-moss_zh" title="Permanent link">&para;</a></h3>
-<p><code>diet-betrayal</code> · Diet Betrayal · 60 frames / 30 fps / 640×640 · <code>prompt_mode: moss_zh</code> · <code>segs = 5,5,4,7,6,7,5,6,5,5,5</code></p>
+<p><code>diet-betrayal</code> · Diet Betrayal · 60 frames / 20 fps / 3.0 s / 640×640 · <code>prompt_mode: moss_zh</code> · <code>segs = 5,5,4,7,6,7,5,6,5,5,5</code></p>
+<p>Per-beat dwell <code>0.95, 0.95, 1.1, 1.3, 1.0, 1.3, 0.95, 1.0, 0.9, 0.95, 0.95</code>, <code>ease = 0.3</code>: the phone
+reach and the bucket hug hold longer, shoulder-only beats move faster. Total stays 3.0 s.</p>
 <table>
 <thead>
 <tr>
@@ -1885,7 +2022,7 @@ python<span class="w"> </span>scripts/emit_workflow.py<span class="w"> </span>--
   makes it much harder for the model to drop the table and the bowl. The background is reduced to wall,
   lamp and table so each redraw has less freedom.</li>
 <li><strong>Lower body stays behind the table.</strong> Move the legs and latent interpolation produces double legs.</li>
-<li><strong>Keyframe denoise 0.85 (range 0.82–0.90).</strong> Moss is an 8-step DMD distilled model; below 0.80 the
+<li><strong>Keyframe denoise 0.85 (range 0.82–0.90).</strong> MOSS-Image is a DiT with 8-step DMD distillation; below 0.80 the
   keyframes barely move (measured whole-film adjacent diff 0.03). Get the motion from the prompt and the
   frame budget, not from pushing denoise further.</li>
 <li><strong>Leave <code>motion</code> empty.</strong> A negation such as "do not move the camera" is read as "keep everything as is"
