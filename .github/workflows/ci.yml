@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -35,3 +35,4 @@ jobs:
           python scripts/emit_workflow.py --validate /tmp/b5.json
       - name: Dependency self-check
         run: python scripts/check_deps.py
+
