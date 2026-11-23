@@ -1,0 +1,21 @@
+{
+  "name": "anim60-moss",
+  "beats": 4,
+  "frames": 60,
+  "segs": [15, 15, 15, 15],
+  "fps": 30,
+  "denoise": 0.5,
+  "seed_mode": "same",
+  "prefix": "APNG/preview-moss60",
+  "lock": "masterpiece, best quality, 1girl, solo, upper body, portrait, yellow raincoat, hood up, short black hair, rain, night city bokeh background, neon reflections, cinematic lighting",
+  "style": "anime screencap, clean lineart, flat cel shading, consistent character design",
+  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, photo, photorealistic, 3d render, collage, grid, multiple girls, different outfit, camera move, zoom, cropped head, color banding, color shift, empty face, no eyes, no mouth",
+  "actions": [
+    "sad expression, eyes lowered, mouth closed",
+    "surprised, eyes wide open, mouth slightly open, rain on her face",
+    "eyes closed, gentle smile",
+    "happy, soft smile, blush, eyes half closed"
+  ],
+  "motion": "same camera, same framing, stable lighting, anime screencap, clean lineart",
+  "curve": "linear"
+}

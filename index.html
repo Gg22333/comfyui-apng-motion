@@ -6,11 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/">
       
       
       
@@ -395,6 +395,33 @@
   
   
     <li class="md-nav__item">
+      <a href="workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="motion-presets/" class="md-nav__link">
         
   
@@ -619,10 +646,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -640,8 +667,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -722,6 +749,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="en/workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -1015,11 +1070,14 @@
 
 
 <h1 id="comfyui-apng-motion">comfyui-apng-motion<a class="headerlink" href="#comfyui-apng-motion" title="Permanent link">&para;</a></h1>
-<p>ComfyUI 里做 <strong>连贯 APNG / WebP / GIF</strong> 的 skill 与工具箱，帧数 8 / 12 / 24 / 30 / 60 可选。</p>
+<p>ComfyUI 里做 <strong>能讲故事的 APNG / WebP / GIF</strong>：3–8 个关键帧 + latent 插值，
+同一个工作流切 <strong>8 / 24 / 30 / 60 帧</strong>，SDXL 与 Moss/DiT 两套环境都有可导入的 JSON。</p>
 <p><a href="en/">English</a> · <strong>简体中文</strong></p>
 <p><img alt="preview" src="assets/preview.webp" /></p>
+<p><img alt="六拍分镜" src="assets/storyboard-diet.webp" /></p>
 <blockquote>
-<p>预览：60 帧 / 30fps / Moss-DiT，配方是 <code>assets/story.preview.json</code>。
+<p>预览：60 帧 / 30fps / Moss-DiT 六拍故事《减肥破功》，配方是 <code>assets/story.diet.json</code>（<code>prompt_mode: moss_zh</code>）。
+下面的联系表是按 segs 从成片抽出的真实关键拍。
 网页主预览用 WebP q100（真彩、保住 60 帧；libwebp 在 q90 会把近重复帧并成 58 帧）；<code>preview.gif</code> 保留给聊天工具。
 GIF 用全局固定调色板 + 关抖动重编码，避免 256 色量化造成的色块闪动。细节见<a href="formats/#46-网页预览为什么最终用-webp">格式对比</a>。</p>
 </blockquote>
@@ -1050,13 +1108,14 @@ GIF 用全局固定调色板 + 关抖动重编码，避免 256 色量化造成�
 <h2 id="_2">三步<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre><code class="language-bash">python scripts/detect_env.py
 python scripts/doctor.py
-python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/story.4beat.json --out my.json
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story assets/story.4beat.json --out my.json
 </code></pre>
 <h2 id="_3">进一步<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="install/">安装</a></li>
-<li><a href="usage/">用法</a>（含 <a href="usage/">帧数怎么选</a>）</li>
-<li><a href="motion-presets/">动作库：16 组表情包动作</a></li>
+<li><a href="usage/">用法</a>（含 <a href="usage/">帧数怎么选</a>、<a href="workflows/#提示词写法">提示词怎么写</a>）</li>
+<li><a href="workflows/">工作流：五份可直接导入的 JSON</a></li>
+<li><a href="motion-presets/">动作库：17 组表情包动作</a></li>
 <li><a href="output/">成品落盘</a></li>
 <li><a href="synthesis-comparison/">方案对比：APNG / GIF / Live2D / 视频</a></li>
 <li><a href="formats/">APNG、GIF 与视频转 GIF</a></li>

@@ -6,11 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/output/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/output/">
       
       
         <link rel="prev" href="../motion-presets/">
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../motion-presets/" class="md-nav__link">
         
   
@@ -463,6 +490,17 @@
     <span class="md-ellipsis">
       
         6 · 归档约定
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 仓库里不该出现的东西
       
     </span>
   </a>
@@ -654,10 +692,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -675,8 +713,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -757,6 +795,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -1065,6 +1131,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · 仓库里不该出现的东西
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1116,7 +1193,7 @@
 </tr>
 <tr>
 <td><code>profiles/dit.json</code></td>
-<td><code>D:\ComfyUI-aki-v3.2-dit\ComfyUI\output</code></td>
+<td><code>D:\ComfyUI-aki-v3.2-DiT\ComfyUI\output</code></td>
 </tr>
 </tbody>
 </table>
@@ -1209,7 +1286,7 @@
 <tr>
 <td>跑了旧工作流</td>
 <td>同一目录出现旧命名（<code>anim_base_*</code>、<code>anim24_1_*</code>）</td>
-<td>用 <code>assets/workflow-*.json</code> 或 <code>emit_workflow.py</code> 重新生成</td>
+<td>用 <code>workflows/workflow-*.json</code> 或 <code>emit_workflow.py</code> 重新生成</td>
 </tr>
 <tr>
 <td>历史 <code>SaveImage</code></td>
@@ -1331,6 +1408,46 @@ python scripts/check_output.py --profile profiles/xl.json --fix
 </tbody>
 </table>
 <p>备份工作流也不要留在 <code>ComfyUI/user/default/workflows/</code>。同名 <code>-v1.json</code> 会被前端当成第二套工作流；备份放 <code>archive/</code>，目录里只留正在用的那一份。</p>
+<hr />
+<h2 id="7">7 · 仓库里不该出现的东西<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
+<p>仓库和 skill 目录只放<strong>源代码与网页素材</strong>。运行产物一律留在 ComfyUI 的 <code>output/</code>：</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>该有什么</th>
+<th>不该有什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;ComfyUI&gt;/output/APNG/final/</code></td>
+<td>三格式成品</td>
+<td>单帧 PNG、旧前缀残留</td>
+</tr>
+<tr>
+<td>仓库 <code>docs/assets/</code></td>
+<td><code>preview.webp</code> / <code>preview.gif</code> / <code>storyboard-*.webp</code></td>
+<td>原始 APNG、<code>_00001_</code> 成品</td>
+</tr>
+<tr>
+<td>仓库根</td>
+<td>源码、文档、<code>workflows/</code></td>
+<td>任何 <code>output/</code> 的拷贝</td>
+</tr>
+<tr>
+<td><code>_tmp/</code> 之类的草稿区</td>
+<td>一次性脚本、试片</td>
+<td>长期留存的 PNG / WebP</td>
+</tr>
+</tbody>
+</table>
+<p>脚本自己产出的只有两种，而且都是<strong>网页素材</strong>，不是成品：</p>
+<ul>
+<li><code>make_preview.py</code> → <code>docs/assets/preview.{webp,gif}</code>（重编码过的预览）</li>
+<li><code>make_storyboard.py</code> → <code>docs/assets/storyboard-&lt;name&gt;.webp</code>（关键拍联系表）</li>
+</ul>
+<p>验收：<code>git status</code> 除了这两个文件，不该出现任何图片的增删。</p>
 
 
 

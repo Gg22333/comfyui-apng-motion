@@ -6,14 +6,14 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/en/motion-presets/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/en/motion-presets/">
       
       
-        <link rel="prev" href="../usage/">
+        <link rel="prev" href="../workflows/">
       
       
         <link rel="next" href="../output/">
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../motion-presets/" class="md-nav__link">
         
   
@@ -543,10 +570,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" checked>
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -564,8 +591,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -646,6 +673,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -815,15 +870,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-the-library-16-presets" class="md-nav__link">
+  <a href="#4-the-library-17-presets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4 · The library (16 presets)
+        4 · The library (17 presets)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4 · The library (16 presets)">
+    <nav class="md-nav" aria-label="4 · The library (17 presets)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1219,15 +1274,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-the-library-16-presets" class="md-nav__link">
+  <a href="#4-the-library-17-presets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4 · The library (16 presets)
+        4 · The library (17 presets)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4 · The library (16 presets)">
+    <nav class="md-nav" aria-label="4 · The library (17 presets)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1538,7 +1593,7 @@ Do not write <code>camera pans</code>, <code>zoom in</code>, <code>character wal
 <p>The default negative already covers <code>photo, photorealistic, 3d render, collage, grid, multiple girls, different outfit, camera move, zoom, color shift</code>.
 Do not pile on <code>ugly, bad</code>; that suppresses ordinary expressions too.</p>
 <hr />
-<h2 id="4-the-library-16-presets">4 · The library (16 presets)<a class="headerlink" href="#4-the-library-16-presets" title="Permanent link">&para;</a></h2>
+<h2 id="4-the-library-17-presets">4 · The library (17 presets)<a class="headerlink" href="#4-the-library-17-presets" title="Permanent link">&para;</a></h2>
 <p><code>assets/motion-presets.json</code> ships with the repo. Each preset carries beats, frames, segments, fps, denoise, four actions, a motion layer and a scene hint.</p>
 <h3 id="41-emotions">4.1 Emotions<a class="headerlink" href="#41-emotions" title="Permanent link">&para;</a></h3>
 <table>
@@ -1741,7 +1796,7 @@ do not copy a whole list into every beat.</p>
   --out assets/story.my-laugh.json
 
 python scripts/emit_workflow.py \
-  --base assets/workflow-sdxl.json \
+  --base workflows/workflow-sdxl.json \
   --story assets/story.my-laugh.json \
   --out my-laugh.json \
   --run

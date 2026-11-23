@@ -6,11 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/formats/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/formats/">
       
       
         <link rel="prev" href="../synthesis-comparison/">
@@ -298,6 +298,33 @@
     
   
     用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
   
 
     
@@ -737,10 +764,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -758,8 +785,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -840,6 +867,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -1516,19 +1571,20 @@
 <td>新 GIF（全局调色板 + <code>dither=none</code>）</td>
 <td>384×384</td>
 <td>60</td>
-<td>1.53 MB</td>
-<td>0.72</td>
+<td>2.13 MB</td>
+<td>1.94</td>
 </tr>
 <tr>
 <td>新 WebP（quality 100，保住 60 帧）</td>
 <td>384×384</td>
 <td>60</td>
-<td>1.78 MB</td>
-<td>0.78</td>
+<td>1.46 MB</td>
+<td>1.82</td>
 </tr>
 </tbody>
 </table>
-<p>当前预览是 60 帧 / 30fps / Moss-DiT，配方 <code>assets/story.preview.json</code>。</p>
+<p>当前预览是 60 帧 / 30fps / Moss-DiT 的六拍故事《减肥破功》，配方 <code>assets/story.diet.json</code>。
+画面细节比旧的 4 拍版本多，GIF 从 1.46 MB 涨到 2.13 MB；WebP 反而更小，所以网页主预览用 WebP。</p>
 <p>WebP 的帧数有个坑：libwebp 的动画编码器会把「压缩后几乎一样」的相邻帧合并。
 质量 90 时 60 帧会变成 58 帧（时长不变，但元数据不是 60）；质量 100 能保住 60 帧，
 代价是体积从约 0.6 MB 涨到 1.8 MB。<code>make_preview.py</code> 默认用 100，并在保存后核对帧数，

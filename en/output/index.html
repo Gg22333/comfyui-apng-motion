@@ -6,11 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/en/output/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/en/output/">
       
       
         <link rel="prev" href="../motion-presets/">
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../motion-presets/" class="md-nav__link">
         
   
@@ -543,10 +570,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" checked>
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -564,8 +591,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -646,6 +673,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -813,6 +868,17 @@
     <span class="md-ellipsis">
       
         6 · Archive conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-what-must-not-land-in-the-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · What must not land in the repo
       
     </span>
   </a>
@@ -1067,6 +1133,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#7-what-must-not-land-in-the-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 · What must not land in the repo
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1118,7 +1195,7 @@
 </tr>
 <tr>
 <td><code>profiles/dit.json</code></td>
-<td><code>D:\ComfyUI-aki-v3.2-dit\ComfyUI\output</code></td>
+<td><code>D:\ComfyUI-aki-v3.2-DiT\ComfyUI\output</code></td>
 </tr>
 </tbody>
 </table>
@@ -1211,7 +1288,7 @@
 <tr>
 <td>Old workflow</td>
 <td>Old names such as <code>anim_base_*</code>, <code>anim24_1_*</code></td>
-<td>Regenerate from <code>assets/workflow-*.json</code> or <code>emit_workflow.py</code></td>
+<td>Regenerate from <code>workflows/workflow-*.json</code> or <code>emit_workflow.py</code></td>
 </tr>
 <tr>
 <td>Historical <code>SaveImage</code></td>
@@ -1332,6 +1409,47 @@ python scripts/check_output.py --profile profiles/xl.json --fix
 </tbody>
 </table>
 <p>Do not keep workflow backups in <code>ComfyUI/user/default/workflows/</code>. A same-named <code>-v1.json</code> shows up as a second workflow in the UI; keep backups under <code>archive/</code> and leave only the active file in the workflows directory.</p>
+<hr />
+<h2 id="7-what-must-not-land-in-the-repo">7 · What must not land in the repo<a class="headerlink" href="#7-what-must-not-land-in-the-repo" title="Permanent link">&para;</a></h2>
+<p>The repo and the skill folder hold <strong>source and web assets only</strong>. Run outputs stay in ComfyUI's own
+<code>output/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Should contain</th>
+<th>Should not contain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;ComfyUI&gt;/output/APNG/final/</code></td>
+<td>the three finals</td>
+<td>single-frame PNGs, stale prefixes</td>
+</tr>
+<tr>
+<td>repo <code>docs/assets/</code></td>
+<td><code>preview.webp</code> / <code>preview.gif</code> / <code>storyboard-*.webp</code></td>
+<td>raw APNG, <code>_00001_</code> outputs</td>
+</tr>
+<tr>
+<td>repo root</td>
+<td>sources, docs, <code>workflows/</code></td>
+<td>any copy of <code>output/</code></td>
+</tr>
+<tr>
+<td>scratch dirs</td>
+<td>one-off scripts, test renders</td>
+<td>long-lived PNG / WebP</td>
+</tr>
+</tbody>
+</table>
+<p>Only two scripts write into <code>docs/assets/</code>, and both write <strong>web assets</strong>, not finals:</p>
+<ul>
+<li><code>make_preview.py</code> → <code>docs/assets/preview.{webp,gif}</code></li>
+<li><code>make_storyboard.py</code> → <code>docs/assets/storyboard-&lt;name&gt;.webp</code></li>
+</ul>
+<p>Check: <code>git status</code> should show no image changes other than those two files.</p>
 
 
 

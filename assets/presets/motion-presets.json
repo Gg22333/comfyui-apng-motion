@@ -1,0 +1,494 @@
+{
+  "schema": 1,
+  "note": "表情包动作库。actions[0] 必须是静息姿势：最后一段会插值回 actions[0]，循环才不跳；第一帧同时是聊天列表里的封面。prompt_mode=tags 的预设用英文逗号标签（SDXL 传统 CLIP）；prompt_mode=moss_zh 的预设用中文散文段落（MOSS-Image / Qwen-VL 文本编码器），此时 actions / lock_full / style / negative 全是中文，不要混英文标签。",
+  "defaults": {
+    "style": "anime screencap, clean lineart, flat cel shading, consistent character design",
+    "motion": "same camera, same framing, stable lighting, no zoom, no camera move",
+    "curve": "linear",
+    "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, extra limbs, photo, photorealistic, 3d render, collage, grid, multiple girls, different outfit, different hair color, camera move, zoom, cropped head, color banding, color shift, empty face, no eyes, no mouth"
+  },
+  "presets": [
+    {
+      "id": "wave",
+      "name_zh": "打招呼",
+      "name_en": "Wave hello",
+      "summary_zh": "抬手 → 挥两下 → 收回。最通用的开场动作。",
+      "tags": [
+        "greeting",
+        "daily"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        7,
+        6,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.5,
+      "actions": [
+        "neutral expression, arms down, looking at viewer, mouth closed",
+        "raising right hand to shoulder height, palm open, slight smile",
+        "waving hand, big smile, eyes half closed",
+        "hand lowering, soft smile, eyes open"
+      ],
+      "note_zh": "挥手只动手腕和小臂；不要写 turn body，插值会把身体拉成糊。"
+    },
+    {
+      "id": "laugh",
+      "name_zh": "大笑",
+      "name_en": "Laugh",
+      "summary_zh": "忍笑 → 爆发 → 后仰 → 收。四拍里情绪跨度最大的一组。",
+      "tags": [
+        "emotion",
+        "happy"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        7,
+        6,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.42,
+      "actions": [
+        "flat expression, mouth closed, eyes open, head straight",
+        "holding back a laugh, lips pressed, cheeks puffed",
+        "laughing hard, mouth wide open, eyes squeezed shut, head tilted back",
+        "giggling, hand near mouth, eyes half closed, head returning"
+      ],
+      "note_zh": "第二拍是预备动作，幅度要小；第三拍才给最大表情。"
+    },
+    {
+      "id": "cry",
+      "name_zh": "大哭",
+      "name_en": "Cry",
+      "summary_zh": "委屈 → 眼泪涌出 → 抽泣 → 擦眼。",
+      "tags": [
+        "emotion",
+        "sad"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        7,
+        6,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.45,
+      "actions": [
+        "neutral expression, eyes open, mouth closed, head straight",
+        "teary eyes, trembling lips, inner eyebrows raised",
+        "crying, tears streaming down cheeks, mouth open, eyes closed",
+        "sniffling, wiping one eye with sleeve, pouting"
+      ],
+      "note_zh": "眼泪属于小面积高对比变化，denoise 0.45 足够；再高会把脸重绘。"
+    },
+    {
+      "id": "shock",
+      "name_zh": "震惊",
+      "name_en": "Shock",
+      "summary_zh": "平静 → 瞳孔收缩 → 后仰 → 僵住。",
+      "tags": [
+        "emotion",
+        "reaction"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        5,
+        6,
+        7,
+        6
+      ],
+      "fps": 10,
+      "denoise": 0.45,
+      "actions": [
+        "calm expression, eyes half closed, mouth closed",
+        "eyes widening, pupils shrinking, mouth opening",
+        "extreme shock, eyes wide, jaw dropped, leaning back slightly",
+        "frozen, blank stare, mouth slightly open, head straight"
+      ],
+      "note_zh": "第一段只给 5 帧，让惊吓来得快；第三段给 7 帧做冲击停顿。"
+    },
+    {
+      "id": "angry",
+      "name_zh": "生气",
+      "name_en": "Angry",
+      "summary_zh": "皱眉 → 鼓脸 → 握拳 → 别过头。",
+      "tags": [
+        "emotion",
+        "angry"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        5,
+        7,
+        6,
+        6
+      ],
+      "fps": 10,
+      "denoise": 0.45,
+      "actions": [
+        "neutral expression, mouth closed, looking at viewer",
+        "frowning, eyebrows lowered, cheeks puffed",
+        "angry, gritted teeth, clenched fists, anger vein mark",
+        "turning head away, pouting, arms crossed"
+      ],
+      "note_zh": "最后不要回到笑脸，回到别过头的静息姿势也算闭环；下一轮循环从 K0 重新开始。"
+    },
+    {
+      "id": "smug",
+      "name_zh": "得意",
+      "name_en": "Smug",
+      "summary_zh": "挑眉 → 斜眼 → 抱臂 → 轻笑。",
+      "tags": [
+        "emotion",
+        "comedy"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.42,
+      "actions": [
+        "neutral expression, looking at viewer, mouth closed",
+        "one eyebrow raised, slight smirk, eyes glancing sideways",
+        "smug, eyes half closed, chin up, arms crossed",
+        "soft chuckle, eyes closed, confident smile"
+      ],
+      "note_zh": "「斜眼」只写眼睛，不要写 head turned；转头会让插值出现两个侧脸。"
+    },
+    {
+      "id": "nod",
+      "name_zh": "点头",
+      "name_en": "Nod yes",
+      "summary_zh": "微笑 → 点头 → 再点 → 定住。",
+      "tags": [
+        "gesture",
+        "agree"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.4,
+      "actions": [
+        "neutral expression, head straight, looking at viewer",
+        "smiling, head tilted down slightly",
+        "smiling wider, head nodded down, eyes closed",
+        "head back to center, soft smile, eyes open"
+      ],
+      "note_zh": "点头幅度 8–12 度就够；写 30 度会变成鞠躬，回位时脸会糊。"
+    },
+    {
+      "id": "shake",
+      "name_zh": "摇头",
+      "name_en": "Shake no",
+      "summary_zh": "叹气 → 摇头 → 再摇 → 无奈。",
+      "tags": [
+        "gesture",
+        "refuse"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        6,
+        7,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.4,
+      "actions": [
+        "neutral expression, head straight, looking at viewer",
+        "sighing, eyes half closed, head turned slightly left",
+        "shaking head, eyes closed, mouth in a flat line, head turned right",
+        "looking back at viewer, resigned smile"
+      ],
+      "note_zh": "左右各一次就够；来回三次会变成快速抖动，GIF 只有 10fps 时看不出方向。"
+    },
+    {
+      "id": "sleepy",
+      "name_zh": "困",
+      "name_en": "Sleepy",
+      "summary_zh": "打哈欠 → 点头打盹 → 惊醒。",
+      "tags": [
+        "emotion",
+        "daily"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        5,
+        7,
+        7,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.45,
+      "actions": [
+        "tired eyes, small yawn, head straight",
+        "big yawn, eyes closed, hand covering mouth",
+        "eyes half closed, head drooping, sleep bubble",
+        "suddenly awake, eyes wide, startled, head up"
+      ],
+      "note_zh": "最后一拍惊醒是笑点，必须给足对比；前面三拍整体压低。"
+    },
+    {
+      "id": "love",
+      "name_zh": "比心",
+      "name_en": "Heart hands",
+      "summary_zh": "害羞 → 抬手 → 比心 → 收。",
+      "tags": [
+        "emotion",
+        "affection"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        5,
+        7,
+        6,
+        6
+      ],
+      "fps": 10,
+      "denoise": 0.5,
+      "actions": [
+        "shy expression, looking at viewer, hands down",
+        "blushing, hands raised to chest",
+        "making a heart shape with both hands, big smile, blush",
+        "holding the heart, eyes closed, gentle smile"
+      ],
+      "note_zh": "双手比心是手部大改，denoise 给到 0.5；手指仍可能糊，必要时把画面裁到手部以上。"
+    },
+    {
+      "id": "panic",
+      "name_zh": "慌张",
+      "name_en": "Panic",
+      "summary_zh": "呆住 → 左右看 → 抱头 → 强笑。",
+      "tags": [
+        "emotion",
+        "comedy"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        5,
+        6,
+        7,
+        6
+      ],
+      "fps": 10,
+      "denoise": 0.5,
+      "actions": [
+        "blank expression, looking at viewer",
+        "eyes darting left and right, sweat drop",
+        "panicking, hands on cheeks, mouth open, trembling",
+        "forced smile, sweat drops, eye twitching"
+      ],
+      "note_zh": "「左右看」靠眼珠和汗滴，不要转整张脸；否则插值会糊成马赛克。"
+    },
+    {
+      "id": "think",
+      "name_zh": "思考",
+      "name_en": "Thinking",
+      "summary_zh": "抬头 → 摸下巴 → 灵光 → 点头。",
+      "tags": [
+        "emotion",
+        "reaction"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        7,
+        6,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.45,
+      "actions": [
+        "neutral expression, looking at viewer, hand down",
+        "looking up, eyes narrowed, hand on chin",
+        "idea, index finger raised, eyes wide, small lightbulb",
+        "nodding, confident smile, arms crossed"
+      ],
+      "note_zh": "灵光用 1–2 个高亮符号就够，别加整片背景变化。"
+    },
+    {
+      "id": "thumbsup",
+      "name_zh": "点赞",
+      "name_en": "Thumbs up",
+      "summary_zh": "抬手 → 竖拇指 → 眨眼 → 收回。",
+      "tags": [
+        "gesture",
+        "approve"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        5,
+        6,
+        7,
+        6
+      ],
+      "fps": 10,
+      "denoise": 0.5,
+      "actions": [
+        "neutral expression, hands down, looking at viewer",
+        "raising right hand, fist closed",
+        "thumbs up, wink, big smile",
+        "lowering hand, soft smile, eyes open"
+      ],
+      "note_zh": "竖拇指前先给一帧握拳，动作才有发力点。"
+    },
+    {
+      "id": "sigh",
+      "name_zh": "无语",
+      "name_en": "Sigh",
+      "summary_zh": "半睁眼 → 呼气 → 垂肩 → 死鱼眼。",
+      "tags": [
+        "emotion",
+        "deadpan"
+      ],
+      "beats": 4,
+      "frames": 24,
+      "segs": [
+        6,
+        7,
+        6,
+        5
+      ],
+      "fps": 10,
+      "denoise": 0.4,
+      "actions": [
+        "neutral expression, looking at viewer",
+        "eyes half lidded, mouth flat",
+        "exhaling, shoulders dropping, eyes closed",
+        "deadpan stare, mouth flat, eyes half lidded"
+      ],
+      "note_zh": "这一组几乎不动，靠眼神和肩线；想要更冷就用 8 帧 + 8fps。"
+    },
+    {
+      "id": "rainy-walk",
+      "name_zh": "雨天出门",
+      "name_en": "Rainy walk",
+      "summary_zh": "五拍小故事：发现下雨 → 撑伞 → 踩水 → 回头。",
+      "tags": [
+        "story",
+        "scene"
+      ],
+      "beats": 5,
+      "frames": 60,
+      "segs": [
+        12,
+        12,
+        12,
+        12,
+        12
+      ],
+      "fps": 30,
+      "denoise": 0.55,
+      "actions": [
+        "standing at the door, looking outside, neutral expression",
+        "noticing the rain, eyes widened slightly, hand on the door frame",
+        "opening a transparent umbrella, stepping out, soft smile",
+        "stepping in a puddle, water splash, laughing",
+        "looking back at viewer, waving, gentle smile"
+      ],
+      "motion": "same camera, same framing, stable rainy night lighting, neon reflections, no zoom, no camera move",
+      "lock_hint": "yellow raincoat, hood up, short black hair, rain, night city street, neon reflections",
+      "note_zh": "故事卡不要求回到 K0 的姿势；最后一段仍然插回 K0，所以 K0 要和结尾气氛接近。"
+    },
+    {
+      "id": "morning-coffee",
+      "name_zh": "早八续命",
+      "name_en": "Morning coffee",
+      "summary_zh": "五拍小故事：趴桌 → 找咖啡 → 喝 → 满血 → 起身。",
+      "tags": [
+        "story",
+        "daily"
+      ],
+      "beats": 5,
+      "frames": 60,
+      "segs": [
+        10,
+        12,
+        12,
+        13,
+        13
+      ],
+      "fps": 30,
+      "denoise": 0.55,
+      "actions": [
+        "collapsed on the desk, eyes closed, messy hair",
+        "lifting head, dead eyes, looking at the coffee cup",
+        "drinking coffee, eyes closed, steam rising",
+        "eyes wide open, refreshed, sparkling eyes",
+        "standing up, energetic pose, confident smile"
+      ],
+      "motion": "same camera, same framing, warm morning window light, no zoom, no camera move",
+      "lock_hint": "office desk, white shirt, messy short hair, coffee cup, warm morning light",
+      "note_zh": "五拍故事适合 30 或 60 帧；24 帧会被压成 5/5/5/5/4，动作会赶。"
+    },
+    {
+      "id": "diet-betrayal",
+      "name_zh": "减肥破功",
+      "name_en": "Diet betrayal",
+      "summary_zh": "六拍全身小故事：叉腰立志 → 趴桌绝望 → 摸手机 → 抱炸鸡桶 → 躺平吃 → 重新坐起。60 帧、30fps。",
+      "tags": [
+        "story",
+        "full-body",
+        "comedy",
+        "moss_zh"
+      ],
+      "prompt_mode": "moss_zh",
+      "beats": 6,
+      "frames": 60,
+      "segs": [
+        10,
+        12,
+        4,
+        12,
+        10,
+        12
+      ],
+      "fps": 30,
+      "denoise": 0.85,
+      "steps": 8,
+      "cfg": 1.0,
+      "seed": 123456789,
+      "curve": "linear",
+      "lock_full": "一间温馨的小卧室，深夜。画面右侧有一盏暖色台灯，光从右前方斜照下来，落在木地板上，左侧是一扇夜色中的窗。画面中间是一张矮木桌，桌上放着一只白碗。固定机位，平视，全身镜头，人物从头到脚完整入画，双手和双脚都留在画框里。小满始终坐在矮桌后面，膝盖收在桌子下面，双脚踩在地板上，坐的位置和朝向整段不变。小满：黑色短发，蓝色眼睛，身材微胖，穿着宽松的米色连帽卫衣和深色短裤，赤脚。房间里只有她一个人。",
+      "style": "动漫赛璐璐风格，干净黑色线稿，平涂上色，暖色调，柔和阴影，边缘柔和，画面干净没有噪点，色彩稳定，每一拍都是同一个角色、同一套衣服、同一个房间。",
+      "negative": "最差画质，低画质，普通画质，低分辨率，压缩噪点，模糊，错误的人体结构，畸形的手，多余的手指，多余的手脚，水印，文字，签名，特写，半身像，裁掉腿，人物出画，镜头移动，变焦，多个人物，拼贴，分屏，服装变化，发色变化，瞳色变化，同一姿势，静止不动，表情不变，色块，色带，照片质感，三维渲染",
+      "actions": [
+        "小满坐得很直，双手叉在腰上，抬起下巴，嘴角只上扬几毫米，面前的白碗里是绿色的沙拉。",
+        "小满的背塌下去，双肘撑在桌面上，头低到快贴住碗口，眼睛半睁，瞳孔偏低，嘴角拉成一条直线，手里的叉子垂下来。",
+        "小满的身体向右倾斜，右手撑在桌面上，左手伸到桌子旁边的地板上够手机，手机屏幕的冷光打在她脸上，眼睛睁大，嘴巴微微张开。",
+        "小满缩起肩膀，双手从桌子下面抱起一桶炸鸡，抱在胸前，眼神躲开镜头，脸颊鼓起来，额角挂着一滴汗。",
+        "小满向后靠在椅背上，一只手把炸鸡举到嘴边，眼睛闭成两道弯，嘴角上扬，脸颊上沾着碎屑。",
+        "小满重新坐直，把空桶推到桌子下面，把沙拉碗抱回胸前，嘴角勉强上扬，眼角有泪光，一只手握成拳头举在胸前。"
+      ],
+      "motion": "",
+      "note_zh": "全身构图，但下半身全程固定在矮桌后面：只有腰以上在动，插值才不出双重腿。MOSS 是 8 步 DMD 蒸馏模型，denoise 低于 0.8 几乎不动；用 0.85-0.90。提示词用 moss_zh 中文散文，motion 留空——带「不要推镜头」这类否定句会压制本帧动作。"
+    }
+  ]
+}

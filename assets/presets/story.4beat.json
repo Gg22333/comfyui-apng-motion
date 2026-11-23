@@ -1,0 +1,24 @@
+{
+  "name": "anim24-4beat",
+  "beats": 4,
+  "segs": [
+    6,
+    7,
+    6,
+    5
+  ],
+  "fps": 10,
+  "denoise": 0.4,
+  "prefix": "APNG/final",
+  "lock": "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform",
+  "style": "anime screencap, clean lineart, flat cel shading",
+  "negative": "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views",
+  "actions": [
+    "neutral expression, mouth closed, head straight",
+    "eyes widened, eyebrows raised, head tilted 8 degrees",
+    "eyes half closed, mouth open, head tilted back 12 degrees",
+    "flat expression, eyes half lidded, mouth closed, head straight"
+  ],
+  "motion": "subtle head motion, stable lighting",
+  "curve": "linear"
+}

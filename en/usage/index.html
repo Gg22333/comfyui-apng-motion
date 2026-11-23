@@ -6,17 +6,17 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/en/usage/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/en/usage/">
       
       
         <link rel="prev" href="../install/">
       
       
-        <link rel="next" href="../motion-presets/">
+        <link rel="next" href="../workflows/">
       
       
         
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../motion-presets/" class="md-nav__link">
         
   
@@ -543,10 +570,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" checked>
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -564,8 +591,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -817,6 +844,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1239,8 +1294,8 @@ and the render falls back to photographic mode (visible as collage frames and co
 </tr>
 <tr>
 <td>24</td>
-<td>12</td>
-<td>2.0 s</td>
+<td>10</td>
+<td>2.4 s</td>
 <td>default; expression loop</td>
 <td><code>6,7,6,5</code></td>
 </tr>
@@ -1262,11 +1317,11 @@ and the render falls back to photographic mode (visible as collage frames and co
 </table>
 <p><code>--segs</code> must sum to <code>frames</code>; omit it and the frames are split evenly across beats (remainder to the
 first beats). At 24 frames the classic presets stay: 3 beats 8/8/8, 4 beats 6/7/6/5, 5 beats 5/6/5/4/4.</p>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-moss.json --story assets/story.preview.json \
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.preview.json \
   --frames 60 --segs 15,15,15,15 --fps 30 --out my-60f.json
 </code></pre>
 <h2 id="generate-a-workflow">Generate a workflow<a class="headerlink" href="#generate-a-workflow" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json --out my.json
 </code></pre>
 <table>
 <thead>
@@ -1281,27 +1336,27 @@ first beats). At 24 frames the classic presets stay: 3 beats 8/8/8, 4 beats 6/7/
 <tr>
 <td>3</td>
 <td>8/8/8</td>
-<td>66</td>
-<td>68</td>
+<td>67</td>
+<td>69</td>
 </tr>
 <tr>
 <td>4</td>
 <td>6/7/6/5</td>
-<td>69</td>
-<td>71</td>
+<td>70</td>
+<td>72</td>
 </tr>
 <tr>
 <td>5</td>
 <td>5/6/5/4/4</td>
-<td>72</td>
-<td>74</td>
+<td>73</td>
+<td>75</td>
 </tr>
 </tbody>
 </table>
 <p>The node count grew with the global-motion layer: one <code>ConditioningCombine</code> per keyframe,
 plus one shared <code>CLIPTextEncode</code> and one <code>Note</code>.</p>
 <p>Straight from the command line:</p>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json   --beats 4 --segs 6,7,6,5   --lock &quot;masterpiece, 1girl, silver hair&quot; --style &quot;anime&quot;   --actions &quot;neutral|notice|react|settle&quot; --out my.json
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-sdxl.json   --beats 4 --segs 6,7,6,5   --lock &quot;masterpiece, 1girl, silver hair&quot; --style &quot;anime&quot;   --actions &quot;neutral|notice|react|settle&quot; --out my.json
 </code></pre>
 <p><code>--seed-mode same</code> (default) pins every keyframe to the same seed. <code>offset</code> adds +1 per keyframe and reintroduces flicker.</p>
 <h2 id="tunable-parameters">Tunable parameters<a class="headerlink" href="#tunable-parameters" title="Permanent link">&para;</a></h2>
@@ -1340,6 +1395,16 @@ plus one shared <code>CLIPTextEncode</code> and one <code>Note</code>.</p>
 <td>same value in all three; <code>fps x frames</code> = duration (24 @ 12 fps = 2 s)</td>
 </tr>
 <tr>
+<td>Prompt dialect</td>
+<td><code>--prompt-mode tags|moss_zh</code> / story-card <code>prompt_mode</code></td>
+<td><code>tags</code> = English comma tags; <code>moss_zh</code> = Chinese prose</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>latent width/height or <code>--size 640</code></td>
+<td>Moss 512 or 640; SDXL 512–1024</td>
+</tr>
+<tr>
 <td>Naming</td>
 <td><code>filename_prefix</code></td>
 <td><code>apng/</code>, <code>webp/</code>, <code>gif/</code></td>
@@ -1352,7 +1417,7 @@ plus one shared <code>CLIPTextEncode</code> and one <code>Note</code>.</p>
 </tbody>
 </table>
 <p>From the CLI:</p>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json \
   --motion &quot;slow head tilt, stable lighting&quot; \
   --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
   --curve linear --out my.json

@@ -6,17 +6,17 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/usage/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/usage/">
       
       
         <link rel="prev" href="../install/">
       
       
-        <link rel="next" href="../motion-presets/">
+        <link rel="next" href="../workflows/">
       
       
         
@@ -480,6 +480,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../motion-presets/" class="md-nav__link">
         
   
@@ -704,10 +731,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -725,8 +752,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -807,6 +834,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -1203,10 +1258,35 @@
   ]
 }
 </code></pre>
-<p>编译规则：<code>关键帧_i = lock + actions[i] + style</code>，字段顺序固定，每帧只改动作。</p>
-<p>注意 <code>style</code> 在最后是有实测依据的：Moss 的 LLM 文本编码器对末尾 token 权重最高，
-<code>anime screencap, clean lineart, flat cel shading</code> 写在中段会被动作词挤掉，出图会掉进写实照相模式
-（表现为拼贴照、色块闪）。</p>
+<p>编译规则取决于 <code>prompt_mode</code>：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>编译结果</th>
+<th>用在</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tags</code>（默认）</td>
+<td><code>lock, actions[i], style</code> 英文逗号拼接</td>
+<td>SDXL / 传统 CLIP</td>
+</tr>
+<tr>
+<td><code>moss_zh</code></td>
+<td><code>lock。\n action。\n style。</code> 中文散文，换行分段</td>
+<td>MOSS / Qwen-VL</td>
+</tr>
+</tbody>
+</table>
+<p><code>tags</code> 模式下 <code>style</code> 必须放最后：CLIP 对末尾 token 权重最高，画风写在中段会被动作词挤掉，
+出图会掉进写实照相模式（表现为拼贴照、色块闪）。</p>
+<p><code>moss_zh</code> 模式下三段都写中文，每段以「。」结尾；不要混英文标签，也不要堆 <code>masterpiece</code>。</p>
+<p><code>assets/story.diet.json</code> 是完整范例：</p>
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-moss.json \
+  --story assets/story.diet.json --size 640 --out diet60.json
+</code></pre>
 <h2 id="_3">帧数怎么选<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>帧数是参数，不是另一套工作流。<code>--frames</code>（或剧情卡的 <code>"frames"</code>）会把
 <code>LatentInterpolate</code> / <code>VAEDecode</code> / <code>ImageBatchMulti</code> 三件套自动扩缩到 N 个。</p>
@@ -1237,8 +1317,8 @@
 </tr>
 <tr>
 <td>24</td>
-<td>12</td>
-<td>2.0 s</td>
+<td>10</td>
+<td>2.4 s</td>
 <td>默认；表情循环</td>
 <td><code>6,7,6,5</code></td>
 </tr>
@@ -1260,11 +1340,11 @@
 </table>
 <p><code>--segs</code> 之和必须等于 <code>frames</code>；不给 <code>--segs</code> 就按拍数平均分（余数给前几拍）。24 帧时保留旧预设
 <code>3 拍 8/8/8</code>、<code>4 拍 6/7/6/5</code>、<code>5 拍 5/6/5/4/4</code>，其余帧数一律平均分。</p>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-moss.json --story assets/story.preview.json \
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-moss.json --story assets/story.preview.json \
   --frames 60 --segs 15,15,15,15 --fps 30 --out my-60f.json
 </code></pre>
 <h2 id="_4">生成工作流<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json --out my.json
 </code></pre>
 <table>
 <thead>
@@ -1279,29 +1359,29 @@
 <tr>
 <td>3</td>
 <td>8/8/8</td>
-<td>66</td>
-<td>68</td>
+<td>67</td>
+<td>69</td>
 </tr>
 <tr>
 <td>4</td>
 <td>6/7/6/5</td>
-<td>69</td>
-<td>71</td>
+<td>70</td>
+<td>72</td>
 </tr>
 <tr>
 <td>5</td>
 <td>5/6/5/4/4</td>
-<td>72</td>
-<td>74</td>
+<td>73</td>
+<td>75</td>
 </tr>
 </tbody>
 </table>
 <p>节点数比早期版本多，是因为多了全局动作层：每个关键帧一个 <code>ConditioningCombine</code>，
-加一个共享的 <code>CLIPTextEncode</code> 和一个 <code>Note</code>。全局动作<strong>留空时不建合并节点</strong>（空提示参与
+加一个共享的 <code>CLIPTextEncode</code> 和两个 <code>Note</code>（参数清单 + 提示词写法）。全局动作<strong>留空时不建合并节点</strong>（空提示参与
 <code>ConditioningCombine</code> 会稀释本帧提示，小模型直接掉画质），填了动作则每多一拍再加 1 个。
 帧数只改插值 / 解码 / 合批三件的数量，不改拍数。</p>
 <p>命令行直接给参数（不写 JSON）：</p>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json \
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
   --beats 4 --segs 6,7,6,5 \
   --lock &quot;masterpiece, 1girl, silver hair&quot; --style &quot;anime&quot; \
   --actions &quot;neutral|notice|react|settle&quot; --out my.json
@@ -1339,7 +1419,17 @@
 <tr>
 <td>速度</td>
 <td>三个保存节点的 <code>fps</code></td>
-<td>必须改成同一个值；<code>fps × 帧数</code> = 时长（24 帧 @12fps = 2 秒）</td>
+<td>必须改成同一个值；<code>fps × 帧数</code> = 时长（24 帧 @10fps = 2.4 秒，60 帧 @30fps = 2 秒）</td>
+</tr>
+<tr>
+<td>提示词方言</td>
+<td><code>--prompt-mode tags|moss_zh</code> / 剧情卡 <code>prompt_mode</code></td>
+<td><code>tags</code> = 英文标签；<code>moss_zh</code> = 中文散文</td>
+</tr>
+<tr>
+<td>尺寸</td>
+<td>latent 宽高 / <code>--size 640</code></td>
+<td>Moss 512 或 640；SDXL 512–1024</td>
 </tr>
 <tr>
 <td>命名</td>
@@ -1354,7 +1444,7 @@
 </tbody>
 </table>
 <p>命令行也能一次改：</p>
-<pre><code class="language-bash">python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+<pre><code class="language-bash">python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story my-story.json \
   --motion &quot;slow head tilt, stable lighting&quot; \
   --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
   --curve linear --out my.json

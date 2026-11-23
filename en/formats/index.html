@@ -6,11 +6,11 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Coherent 8–60 frame APNG/WebP/GIF for ComfyUI">
+        <meta name="description" content="Coherent 8/24/30/60-frame APNG, WebP and GIF from keyframes in ComfyUI">
       
       
       
-        <link rel="canonical" href="https://Gg22333.github.io/comfyui-apng-motion/en/formats/">
+        <link rel="canonical" href="https://gg22333.github.io/comfyui-apng-motion/en/formats/">
       
       
         <link rel="prev" href="../synthesis-comparison/">
@@ -317,6 +317,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工作流
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../motion-presets/" class="md-nav__link">
         
   
@@ -543,10 +570,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" checked>
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
             
   
   
@@ -564,8 +591,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_13">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -646,6 +673,34 @@
     
   
     Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
   
 
     
@@ -1518,22 +1573,22 @@ Measured here (512², straight from ComfyUI):</p>
 <td>New GIF (global palette + <code>dither=none</code>)</td>
 <td>384x384</td>
 <td>60</td>
-<td>1.53 MB</td>
-<td>0.72</td>
+<td>2.13 MB</td>
+<td>1.94</td>
 </tr>
 <tr>
 <td>New WebP (quality 100, keeps all 60 frames)</td>
 <td>384x384</td>
 <td>60</td>
-<td>1.78 MB</td>
-<td>0.78</td>
+<td>1.46 MB</td>
+<td>1.82</td>
 </tr>
 </tbody>
 </table>
 <p>The current preview is 60 frames / 30 fps / Moss-DiT, recipe in <code>assets/story.preview.json</code>.</p>
 <p>WebP has a frame-count trap: libwebp's animation encoder merges adjacent frames that are nearly identical after compression.
 At quality 90, 60 frames become 58 (same duration, wrong metadata); quality 100 keeps all 60, at the cost of
-growing from ~0.6 MB to 1.8 MB. <code>make_preview.py</code> defaults to 100 and verifies the frame count after saving,
+growing from ~0.6 MB to 1.5 MB. <code>make_preview.py</code> defaults to 100 and verifies the frame count after saving,
 falling back to lossless if needed.</p>
 <p>GIF has 256 colours. VHS runs <code>palettegen</code> + <code>paletteuse</code> per frame with <code>sierra2_4a</code> dithering:
 every frame gets its own palette and its own dither grain. On playback that reads as <strong>blocks
