@@ -91,6 +91,9 @@ The eleven-beat *Diet Betrayal* uses `5,5,4,7,6,7,5,6,5,5,5`: reaching for the p
 lifting the chicken bucket (K5→K6) get 7 frames each; shoulder/head beats get 4–5; the final beat uses 5
 frames to interpolate back to K0.
 
+**To slow the whole film down**, keep the frame count and drop fps on all three save nodes from 30 to 24
+(2.5 s) or 20 (3 s). The in-between count and per-frame step stay the same; only playback speed changes.
+
 ```bash
 python scripts/check_anim.py output/apng/anim60_00001_.png \
     --segs 5,5,4,7,6,7,5,6,5,5,5 --fps 30
