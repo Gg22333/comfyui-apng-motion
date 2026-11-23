@@ -27,6 +27,7 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 - [Install](install.md)
 - [Usage](usage.md)
 - [Output layout](output.md)
+- [Approach comparison: APNG / GIF / Live2D / video](synthesis-comparison.md)
 - [APNG, GIF and video-to-GIF](formats.md)
 - [Architecture](architecture.md)
 - [Troubleshooting](troubleshooting.md)

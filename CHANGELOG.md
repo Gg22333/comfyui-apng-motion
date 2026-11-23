@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.2.0 — 2026-11-23
+
+- 双环境统一：xl 与 Dit 的 3 拍模板、4 拍模板、正在使用的工作流全部改成关键帧同 seed；`test_shipped_assets_share_one_seed` 防止回退。
+- 新增 `docs/synthesis-comparison.md` / `docs/en/synthesis-comparison.md`：APNG 定义与 GIF 差异、和 Live2D / Spine 的定位区别、与逐帧 AI / 视频生成 / 序列帧 / Lottie 的对比、采样次数与显存账。
+- README 增加「Why it is cheap / 为什么省算力」：3 拍 60 次、4 拍 80 次采样，对比逐帧 480 次。
+- mkdocs 导航、docs 索引、formats 交叉链接补齐。
+
 ## 1.1.2 — 2026-11-23
 
 - 预览图重出：`story.preview.json` 改为上半身四拍（中性 → 惊讶 → 大笑 → 死鱼眼），关键帧同 seed、denoise 0.55；`docs/assets/preview.gif` 换成新片（24 帧，相邻帧 diff avg 2.49，颜色漂移 1.37）。

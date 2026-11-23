@@ -19,6 +19,7 @@ nav:
   - 安装: install.md
   - 用法: usage.md
   - 成品落盘: output.md
+  - 方案对比: synthesis-comparison.md
   - 格式对比: formats.md
   - 架构: architecture.md
   - 排错: troubleshooting.md
@@ -29,6 +30,7 @@ nav:
       - Install: en/install.md
       - Usage: en/usage.md
       - Output layout: en/output.md
+      - Approach comparison: en/synthesis-comparison.md
       - Formats: en/formats.md
       - Architecture: en/architecture.md
       - Troubleshooting: en/troubleshooting.md

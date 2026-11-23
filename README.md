@@ -18,6 +18,7 @@ keyframes in latent space — no frame-by-frame scripts, no per-frame image dump
 
 - [At a glance](#at-a-glance)
 - [Why not `batch_size`](#why-not-batch_size)
+- [Why it is cheap](#why-it-is-cheap)
 - [Quick start](#quick-start)
 - [Where files land](#where-files-land)
 - [Requirements](#requirements)
@@ -58,6 +59,21 @@ first frame (denoise 1.0, fixed seed)
    ├─ SaveAnimatedWEBP
    └─ VHS_VideoCombine (GIF)
 ```
+
+## Why it is cheap
+
+A 24-frame run costs **K sampling passes, not 24**:
+
+| Route | Sampling passes (steps=20) | Versus 24-frame frame-by-frame |
+| --- | --- | --- |
+| 3 beats | 3 × 20 = 60 | 87.5% fewer |
+| 4 beats | 4 × 20 = 80 | 83.3% fewer |
+| 5 beats | 5 × 20 = 100 | 79.2% fewer |
+| Frame-by-frame | 24 × 20 = 480 | baseline |
+
+Decoding is still 24 passes, but interpolation is just 24 linear blends on `64×64×4` latents — no model calls, tens of MB of buffers, not gigabytes. That is the trade: no real motion trajectory, but a sticker that plays anywhere for a fraction of the sampling cost.
+
+Full comparison with Live2D / Spine, video generation, sprite sheets and Lottie: [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md).
 
 ## Quick start
 
@@ -137,6 +153,7 @@ are in [docs/formats.md](docs/formats.md) and [SKILL.md](SKILL.md).
 | Install | [docs/en/install.md](docs/en/install.md) | [docs/install.md](docs/install.md) |
 | Usage | [docs/en/usage.md](docs/en/usage.md) | [docs/usage.md](docs/usage.md) |
 | Output layout | [docs/en/output.md](docs/en/output.md) | [docs/output.md](docs/output.md) |
+| Approach comparison | [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md) | [docs/synthesis-comparison.md](docs/synthesis-comparison.md) |
 | APNG vs GIF vs video | [docs/en/formats.md](docs/en/formats.md) | [docs/formats.md](docs/formats.md) |
 | Architecture | [docs/en/architecture.md](docs/en/architecture.md) | [docs/architecture.md](docs/architecture.md) |
 | Troubleshooting | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) | [docs/troubleshooting.md](docs/troubleshooting.md) |

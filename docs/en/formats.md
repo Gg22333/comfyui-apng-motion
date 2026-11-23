@@ -133,6 +133,9 @@ Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is no
 
 ---
 
+> For how this route compares with Live2D, frame-by-frame AI and video generation, including the
+> compute bill, see [Animation approaches compared](synthesis-comparison.md).
+
 ## 5 · Which format to ship
 
 | Scenario | Use | Why |

@@ -18,6 +18,7 @@
 
 - [一眼看懂](#一眼看懂)
 - [为什么不用 batch_size](#为什么不用-batch_size)
+- [为什么省算力](#为什么省算力)
 - [快速开始](#快速开始)
 - [成品落在哪](#成品落在哪)
 - [依赖](#依赖)
@@ -57,6 +58,21 @@
    ├─ SaveAnimatedWEBP
    └─ VHS_VideoCombine（GIF）
 ```
+
+## 为什么省算力
+
+24 帧一次只花 **K 次采样，不是 24 次**：
+
+| 路线 | 采样次数（steps=20） | 相对 24 帧逐帧 |
+| --- | --- | --- |
+| 3 拍 | 3 × 20 = 60 | 少 87.5% |
+| 4 拍 | 4 × 20 = 80 | 少 83.3% |
+| 5 拍 | 5 × 20 = 100 | 少 79.2% |
+| 逐帧 | 24 × 20 = 480 | 基准 |
+
+解码仍然是 24 次，但插值只是 24 次 `64×64×4` latent 线性混合，不调用模型，占用是几十 MB 级缓冲而不是几 GB。代价是没有真实运动轨迹；换来的是采样成本降到零头、成品到处能播。
+
+和 Live2D / Spine、视频生成、序列帧、Lottie 的完整对比：[docs/synthesis-comparison.md](docs/synthesis-comparison.md)。
 
 ## 快速开始
 
@@ -132,6 +148,7 @@ dist/                 打包产物（已 gitignore）
 | 安装 | [docs/install.md](docs/install.md) | [docs/en/install.md](docs/en/install.md) |
 | 用法 | [docs/usage.md](docs/usage.md) | [docs/en/usage.md](docs/en/usage.md) |
 | 成品落盘 | [docs/output.md](docs/output.md) | [docs/en/output.md](docs/en/output.md) |
+| 方案对比 | [docs/synthesis-comparison.md](docs/synthesis-comparison.md) | [docs/en/synthesis-comparison.md](docs/en/synthesis-comparison.md) |
 | 格式对比 | [docs/formats.md](docs/formats.md) | [docs/en/formats.md](docs/en/formats.md) |
 | 架构 | [docs/architecture.md](docs/architecture.md) | [docs/en/architecture.md](docs/en/architecture.md) |
 | 排错 | [docs/troubleshooting.md](docs/troubleshooting.md) | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) |

@@ -81,6 +81,17 @@ def test_shipped_assets_validate():
         assert code == 0, name + log
 
 
+def test_shipped_assets_share_one_seed():
+    """所有随包工作流的关键帧必须同 seed，两个环境一样。"""
+    names = ("workflow-sdxl.json", "workflow-moss.json",
+             "workflow-sdxl-4beat.json", "workflow-moss-4beat.json",
+             "workflow-sdxl-preview.json")
+    for name in names:
+        wf = json.loads((ROOT / "assets" / name).read_text(encoding="utf-8"))
+        seeds = {n["widgets_values"][0] for n in wf["nodes"] if n["type"] == "KSampler"}
+        assert len(seeds) == 1, (name, seeds)
+
+
 def test_rejects_bad_seg_sum(tmp_path):
     code, log = run(["--base", str(ROOT / "assets" / "workflow-sdxl.json"),
                      "--beats", "4", "--segs", "8,8,8",
