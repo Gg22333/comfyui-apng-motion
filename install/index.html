@@ -1309,6 +1309,30 @@ python<span class="w"> </span>scripts/install.py
 <p>指定位置：</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/install.py<span class="w"> </span>--dest<span class="w"> </span>/path/to/skills/comfyui-apng-motion
 </code></pre></div>
+<p><code>SKILL.md</code> 是 Agent Skills 格式（<code>name</code> + <code>description</code> frontmatter），没有 Codex 私有字段。其它客户端放进各自的 skill 目录即可：</p>
+<table>
+<thead>
+<tr>
+<th>客户端</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex</td>
+<td><code>~/.codex/skills/comfyui-apng-motion</code></td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td><code>~/.claude/skills/comfyui-apng-motion</code>（或项目内 <code>.claude/skills/</code>；未在本仓库 CI 实测）</td>
+</tr>
+<tr>
+<td>任意目录</td>
+<td><code>python scripts/install.py --dest &lt;dir&gt;/comfyui-apng-motion</code></td>
+</tr>
+</tbody>
+</table>
+<p>脚本只依赖 Python ≥3.9 + Pillow，Windows / Linux 都能跑；ComfyUI 本身按目标机器单独安装。</p>
 <p>升级：重新跑一次。旧 <code>SKILL.md</code> 自动备份成 <code>.bak-&lt;时间戳&gt;</code>。</p>
 <h2 id="2--校验安装">2 · 校验安装<a class="headerlink" href="#2--校验安装" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/install.py<span class="w"> </span>--check

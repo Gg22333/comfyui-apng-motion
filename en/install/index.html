@@ -1309,6 +1309,30 @@ python<span class="w"> </span>scripts/install.py
 <p>Custom location:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/install.py<span class="w"> </span>--dest<span class="w"> </span>/path/to/skills/comfyui-apng-motion
 </code></pre></div>
+<p><code>SKILL.md</code> uses the Agent Skills layout (<code>name</code> + <code>description</code> frontmatter) with no Codex-only fields. For other clients, point <code>--dest</code> at their skill directory:</p>
+<table>
+<thead>
+<tr>
+<th>Client</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex</td>
+<td><code>~/.codex/skills/comfyui-apng-motion</code></td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td><code>~/.claude/skills/comfyui-apng-motion</code> (or <code>.claude/skills/</code> inside a project; not exercised in this repo's CI)</td>
+</tr>
+<tr>
+<td>Anything else</td>
+<td><code>python scripts/install.py --dest &lt;dir&gt;/comfyui-apng-motion</code></td>
+</tr>
+</tbody>
+</table>
+<p>Scripts need only Python ≥3.9 + Pillow and run on Windows and Linux; ComfyUI itself is installed separately on the target machine.</p>
 <p>Upgrade: run it again. The previous <code>SKILL.md</code> is backed up as <code>.bak-&lt;timestamp&gt;</code>.</p>
 <h2 id="2--verify-the-install">2 · Verify the install<a class="headerlink" href="#2--verify-the-install" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/install.py<span class="w"> </span>--check
