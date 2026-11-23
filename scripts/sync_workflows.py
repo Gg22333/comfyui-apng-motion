@@ -49,11 +49,21 @@ def main():
     a = ap.parse_args()
 
     dest_root = a.dest_root if os.path.isabs(a.dest_root) else os.path.join(a.root, a.dest_root)
-    total, stale = 0, []
+    total, stale, extra = 0, [], []
     for src_name, dest_name in PAIRS:
         src_dir = os.path.join(a.root, src_name)
         dst_dir = os.path.join(dest_root, dest_name)
         names = collect(src_dir)
+        # 目标目录里已经不存在于源目录的旧文件：删掉，否则迁移后残留会一直被当成 drift
+        if os.path.isdir(dst_dir):
+            for old in collect(dst_dir):
+                if old not in names:
+                    extra.append(old)
+                    if not a.check:
+                        try:
+                            os.remove(os.path.join(dst_dir, old))
+                        except OSError:
+                            pass
         for n in names:
             total += 1
             src = os.path.join(src_dir, n)
@@ -69,10 +79,12 @@ def main():
                 shutil.copyfile(src, dst)
 
     if a.check:
-        if stale:
-            print("DRIFT %d/%d 个文件没同步：" % (len(stale), total))
+        if stale or extra:
+            print("DRIFT %d/%d 个文件没同步，%d 个多余：" % (len(stale), total, len(extra)))
             for s in stale:
                 print("  -", s)
+            for s in extra:
+                print("  x", s)
             print("跑 python scripts/sync_workflows.py 重新生成")
             return 1
         print("SAME  %d 个文件已同步" % total)
@@ -83,6 +95,8 @@ def main():
     except ValueError:
         where = dest_root
     print("synced %d 个文件 -> %s" % (len(stale), where))
+    if extra:
+        print("pruned %d 个过期文件" % len(extra))
     for s in stale:
         print("  +", s)
     return 0
