@@ -1,6 +1,6 @@
 {
   "name": "comfyui-apng-motion",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "schema": 1,
   "summary": "ComfyUI 连贯 APNG/WebP/GIF：8/24/30/60 帧可变、关键帧 latent 插值、fps + 每拍停留（dwell/ease）、17 组动作库、CLIP/Qwen-VL/T5 三种提示词方言、UNet 系与 DiT 系双环境（MOSS-Image/FLUX/SD3/Krea/Anima）",
   "license": "MIT",
@@ -47,7 +47,9 @@
   "targets": [
     "~/.codex/skills/comfyui-apng-motion",
     "~/.config/magpie/library/skills/comfyui-apng-motion",
-    "~/.claude/skills/comfyui-apng-motion"
+    "~/.claude/skills/comfyui-apng-motion",
+    "~/.dsh/skills/comfyui-apng-motion",
+    "~/.workbuddy/skills/comfyui-apng-motion"
   ],
   "exclude_from_package": [
     "profiles/*.json",

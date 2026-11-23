@@ -13,6 +13,8 @@ python scripts/install.py
 - `~/.codex/skills/comfyui-apng-motion`
 - `~/.config/magpie/library/skills/comfyui-apng-motion`（父目录存在时）
 - `~/.claude/skills/comfyui-apng-motion`（`~/.claude/skills` 存在时）
+- `~/.dsh/skills/comfyui-apng-motion`（`~/.dsh/skills` 存在时，DSH / DeepSeek harness）
+- `~/.workbuddy/skills/comfyui-apng-motion`（`~/.workbuddy/skills` 存在时）
 
 指定位置：
 
@@ -26,6 +28,8 @@ python scripts/install.py --dest /path/to/skills/comfyui-apng-motion
 | --- | --- |
 | Codex | `~/.codex/skills/comfyui-apng-motion` |
 | Claude Code | `~/.claude/skills/comfyui-apng-motion`（bootstrap 自动装；或项目内 `.claude/skills/`；未在本仓库 CI 实测） |
+| DSH（DeepSeek harness） | `~/.dsh/skills/comfyui-apng-motion`（bootstrap 自动装） |
+| WorkBuddy | `~/.workbuddy/skills/comfyui-apng-motion`（用户级 skills 目录；bootstrap 自动装） |
 | 任意目录 | `python scripts/install.py --dest <dir>/comfyui-apng-motion` |
 
 脚本只依赖 Python ≥3.9 + Pillow，Windows / Linux 都能跑；ComfyUI 本身按目标机器单独安装。

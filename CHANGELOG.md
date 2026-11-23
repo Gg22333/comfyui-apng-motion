@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.3.7 — 2026-11-24
+
+- **默认目标再补两家**：`skill.json` 的 `targets` 增加 `~/.dsh/skills/comfyui-apng-motion`
+  （DSH / DeepSeek harness）与 `~/.workbuddy/skills/comfyui-apng-motion`（WorkBuddy 用户级 skills 目录）。
+  父目录存在才装，不存在一律跳过，行为与 Codex / Claude Code / magpie 一致。
+- **文档**：中英 `docs/install.md` 的目标清单与客户端对照表同步补 DSH、WorkBuddy 两行。
+- **版本号**：1.3.6 → 1.3.7。
+
 ## 1.3.6 — 2026-11-24
 
 - **默认目标补 Claude Code**：`skill.json` 的 `targets` 增加 `~/.claude/skills/comfyui-apng-motion`，
