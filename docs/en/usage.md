@@ -33,9 +33,12 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-stor
 
 | Beats | Segment split | Node count (xl) |
 | --- | --- | --- |
-| 3 | 8/8/8 | 61 |
-| 4 | 6/7/6/5 | 63 |
-| 5 | 5/6/5/4/4 | 65 |
+| 3 | 8/8/8 | 66 | 68 |
+| 4 | 6/7/6/5 | 69 | 71 |
+| 5 | 5/6/5/4/4 | 72 | 74 |
+
+The node count grew with the global-motion layer: one `ConditioningCombine` per keyframe,
+plus one shared `CLIPTextEncode` and one `Note`.
 
 Straight from the command line:
 
@@ -44,6 +47,49 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json   --beats 4 --s
 ```
 
 `--seed-mode same` (default) pins every keyframe to the same seed. `offset` adds +1 per keyframe and reintroduces flicker.
+
+## Tunable parameters
+
+| Scope | Node | What it controls |
+| --- | --- | --- |
+| Whole clip | `CLIPTextEncode` "global motion" | action, camera, lighting, style; one edit affects every keyframe |
+| Per keyframe | `CLIPTextEncode` "K0 / K1 / ..." | expression, pose, gaze |
+| Per keyframe sampling | each `KSampler` | seed, steps, cfg, sampler, scheduler, denoise |
+| Pacing | 24 x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
+| Speed | three save nodes `fps` | same value in all three (10 fps x 24 = 2.4 s) |
+| Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` |
+| Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | size and playback |
+
+From the CLI:
+
+```bash
+python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+  --motion "slow head tilt, stable lighting" \
+  --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
+  --curve linear --out my.json
+```
+
+### Curve choice
+
+| Value | Behaviour | When |
+| --- | --- | --- |
+| `linear` (default) | constant per-frame step | least visible stepping; best for stickers |
+| `ease` | slow-fast-slow | when you want anticipation and follow-through |
+| `snap` | nearly frozen then a rush | legacy behaviour, comparison only |
+
+### Switching models
+
+The contract is loader-agnostic:
+
+| Family | Loader nodes | Keyframe denoise |
+| --- | --- | --- |
+| SD 1.5 | `CheckpointLoaderSimple` | 0.45-0.55 |
+| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35-0.45 |
+| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45-0.55 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.50-0.55 |
+
+Denoise values are field experience. On SDXL, above ~0.42 the keyframe redraw starts changing
+clothes and background, and latent interpolation turns that into colour blotches.
 
 ## Validate
 

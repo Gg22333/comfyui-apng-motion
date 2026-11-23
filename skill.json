@@ -1,6 +1,6 @@
 {
   "name": "comfyui-apng-motion",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "schema": 1,
   "summary": "ComfyUI 24 帧连贯 APNG/WebP/GIF：三关键帧 latent 插值、剧情卡、3–5 拍、双环境可移植",
   "license": "MIT",

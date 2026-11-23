@@ -2,7 +2,11 @@
 
 A ComfyUI skill and toolkit for **24-frame, coherent APNG / WebP / GIF** animations.
 
-![preview](../assets/preview.gif)
+![preview](../assets/preview.webp)
+
+> The primary preview is WebP (true colour, about 1/5 the size of GIF); `preview.gif` remains for
+> chat apps. The GIF is re-encoded with one global palette and dithering off, so 256-colour
+> quantisation no longer reads as flicker. See [formats](formats.md#46-why-the-web-preview-is-webp).
 
 ## What it fixes
 

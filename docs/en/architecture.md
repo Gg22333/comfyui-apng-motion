@@ -7,9 +7,14 @@ EmptyLatentImage(512,512,1)
         │
    KSampler K0   denoise 1.0, seed 123456789
         │  LATENT ─────────────────────────┐
-        ├──────────────► CLIPTextEncode K1 ─► KSampler K1  denoise 0.4, same seed
-        ├──────────────► CLIPTextEncode K2 ─► KSampler K2  denoise 0.4, same seed
-        └──────────────► CLIPTextEncode K3 ─► KSampler K3  denoise 0.4, same seed (4 beats)
+        ├──────────────► CLIPTextEncode K1 ─┐
+        ├──────────────► CLIPTextEncode K2 ─┤
+        ├──────────────► CLIPTextEncode K3 ─┤
+        │                                   │
+   CLIPTextEncode "global motion" ──► ConditioningCombine (one per keyframe)
+                                          │
+                     KSampler K1/K2/K3 take the merged conditioning
+                     denoise 0.35-0.4, same seed and same first latent
                                           │
         24 × LatentInterpolate (one ratio per frame; unique within a latent pair)
                                           │
@@ -24,6 +29,7 @@ EmptyLatentImage(512,512,1)
 Hard constraints:
 
 1. **Every keyframe's `latent_image` points at K0's LATENT**, never chained from the previous keyframe, or colour drifts cumulatively.
+   All KSamplers also share one seed: different seeds bring different noise paths, which interpolation turns into blotches.
 2. **Ratios within one latent pair are unique.** Different segments may reuse a value because the pair of images differs; only a collision inside one segment makes Pillow merge frames.
 3. **All three outputs read the same batch**, otherwise frame order diverges.
 
@@ -38,18 +44,22 @@ Hard constraints:
 | `check_anim.py` | artifact file | frames/duration/loop/diff/colour drift |
 | `check_output.py` | output tree | stray files, incomplete trios, archive suggestions |
 | `make_curve.py` | segment counts | 24 ratios |
+| `make_preview.py` | finished APNG | global-palette GIF + WebP web preview |
 | `package.py` | repository tree | deterministic zip + SHA256 |
 
 ## Curve
 
-Each segment runs from "hugging the previous keyframe" to "hugging the next":
+Default `linear`: every segment walks from 1.0 down to 0.0 with a constant per-frame step.
 
 ```
-segment 1: 1.0 → 0.05   segment 2: 0.94 → 0.04   segment 3: 0.92 → 0.03   segment 4: 0.90 → 0.01
+segment 1: 1.0 0.857 0.714 0.571 0.429 0.286 0.143 0.0
+segment 2: 0.996 0.861 ... 0.004      (almost flush with the previous segment)
+segment 3: 0.992 0.853 ... 0.008
 ```
 
-Adjacent segments end and start close together, producing a 1–2 frame pause at each keyframe.
-Three-beat cards keep the historical defaults (`1.0/0.92/0.88` → `0.08/0.0/0.01`).
+`ease` uses smootherstep: slow at both ends, fast in the middle, with a per-frame peak about
+1.9x the linear version. `snap` is the legacy power curve: nearly frozen at the start, a rush at
+the end, easily read as a jump. Segments keep a 0.004 gap so Pillow never merges identical frames.
 
 ## UI to API
 

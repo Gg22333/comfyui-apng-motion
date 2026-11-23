@@ -1,7 +1,12 @@
 {
   "name": "anim24-4beat",
   "beats": 4,
-  "segs": [6, 7, 6, 5],
+  "segs": [
+    6,
+    7,
+    6,
+    5
+  ],
   "fps": 10,
   "denoise": 0.4,
   "prefix": "APNG/final",
@@ -13,5 +18,7 @@
     "eyes widened, eyebrows raised, head tilted 8 degrees",
     "eyes half closed, mouth open, head tilted back 12 degrees",
     "flat expression, eyes half lidded, mouth closed, head straight"
-  ]
+  ],
+  "motion": "subtle head motion, stable lighting",
+  "curve": "linear"
 }

@@ -10,13 +10,15 @@
 Make **24-frame, coherent APNG / WebP / GIF** animations in ComfyUI by interpolating three to five
 keyframes in latent space — no frame-by-frame scripts, no per-frame image dumps, one queue → three files.
 
-![preview](docs/assets/preview.gif)
+![preview](docs/assets/preview.webp)
 
 ---
 
 ## Contents
 
 - [At a glance](#at-a-glance)
+- [Model support](#model-support)
+- [Tunable parameters](#tunable-parameters)
 - [Why not `batch_size`](#why-not-batch_size)
 - [Why it is cheap](#why-it-is-cheap)
 - [Quick start](#quick-start)
@@ -42,6 +44,41 @@ keyframes in latent space — no frame-by-frame scripts, no per-frame image dump
 | **Models** | any: SDXL checkpoint or Moss/DiT stack (loader-agnostic) |
 | **Scripts** | pure stdlib + Pillow, no GPU needed for tooling |
 | **Runs on** | Windows / macOS / Linux; paths come from `profiles/*.json` |
+
+## Model support
+
+The workflow contract is model-agnostic: **one `denoise=1.0` KSampler, 2-4 keyframe KSamplers,
+24 `LatentInterpolate`, 24 `VAEDecode`, `ImageBatchMulti(24)`, three savers**. Swapping the loader is
+the only structural change.
+
+| Family | Loader nodes | Keyframe denoise | Notes |
+| --- | --- | --- | --- |
+| SD 1.5 | `CheckpointLoaderSimple` | 0.45-0.55 | 512x512 native |
+| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35-0.45 | 1024x1024 native; 512 also fine |
+| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45-0.55 | add `FluxGuidance` before the sampler |
+| Moss / DiT | `UNETLoader` + `CLIPLoader` (`type=moss_image`) + `VAELoader` | 0.50-0.55 | 8-step DMD, cfg 1.0 |
+| Any fine-tune | same as its base | start 0.35 | lower = stable, higher = expressive |
+
+Denoise ranges are field experience, not hard rules. For the same seed, **0.35 is the stability
+ceiling on SDXL**: above ~0.42 the keyframe redraw starts changing clothes and background, and latent
+interpolation mixes the two textures into colour blotches. If you need bigger expressions, raise
+denoise and accept drift, or inpaint the face region only.
+
+## Tunable parameters
+
+Everything below is editable inside the workflow, no script required.
+
+| Scope | Node | What it controls |
+| --- | --- | --- |
+| Whole clip | `CLIPTextEncode` "global motion" | action, camera, lighting, style; one edit affects every keyframe |
+| Per keyframe | `CLIPTextEncode` "K0 / K1 / ..." | expression, pose, gaze |
+| Per keyframe sampling | each `KSampler` | seed, steps, cfg, sampler, scheduler, denoise |
+| Pacing | 24 x `LatentInterpolate` ratio | easing curve; `linear` is the most even |
+| Speed | three save nodes `fps` | set the same value in all three (10 fps x 24 = 2.4 s) |
+| Naming | `filename_prefix` | `apng/`, `webp/`, `gif/` subfolders |
+| Quality | APNG `compress_level`, WebP `lossless`/`quality`, VHS `loop`/`pingpong` | file size and playback behaviour |
+
+The workflow ships with a `Note` node listing the same table, so you can find the knobs on the canvas.
 
 ## Why not `batch_size`
 

@@ -46,10 +46,14 @@ netstat -ano | findstr ":8190 :8191"
 
 ### 0.1 当前状态（2026-11-23 实测成片）
 
-| 环境 | 相邻帧差异 | 结论 |
-| --- | --- | --- |
-| Dit | 0.06 – 3.04，平均 1.43 | 已不闪，动作幅度够，保持现状 |
-| xl | 0.01 – 0.78，平均 0.38 | 不闪，但走的是"细腻"路线；嫌动作小就把 A/B 的 denoise 从 0.4 提到 0.45，不要动曲线 |
+| 版本 | 环境 | 相邻帧差异 | 颜色漂移 | 结论 |
+| --- | --- | --- | --- | --- |
+| 新（denoise 0.35 + linear + 全局动作） | xl | 0.12 – 2.35，平均 1.08 | 2.63 | 当前默认，已不闪 |
+| 旧（denoise 0.55 + 幂曲线） | xl | 0.95 – 5.42，平均 2.34 | 3.07 | 中段出现色斑，已弃用 |
+| 历史 | Dit | 0.06 – 3.04，平均 1.43 | — | 结构同步到新默认，未重测成片 |
+
+xl 的稳定上限约 **denoise 0.35**：0.42 时颜色漂移升到 8 左右，衣服和背景开始被重绘；0.45 时衣服变蓝。
+要更大表情，优先加帧数或做面部局部重绘，不要直接抬 denoise。
 
 ### 0.2 用这个 skill 的顺序
 
@@ -92,6 +96,30 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story assets/
 
 `emit_workflow.py` 认的是**结构**，不是模型名：只要 base 里有「1 个 denoise=1 的 KSampler + ≥2 个关键帧 KSampler + 24 个 LatentInterpolate + 24 个 VAEDecode + ImageBatchMulti(24) + 三个输出」，就能扩成 3–5 拍。换模型只需要把 base 里的 loader 换成你自己的（`CheckpointLoaderSimple` 或 `UNETLoader`+`CLIPLoader`+`VAELoader` 都行），其余别动。
 
+模型与 denoise 的对应（经验值，同 seed 下测出来的稳定上限）：
+
+| 模型族 | 加载器 | 关键帧 denoise |
+| --- | --- | --- |
+| SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 |
+| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 |
+| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55（前面加 `FluxGuidance`） |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.55 |
+
+### 0.5.1 工作流里能改什么
+
+生成出来的每个工作流都自带这三层，打开就能调：
+
+| 范围 | 节点 | 改什么 |
+| --- | --- | --- |
+| 全片 | `CLIPTextEncode`「全局动作指导（所有关键帧共享）」 | 动作、镜头、光照、风格；改一处，所有关键帧生效 |
+| 每帧 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线 |
+| 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
+| 节奏 | 24 个 `LatentInterpolate` 的 ratio | `linear` 最均匀，`ease` 两端慢，`snap` 旧行为 |
+| 速度 | 三个保存节点的 `fps` | 三处必须一致（10fps × 24 = 2.4 秒） |
+| 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放 |
+
+CLI 对应参数：`--motion` `--curve` `--seed` `--denoise` `--steps` `--cfg`。画布里还有一个 `Note` 节点把这张表写在旁边。
+
 跑之前想确认能不能落地，加 `--run`：
 
 ```powershell
@@ -109,9 +137,12 @@ python scripts/emit_workflow.py --validate my-4beat.json --run --profile profile
 | `emit_workflow.py` | 3 关键帧 → K 拍（3–5）；编译剧情卡提示词；重算曲线；校验连线；可选 `--run` 直接出片 | 无 |
 | `check_anim.py` | 帧数、时长、循环、相邻帧差异、重复帧、颜色漂移 | Pillow |
 | `make_curve.py` | 单独出 ratio 曲线，改节奏用 | 无 |
+| `make_preview.py` | 把成品 APNG 重编码成网页预览：全局调色板 + 关抖动 GIF、真彩 WebP | Pillow |
 | `comfy_lib.py` | 共用库：profile、HTTP、曲线、UI→API 转换 | 无 |
 
-本机实测（2026-11-23）：用 `emit_workflow.py` 把 xl 从 61 节点扩到 63 节点（4 拍），`--run` 交出 24 帧三格式成品，`check_anim` 全部 `frames=24 / loop=0 / EXIT=0`，相邻帧差异 0.83–4.04（avg 2.34），颜色漂移 1.17。
+本机实测（2026-11-23，新默认）：xl 3 拍 66 节点、4 拍 69 节点；Dit 3 拍 68 节点、4 拍 71 节点。
+`--run` 交出 24 帧三格式成品，`check_anim` 全部 `frames=24 / loop=0 / EXIT=0`；
+denoise 0.35 的预览片相邻帧差异 0.12–2.35（avg 1.08），颜色漂移 2.63。
 
 ### 0.7 依赖与分发
 
@@ -457,7 +488,7 @@ K3 收：  … , flat expression, eyes half lidded, mouth closed, head straight
 
 ### 6.0 落盘细则（归档会话里踩过的坑）
 
-- 只接三个保存节点，全部接**同一个** `ImageBatchMulti` 输出；中间不接 `SaveImage` / `PreviewImage`。xl 61 节点、Dit 63 节点就是"3 关键帧 + 24 插值 + 24 解码 + 三输出"的全部，没有隐藏的落盘节点。
+- 只接三个保存节点，全部接**同一个** `ImageBatchMulti` 输出；中间不接 `SaveImage` / `PreviewImage`。xl 66 节点、Dit 68 节点 = 3 关键帧 + 3 个条件合并 + 1 个全局动作编码 + 1 个 Note + 24 插值 + 24 解码 + 三输出，没有隐藏的落盘节点。
 - 目录分层（两环境一致）：
 
 ```
@@ -629,7 +660,8 @@ output\APNG\
 | --- | --- |
 | `assets/workflow-sdxl.json` | xl 环境工作流副本（与线上一致） |
 | `assets/workflow-moss.json` | Dit 环境工作流副本 |
-| `scripts/check_anim.py` | 帧数 / 时长 / 相邻帧差异校验 |
+| `scripts/check_anim.py` | 帧数 / 时长 / 相邻帧差异 / 颜色漂移校验 |
+| `scripts/make_preview.py` | 成品 APNG → 全局调色板 GIF + WebP 网页预览 |
 | `scripts/make_curve.py` | 生成 ratio 曲线，支持 3–6 段（剧情拍）：`--segs 6,7,6,5` 直接出 24 值 |
 | `scripts/detect_env.py` | 扫本机 ComfyUI → `profiles/*.json`（换机器第一步） |
 | `scripts/doctor.py` | profile 体检：模型、插件、节点、端口、输出目录 |

@@ -6,14 +6,22 @@
 
 | 文件 | 环境 | 拍数 | 节点数 | 模型 |
 | --- | --- | --- | --- | --- |
-| `workflow-sdxl.json` | SDXL | 3 | 61 | `CheckpointLoaderSimple` |
-| `workflow-sdxl-4beat.json` | SDXL | 4 | 63 | 同上 |
-| `workflow-moss.json` | Moss / DiT | 3 | 63 | `UNETLoader` + `CLIPLoader` + `VAELoader` |
-| `workflow-moss-4beat.json` | Moss / DiT | 4 | 65 | 同上 |
-| `workflow-sdxl-preview.json` | SDXL | 4 | 63 | 用于生成仓库预览图，上半身表情四拍 |
+| `workflow-sdxl.json` | SDXL | 3 | 66 | `CheckpointLoaderSimple` |
+| `workflow-sdxl-4beat.json` | SDXL | 4 | 69 | 同上 |
+| `workflow-moss.json` | Moss / DiT | 3 | 68 | `UNETLoader` + `CLIPLoader` + `VAELoader` |
+| `workflow-moss-4beat.json` | Moss / DiT | 4 | 71 | 同上 |
+| `workflow-sdxl-preview.json` | SDXL | 4 | 69 | 生成仓库预览图；同 seed、denoise 0.35 |
 
 四份都是同一套结构：`K 关键帧 → 24 × LatentInterpolate → 24 × VAEDecode → ImageBatchMulti(24) → 三输出`。
 4 拍版本只是多了一对 `CLIPTextEncode` + `KSampler`，24 帧按 6/7/6/5 分配。
+
+每个文件都带一层的全局动作控制：
+
+- `CLIPTextEncode`「全局动作指导（所有关键帧共享）」—— 改一处，所有关键帧生效；
+- 每个关键帧一个 `ConditioningCombine`，把全局动作和该帧提示合并；
+- 一个 `Note` 节点，把可调参数写在画布上。
+
+所以节点数比只有插值结构的版本多 `拍数 + 2`。
 
 ## 导入步骤
 

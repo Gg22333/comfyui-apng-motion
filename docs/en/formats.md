@@ -131,6 +131,38 @@ Conclusion: **GIF is usually smaller than lossless APNG, but lossless WebP is no
 - **Identical frames get merged**: when Pillow writes APNG, adjacent pixel-identical frames are dropped and their duration is added to the previous frame. GIF encoders differ, so ratios within one latent pair must be unique (equal values across different segments are safe).
 - **Loop count**: APNG `num_plays=0` and the GIF NETSCAPE2.0 `loop=0` both mean infinite, semantically identical.
 
+### 4.6 Why the web preview is WebP
+
+`docs/assets/preview.webp` is the primary preview; `preview.gif` is a compatibility copy.
+
+| File | Size | Bytes | Adjacent-frame diff (avg) |
+| --- | --- | --- | --- |
+| Old GIF (VHS direct, 512, `sierra2_4a`) | 512x512 | 3.45 MB | 2.49 |
+| New GIF (global palette + `dither=none`, 384) | 384x384 | 0.76 MB | 1.03 |
+| New WebP (quality 90, 384) | 384x384 | 0.57 MB | 1.07 |
+
+GIF has 256 colours. VHS runs `palettegen` + `paletteuse` per frame with `sierra2_4a` dithering:
+every frame gets its own palette and its own dither grain. On playback that reads as **blocks
+flickering**, independent of whether the artwork moves.
+
+`scripts/make_preview.py` fixes it by sharing one palette across all frames, disabling dither,
+and downscaling to 384 px. The per-frame quantisation error stays around 2.3/255, but the
+**error becomes consistent between frames**, so the flicker disappears.
+
+## 7 · Two sources of colour flicker
+
+Check the APNG first, then the GIF.
+
+| Source | How to recognise | Fix |
+| --- | --- | --- |
+| Generation: keyframe denoise too high | APNG adjacent diff avg > 2, patchy blotches on face/clothes | drop keyframe denoise to 0.35-0.40; same seed; same first latent |
+| Generation: uneven curve | diff series has 4-5 spikes in the middle | `--curve linear`; avoid `snap` |
+| Encoding: per-frame GIF palette | APNG clean, GIF shows blocky noise | global palette + no dither; or use WebP |
+| Loop seam | last frame to first frame diff is large | bring the last beat back to the first pose |
+
+Measured on the same content: denoise 0.55 gave APNG diff 2.34 and drift 8+; 0.35 gives
+diff 1.08 and drift 2.63. Re-encoding the GIF removes another ~0.05.
+
 ---
 
 > For how this route compares with Live2D, frame-by-frame AI and video generation, including the

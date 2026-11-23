@@ -4,7 +4,10 @@ ComfyUI 里做 **24 帧连贯 APNG / WebP / GIF** 的 skill 与工具箱。
 
 [English](en/index.md) · **简体中文**
 
-![preview](assets/preview.gif)
+![preview](assets/preview.webp)
+
+> 网页主预览用 WebP（真彩、体积约为 GIF 的 1/5）；`preview.gif` 保留给聊天工具。
+> GIF 用全局固定调色板 + 关抖动重编码，避免 256 色量化造成的色块闪动。细节见[格式对比](formats.md#46-网页预览为什么最终用-webp)。
 
 ## 它解决什么
 

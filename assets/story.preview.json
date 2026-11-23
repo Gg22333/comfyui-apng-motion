@@ -1,9 +1,14 @@
 {
   "name": "anim24-preview",
   "beats": 4,
-  "segs": [7, 6, 6, 5],
+  "segs": [
+    7,
+    6,
+    6,
+    5
+  ],
   "fps": 10,
-  "denoise": 0.55,
+  "denoise": 0.35,
   "seed_mode": "same",
   "prefix": "APNG/final",
   "lock": "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform",
@@ -14,5 +19,7 @@
     "surprised, eyes wide open, eyebrows raised, mouth open, head tilted back slightly",
     "laughing, eyes closed happily, mouth open wide, blush, head tilted back",
     "deadpan, eyes half lidded, mouth closed, looking away"
-  ]
+  ],
+  "motion": "consistent face shape, stable eye shape, stable lineart, no color shift",
+  "curve": "linear"
 }

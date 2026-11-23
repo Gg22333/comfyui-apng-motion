@@ -10,13 +10,15 @@
 在 ComfyUI 里用「3–5 个关键帧 + latent 插值」做 **24 帧连贯 APNG / WebP / GIF**。
 不靠 `batch_size` 堆帧，不逐帧落盘，一次 Queue 出三个成品文件。
 
-![预览](docs/assets/preview.gif)
+![预览](docs/assets/preview.webp)
 
 ---
 
 ## 目录
 
 - [一眼看懂](#一眼看懂)
+- [模型支持](#模型支持)
+- [可调参数](#可调参数)
 - [为什么不用 batch_size](#为什么不用-batch_size)
 - [为什么省算力](#为什么省算力)
 - [快速开始](#快速开始)
@@ -42,6 +44,40 @@
 | **模型** | 不限：SDXL checkpoint 或 Moss/DiT 三件套都可以（只认结构不认模型名） |
 | **脚本** | 纯标准库 + Pillow，工具链不需要 GPU |
 | **平台** | Windows / macOS / Linux，路径全部来自 `profiles/*.json` |
+
+## 模型支持
+
+工作流的结构契约与模型无关：**1 个 `denoise=1.0` 的 KSampler + 2–4 个关键帧 KSampler +
+24 个 `LatentInterpolate` + 24 个 `VAEDecode` + `ImageBatchMulti(24)` + 3 个保存节点**。
+换模型只换加载器，不动结构。
+
+| 模型族 | 加载器 | 关键帧 denoise | 说明 |
+| --- | --- | --- | --- |
+| SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 | 原生 512×512 |
+| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 | 原生 1024×1024，512 也能跑 |
+| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 | 采样器前加 `FluxGuidance` |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.55 | 8 步 DMD，cfg 1.0 |
+| 任意微调模型 | 跟随其基座 | 先 0.35 | 越低越稳，越高越自由 |
+
+denoise 区间是实拍经验，不是硬性规格。同 seed 下 **SDXL 的稳定上限约 0.35**：
+超过 0.42 后关键帧重绘会开始改衣服和背景，latent 插值再把两套纹理混成色斑。
+要更大表情就提 denoise 并接受漂移，或者只对面部做局部重绘。
+
+## 可调参数
+
+下面这些都能在 ComfyUI 里直接改，不需要跑脚本。
+
+| 范围 | 节点 | 控制什么 |
+| --- | --- | --- |
+| 全片 | `CLIPTextEncode`「全局动作指导」 | 动作、镜头、光照、风格；改一处，所有关键帧生效 |
+| 每帧 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线 |
+| 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
+| 节奏 | 24 个 `LatentInterpolate` 的 ratio | 缓动曲线；`linear` 最均匀 |
+| 速度 | 三个保存节点的 `fps` | 三处必须一致（10fps × 24 帧 = 2.4 秒） |
+| 命名 | `filename_prefix` | `apng/`、`webp/`、`gif/` 子目录 |
+| 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放行为 |
+
+工作流里自带一个 `Note` 节点，把这张表写在画布上，不用翻文档找旋钮。
 
 ## 为什么不用 batch_size
 

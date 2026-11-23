@@ -1,7 +1,11 @@
 {
   "name": "anim24",
   "beats": 3,
-  "segs": [8, 8, 8],
+  "segs": [
+    8,
+    8,
+    8
+  ],
   "fps": 10,
   "denoise": 0.4,
   "prefix": "APNG/final",
@@ -12,5 +16,7 @@
     "neutral expression, mouth closed, head straight",
     "big smile, eyes half closed, blush",
     "laughing, mouth open, blush"
-  ]
+  ],
+  "motion": "subtle head motion, stable lighting",
+  "curve": "linear"
 }

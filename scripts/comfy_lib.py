@@ -149,19 +149,35 @@ def wait_history(base, prompt_id, timeout=1800, poll=2.0):
     raise TimeoutError("history timeout after %ss" % timeout)
 
 
-def build_curve(segs, starts=None, ends=None, powers=None):
+def build_curve(segs, starts=None, ends=None, powers=None, curve="linear"):
+    """生成 24 帧的插值比例。
+
+    默认 linear：每段从 1.0 均匀降到 0.0，步长恒定，视觉最稳。
+    curve=ease：smootherstep，两端慢、中间快，动作更自然但中段单帧位移更大。
+    curve=snap：旧版幂曲线，前段几乎静止、末段猛冲，容易看成跳帧。
+    显式给 starts/ends/powers 时按旧公式计算，保持向后兼容。
+    """
     n = len(segs)
-    if n == 3 and starts is None and ends is None and powers is None:
-        starts, ends, powers = [1.0, 0.92, 0.88], [0.08, 0.0, 0.01], [3.0, 1.2, 2.5]
-    else:
+    raw = []
+    if starts is not None or ends is not None or powers is not None:
         starts = starts or ([1.0] + [0.94, 0.92, 0.90, 0.88, 0.86][: n - 1])
         ends = ends or ([0.05, 0.04, 0.03, 0.02, 0.02][: n - 1] + [0.01])
         powers = powers or [1.8] * n
-    raw = []
-    for cnt, s, e, p in zip(segs, starts, ends, powers):
-        for i in range(cnt):
-            t = i / (cnt - 1) if cnt > 1 else 1.0
-            raw.append(s + (e - s) * (t ** p))
+        for cnt, s, e, p in zip(segs, starts, ends, powers):
+            for i in range(cnt):
+                t = i / (cnt - 1) if cnt > 1 else 1.0
+                raw.append(s + (e - s) * (t ** p))
+    else:
+        for cnt in segs:
+            for i in range(cnt):
+                u = i / (cnt - 1) if cnt > 1 else 1.0
+                if curve == "ease":
+                    t = u * u * u * (u * (u * 6 - 15) + 10)
+                elif curve == "snap":
+                    t = u ** 1.8
+                else:
+                    t = u
+                raw.append(1.0 - t)
     used = set()
     out = []
     for r in raw:

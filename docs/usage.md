@@ -31,11 +31,14 @@
 python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json --out my.json
 ```
 
-| 拍数 | 段数分配 | 节点数（xl） |
-| --- | --- | --- |
-| 3 | 8/8/8 | 61 |
-| 4 | 6/7/6/5 | 63 |
-| 5 | 5/6/5/4/4 | 65 |
+| 拍数 | 段数分配 | 节点数（SDXL） | 节点数（Moss） |
+| --- | --- | --- | --- |
+| 3 | 8/8/8 | 66 | 68 |
+| 4 | 6/7/6/5 | 69 | 71 |
+| 5 | 5/6/5/4/4 | 72 | 74 |
+
+节点数比早期版本多，是因为多了全局动作层：每个关键帧一个 `ConditioningCombine`，
+加一个共享的 `CLIPTextEncode` 和一个 `Note`。
 
 命令行直接给参数（不写 JSON）：
 
@@ -45,6 +48,49 @@ python scripts/emit_workflow.py --base assets/workflow-sdxl.json \
   --lock "masterpiece, 1girl, silver hair" --style "anime" \
   --actions "neutral|notice|react|settle" --out my.json
 ```
+
+## 可调参数
+
+| 范围 | 节点 | 控制什么 |
+| --- | --- | --- |
+| 全片动作 | `CLIPTextEncode`「全局动作指导（所有关键帧共享）」 | 动作、镜头、光照、风格。改一处，K0..Kn 全部生效；留空即不加额外条件 |
+| 每帧提示 | `CLIPTextEncode`「K0 / K1 / … 提示」 | 表情、姿态、视线，逐帧独立 |
+| 每帧采样 | 每个 `KSampler` | seed、steps、cfg、采样器、调度器、denoise |
+| 节奏 | 24 个 `LatentInterpolate` 的 ratio | 缓动曲线。`linear` 每帧步长恒定，最稳 |
+| 速度 | 三个保存节点的 `fps` | 必须改成同一个值；10fps × 24 帧 = 2.4 秒 |
+| 命名 | `filename_prefix` | 分别落在 `apng/`、`webp/`、`gif/` |
+| 画质 | APNG `compress_level`、WebP `lossless`/`quality`、VHS `loop`/`pingpong` | 体积与播放行为 |
+
+命令行也能一次改：
+
+```bash
+python scripts/emit_workflow.py --base assets/workflow-sdxl.json --story my-story.json \
+  --motion "slow head tilt, stable lighting" \
+  --seed 777777 --denoise 0.35 --steps 24 --cfg 5.5 \
+  --curve linear --out my.json
+```
+
+### 曲线怎么选
+
+| 值 | 行为 | 什么时候用 |
+| --- | --- | --- |
+| `linear`（默认） | 每帧步长恒定 | 最不容易看出跳帧，适合表情包 |
+| `ease` | 两端慢、中间快 | 想要「起势—爆发—收住」的动作感 |
+| `snap` | 前段几乎静止、末段猛冲 | 旧版行为，只在对比时用 |
+
+### 换模型
+
+结构不变，只换加载器：
+
+| 模型族 | 加载器 | 关键帧 denoise |
+| --- | --- | --- |
+| SD 1.5 | `CheckpointLoaderSimple` | 0.45–0.55 |
+| SDXL / Illustrious / NoobAI | `CheckpointLoaderSimple` | 0.35–0.45 |
+| FLUX.1 | `UNETLoader` + `DualCLIPLoader` + `VAELoader` | 0.45–0.55 |
+| Moss / DiT | `UNETLoader` + `CLIPLoader`（`type=moss_image`）+ `VAELoader` | 0.50–0.55 |
+
+denoise 是经验值。同 seed 下 SDXL 超过 0.42 就开始改衣服和背景，插值时出现色斑；
+要更大表情用 0.45–0.5 并接受漂移，或改用面部局部重绘。
 
 ## 校验
 

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 1.2.1 — 2026-11-23
+
+- 新增全局动作层：每个工作流带一个共享的 `CLIPTextEncode`「全局动作指导」+ 每关键帧一个 `ConditioningCombine`，
+  改一处全片生效；每帧提示仍独立可调。画布内附 `Note` 参数清单。
+- 插值曲线改为段内 `linear`（每帧步长恒定），新增 `--curve linear|ease|snap`；旧的 `snap` 幂曲线保留但不再是默认。
+- `emit_workflow.py` 新增 `--motion` `--curve` `--seed` `--steps` `--cfg`；重复 emit 幂等，不会叠加合并节点。
+- 修 `--run`：`Note` / `Reroute` / `PrimitiveNode` 是纯前端节点，不再被当成服务器缺节点。
+- 预览图重出并重编码：关键帧 denoise 0.55 → 0.35，相邻帧差异 2.34 → 1.08，颜色漂移 3.07 → 2.63。
+- 新增 `scripts/make_preview.py`：全局固定调色板 + `dither=none` 重编码 GIF（相邻帧差异 2.49 → 1.03，体积 3.45 MB → 0.76 MB），
+  同时输出 WebP（0.57 MB）作为网页主预览。
+- `docs/formats.md` 增加「网页预览为什么用 WebP」和「色块闪动的两个来源」；README / usage 增加模型支持表与可调参数表。
+- GitHub topics 补 `dit` `moss` `webp` `gif` `image-generation`；Dependabot 的三个 action 升级合并进主线。
+
 ## 1.2.0 — 2026-11-23
 
 - 双环境统一：xl 与 Dit 的 3 拍模板、4 拍模板、正在使用的工作流全部改成关键帧同 seed；`test_shipped_assets_share_one_seed` 防止回退。

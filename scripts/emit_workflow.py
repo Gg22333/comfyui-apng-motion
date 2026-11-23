@@ -59,6 +59,17 @@ def input_origin(wf, node, name):
     raise KeyError("%s has no linked input %s" % (node.get("type"), name))
 
 
+def positive_encoder(wf, sampler):
+    """返回控制该 KSampler positive 的 CLIPTextEncode，自动穿透全局动作合并层。"""
+    nodes = wf["nodes"]
+    o = input_origin(wf, sampler, "positive")
+    n = node_by(nodes, o[0])
+    while n["type"] == "ConditioningCombine":
+        o = input_origin(wf, n, "conditioning_2")
+        n = node_by(nodes, o[0])
+    return n
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default="")
@@ -73,6 +84,12 @@ def main():
     ap.add_argument("--negative", default="")
     ap.add_argument("--actions", default="")
     ap.add_argument("--denoise", type=float, default=0)
+    ap.add_argument("--motion", default=None,
+                    help="全局动作指导，写进所有关键帧共享的 CLIPTextEncode")
+    ap.add_argument("--curve", choices=["linear", "ease", "snap"], default="")
+    ap.add_argument("--steps", type=int, default=0)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--cfg", type=float, default=0)
     ap.add_argument("--seed-mode", choices=["same", "offset"], default=None,
                     help="same=所有关键帧同 seed（少抖动，默认）；offset=逐帧 +1")
     ap.add_argument("--validate", default="")
@@ -124,6 +141,11 @@ def main():
     fps = a.fps or story.get("fps", 10)
     prefix = a.prefix or story.get("prefix", "")
     denoise = a.denoise or story.get("denoise", 0)
+    motion = story.get("motion", "") if a.motion is None else a.motion
+    curve = a.curve or story.get("curve", "linear")
+    steps = a.steps or int(story.get("steps", 0))
+    cfg = a.cfg or float(story.get("cfg", 0))
+    seed_base = a.seed or int(story.get("seed", 0))
     same_seed = (a.seed_mode or story.get("seed_mode", "same")) == "same"
 
     nodes = wf["nodes"]
@@ -142,7 +164,7 @@ def main():
     model_o = input_origin(wf, k0, "model")
     neg_o = input_origin(wf, k0, "negative")
     latent_o = input_origin(wf, key_samplers[0], "latent_image")
-    clip_o = input_origin(wf, node_by(nodes, input_origin(wf, k0, "positive")[0]), "clip")
+    clip_o = input_origin(wf, positive_encoder(wf, k0), "clip")
     vae_o = None
     for n in nodes:
         if n["type"] == "VAEDecode":
@@ -150,10 +172,7 @@ def main():
             break
 
     # 现有关键帧的提示词节点
-    kf_enc = []
-    for s in key_samplers:
-        eid = input_origin(wf, s, "positive")[0]
-        kf_enc.append(node_by(nodes, eid))
+    kf_enc = [positive_encoder(wf, s) for s in key_samplers]
 
     next_id = max(n["id"] for n in nodes) + 1
     max_x = max((n.get("pos") or [0, 0])[0] for n in nodes)
@@ -184,8 +203,9 @@ def main():
         s["order"] = max_order + 1
         max_order += 1
         s["pos"] = [max_x + 800, y]
-        seed = int(tmpl["widgets_values"][0]) if same_seed else int(tmpl["widgets_values"][0]) + idx
-        s["widgets_values"] = [seed, "fixed"] + list(tmpl["widgets_values"][2:-1]) + [base_dn]
+        s0 = seed_base or int(tmpl["widgets_values"][0])
+        sv = s0 if same_seed else s0 + idx
+        s["widgets_values"] = [sv, "fixed"] + list(tmpl["widgets_values"][2:-1]) + [base_dn]
         m = ledger.add(model_o[0], model_o[1], s["id"], 0, "MODEL")
         p = ledger.add(enc["id"], 0, s["id"], 1, "CONDITIONING")
         ng = ledger.add(neg_o[0], neg_o[1], s["id"], 2, "CONDITIONING")
@@ -209,7 +229,7 @@ def main():
     if len(chain) > beats:
         chain = chain[:beats]
     # 已有节点也要回写：关键帧共用首帧 latent，同 seed、同 denoise，否则帧间抖动
-    base_seed = int(k0["widgets_values"][0])
+    base_seed = seed_base or int(k0["widgets_values"][0])
     for i, s in enumerate(chain):
         w = list(s["widgets_values"])
         w[0] = base_seed if same_seed else base_seed + i
@@ -219,21 +239,115 @@ def main():
     if not actions:
         actions = [""] * beats
     # 写提示词
-    pos0 = node_by(nodes, input_origin(wf, k0, "positive")[0])
+    pos0 = positive_encoder(wf, k0)
     pos0["widgets_values"] = [compile_prompt(lock, style, actions[0])]
+    pos0["title"] = "K0 首帧提示"
     for i, enc in enumerate(kf_enc[: beats - 1], start=1):
         enc["widgets_values"] = [compile_prompt(lock, style, actions[i])]
+        enc["title"] = "K%d 提示" % i
     if negative:
         node_by(nodes, neg_o[0])["widgets_values"] = [negative]
     for i, s in enumerate(chain):
-        s["title"] = ("首帧 采样" if i == 0 else "关键帧 %d 重绘" % i)
+        act = (actions[i] if i < len(actions) else "").split(",")[0].strip()
+        s["title"] = ("K0 首帧" if i == 0 else "K%d 关键帧" % i) + (("：%s" % act) if act else "")
+        w = list(s["widgets_values"])
+        if steps:
+            w[2] = steps
+        if cfg:
+            w[3] = cfg
+        s["widgets_values"] = w
+
+    def ledger_origin(node, name):
+        for inp in node.get("inputs") or []:
+            if inp.get("name") == name and inp.get("link") is not None:
+                l = ledger.links[inp["link"]]
+                return l[1], l[2], l[0]
+        raise KeyError("%s has no linked input %s" % (node.get("type"), name))
+
+    # ---- 全局动作指导层（幂等：重复 emit 不会叠加节点）----
+    # 每个关键帧 positive = ConditioningCombine(全局动作, 该帧提示)
+    # 改一个节点全片生效；每帧提示仍然独立可调。
+    genc = None
+    for n in nodes:
+        if n["type"] == "CLIPTextEncode" and str(n.get("title") or "").startswith("全局动作指导"):
+            genc = n
+            break
+    if genc is None:
+        genc = mk_encoder("", 100)
+    genc["title"] = "全局动作指导（所有关键帧共享）"
+    genc["widgets_values"] = [motion]
+    genc["pos"] = [max_x + 420, 100]
+    for i, s in enumerate(chain):
+        origin = ledger_origin(s, "positive")
+        onode = node_by(nodes, origin[0])
+        if onode["type"] == "ConditioningCombine":
+            comb = onode
+            comb["title"] = "合并 K%d（全局动作 + 本帧）" % i
+            l1 = ledger.add(genc["id"], 0, comb["id"], 0, "CONDITIONING")
+            for inp in comb["inputs"]:
+                if inp["name"] == "conditioning_1":
+                    if inp.get("link") is not None:
+                        ledger.drop(inp["link"])
+                    inp["link"] = l1
+        else:
+            comb = {
+                "id": next_id, "type": "ConditioningCombine",
+                "pos": [max_x + 820, 600 + i * 280], "size": [315, 46],
+                "flags": {}, "order": max_order + 1, "mode": 0,
+                "inputs": [], "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING", "links": []}],
+                "properties": {"Node name for S&R": "ConditioningCombine"},
+            }
+            comb["title"] = "合并 K%d（全局动作 + 本帧）" % i
+            next_id += 1
+            max_order += 1
+            nodes.append(comb)
+            l1 = ledger.add(genc["id"], 0, comb["id"], 0, "CONDITIONING")
+            l2 = ledger.add(onode["id"], 0, comb["id"], 1, "CONDITIONING")
+            comb["inputs"] = [
+                {"name": "conditioning_1", "type": "CONDITIONING", "link": l1},
+                {"name": "conditioning_2", "type": "CONDITIONING", "link": l2},
+            ]
+            for inp in s["inputs"]:
+                if inp["name"] == "positive":
+                    if inp.get("link") is not None:
+                        ledger.drop(inp["link"])
+                    inp["link"] = ledger.add(comb["id"], 0, s["id"], 1, "CONDITIONING")
+
+    # ---- 画布内的参数清单，避免用户在节点堆里找不到入口 ----
+    note_text = (
+        "【可调参数清单】\n"
+        "全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n"
+        "  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n"
+        "每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n"
+        "采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n"
+        "  关键帧 denoise 建议 0.30-0.40；越低越稳，越高越自由但容易出现色斑。\n"
+        "节奏：24 个 LatentInterpolate 的 ratio 就是缓动曲线。线性最均匀，缓动两端慢。\n"
+        "速度：三个保存节点的 fps 必须改成同一个值。10fps × 24 帧 = 2.4 秒。\n"
+        "命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n"
+        "画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n"
+        "避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。"
+    )
+    note = None
+    for n in nodes:
+        if n["type"] == "Note" and str((n.get("widgets_values") or [""])[0]).startswith("【可调参数清单】"):
+            note = n
+            break
+    if note is None:
+        note = {"id": next_id, "type": "Note", "pos": [max_x + 420, 1080], "size": [520, 360],
+                "flags": {}, "order": max_order + 1, "mode": 0, "widgets_values": [note_text]}
+        next_id += 1
+        max_order += 1
+        nodes.append(note)
+    else:
+        note["widgets_values"] = [note_text]
+        note["pos"] = [max_x + 420, 1080]
 
     # 24 个插值
     interps = sorted([n for n in nodes if n["type"] == "LatentInterpolate"], key=lambda n: n.get("order", 0))
     if len(interps) != 24:
         print("base 里 LatentInterpolate 是 %d 个，必须是 24" % len(interps))
         return 2
-    ratios = L.build_curve(segs)
+    ratios = L.build_curve(segs, curve=curve)
     idx = 0
     for seg, cnt in enumerate(segs):
         src = chain[seg]
@@ -294,7 +408,8 @@ def main():
     probs = validate(wf)
     L.save_json(a.out, wf)
     print("written:", a.out, "nodes=%d links=%d" % (len(nodes), len(wf["links"])))
-    print("beats=%d segs=%s fps=%s denoise=%s" % (beats, segs, fps, base_dn))
+    print("beats=%d segs=%s fps=%s denoise=%s curve=%s" % (beats, segs, fps, base_dn, curve))
+    print("motion=%r" % motion)
     if probs:
         print("VALIDATE FAIL")
         for p in probs:
@@ -411,7 +526,9 @@ def run_it(wf, profile_path):
         print("--run 需要 --profile")
         return 2
     base = L.base_url(prof)
-    types = sorted({n["type"] for n in wf["nodes"]})
+    # Note / Reroute / PrimitiveNode 只活在前端，/object_info 里没有，不能算缺节点
+    front_only = {"Note", "Reroute", "PrimitiveNode", "MarkdownNote"}
+    types = sorted({n["type"] for n in wf["nodes"]} - front_only)
     info = L.get_object_info_for(base, types)
     missing = [t for t in types if t not in info]
     if missing:
