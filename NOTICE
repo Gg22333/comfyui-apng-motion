@@ -12,6 +12,15 @@ Runtime dependencies (not bundled, not relicensed):
 No GPL source code is copied into this repository. Everything in scripts/, tests/,
 workflows/, assets/ and docs/ is original work, MIT-licensed.
 
+Conceptual inspiration (concept only, no code reused):
+  ComfyUI-AstralAnimator       no license file  https://github.com/ShmuelRonen/ComfyUI-AstralAnimator
+
+The idea of driving a whole-sequence camera move (pan / zoom / rotate) from an
+easing curve over the frame index was inspired by ComfyUI-AstralAnimator. That
+project publishes no license file, so no source code, data or assets from it were
+copied, ported or adapted. APNGCameraMove is independent work built on
+torch.nn.functional.affine_grid + grid_sample, and it does not re-sample frames.
+
 Third-party names and licenses referenced above remain the property of their
 respective owners and are listed for attribution only.
 

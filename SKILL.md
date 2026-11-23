@@ -5,7 +5,7 @@ description: >
   双环境配置（UNet 系 / DiT 系）、工作流结构、任意帧数扩缩、提示词写法、17 组动作库、只存成品的输出规范、
   兼容性与排错。Use when 用户提到 ComfyUI、APNG、动图、表情包、8/24/30/60 帧、帧间闪烁、不连贯、LatentInterpolate、
   SaveAnimatedPNG、SaveAnimatedWEBP、VHS_VideoCombine、SDXL、MOSS-Image、DiT 架构、FLUX、剧情分镜、多角色、
-  表情包定义、画风锁定、瞳色漂移、换机器、移植、profile、环境探测。
+  表情包定义、画风锁定、瞳色漂移、换机器、移植、profile、环境探测、整段镜头运动、推拉、平移、旋转、缓动。
 ---
 
 # ComfyUI 连贯动图（8–60 帧）· APNG / WebP / GIF
@@ -338,6 +338,7 @@ K 个关键帧 KSampler（不变）
   → 每拍 1 个 APNGLatentInterpolateN（frames / role / curve 三个 widget）
   → N-1 个 APNGLatentConcat
   → 1 个 VAEDecode（一次解码全部帧）
+  → [可选] 1 个 APNGCameraMove（--camera：整段平移 / 缩放 / 旋转 + 缓动）
   → 3 个保存节点 + 1 个 APNGFrameStats
 ```
 
@@ -351,10 +352,21 @@ K 个关键帧 KSampler（不变）
 | 相邻帧差 | `APNGFrameStats` 打印 min/max/avg 与 identical_pairs |
 | 接缝唯一性 | `APNGFrameStats` 的 `segs` 填各拍帧数，逐拍与循环接缝判 OK/FAIL |
 | 分镜 / 故事板 | K 个关键帧 KSampler，一个关键帧一拍，结构不变 |
+| 镜头运动 | `APNGCameraMove` 的 `x`/`y`/`zoom`/`angle`/`easing`/`loop`/`border`，整段统一变换 |
 
 阈值与 `check_anim.py` 一致（拍内 `full>=2.0 && lower>=1.0`，循环 `0.3..6.0`）。
-`--validate` 会拦：frames 之和与 `segs` 不一致、role/curve 非法、解码节点不是 1 个。
+`--validate` 会拦：frames 之和与 `segs` 不一致、role/curve 非法、解码节点不是 1 个；
+加 `--camera` 时还查镜头参数取值与接线（必须 `VAEDecode → APNGCameraMove → 保存/报告`）。
 **逐帧 dwell / 拍内 ease 仍只能出片后跑 `retime.py`**，ComfyUI 保存节点只有一个全局 fps。
+
+#### 2.4.1 镜头运动节点（`--camera`）
+
+- 纯像素仿射：`affine_grid` + `grid_sample`，不重新采样、不碰采样器、无新依赖。
+- `x` 正向右、`y` 正向下、`angle` 正逆时针、`zoom>1` 推近；**都是整段总量**，不是每帧增量。
+- `easing`：`linear/sine/cubic/quint/back/elastic/bounce`；`loop=True` 首尾帧像素一致。
+- `border`：`reflection` / `border` / `zeros`。总帧数 2 且 `loop=True` 时等于不动。
+- 思路来自 [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator)，
+  该仓库无许可证文件，未复用代码。
 
 ## 3 · 保存节点参数
 

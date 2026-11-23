@@ -79,6 +79,8 @@ def positive_encoder(wf, sampler):
 DYN_INTERP = "APNGLatentInterpolateN"
 DYN_CONCAT = "APNGLatentConcat"
 DYN_STATS = "APNGFrameStats"
+DYN_CAMERA = "APNGCameraMove"
+CAM_EASINGS = ("linear", "sine", "cubic", "quint", "back", "elastic", "bounce")
 
 
 def _new_node(nid, ntype, pos, size, inputs, outputs, widgets, title, order):
@@ -90,7 +92,7 @@ def _new_node(nid, ntype, pos, size, inputs, outputs, widgets, title, order):
     }
 
 
-def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o):
+def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, camera=False):
     """静态 N 插值 + N 解码 -> 每拍一个插值节点 + 一次解码 + 帧报告。"""
     nodes = wf["nodes"]
     # 也清掉上一次 --dynamic 留下的节点，保证对动态图重复跑是幂等的
@@ -167,12 +169,22 @@ def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o):
     dec["inputs"][0]["link"] = ledger.add(acc["id"], 0, dec["id"], 0, "LATENT")
     dec["inputs"][1]["link"] = ledger.add(vae_o[0], vae_o[1], dec["id"], 1, "VAE")
 
-    stats = add(DYN_STATS, [max_x + 1140, 140], [340, 300],
+    img_src = dec
+    if camera:
+        cam = add(DYN_CAMERA, [max_x + 1140, 140], [320, 260],
+                  [{"name": "images", "type": "IMAGE", "link": None}],
+                  [0.0, 0.0, 1.0, 0.0, "sine", True, "reflection"],
+                  "镜头运动（x/y/zoom/angle；默认中立）",
+                  out_name="IMAGE", out_type="IMAGE")
+        cam["inputs"][0]["link"] = ledger.add(dec["id"], 0, cam["id"], 0, "IMAGE")
+        img_src = cam
+
+    stats = add(DYN_STATS, [max_x + 1500, 140], [340, 300],
                 [{"name": "images", "type": "IMAGE", "link": None}],
                 [fps, ",".join(str(x) for x in segs)],
                 "帧报告（帧数 / 时长 / 相邻帧差 / 接缝）",
                 out_name="STRING", out_type="STRING")
-    stats["inputs"][0]["link"] = ledger.add(dec["id"], 0, stats["id"], 0, "IMAGE")
+    stats["inputs"][0]["link"] = ledger.add(img_src["id"], 0, stats["id"], 0, "IMAGE")
 
     nid += 1
     order += 1
@@ -187,6 +199,8 @@ def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o):
             "- role 按拍序固定为 first / middle / last，删拍加拍时记得同步\n"
             "- 「帧报告」节点打印相邻帧差与循环接缝差，阈值与 check_anim.py 一致\n"
             "- 改完 frames 要同步把 Frame Stats 的 segs 改成新的逗号列表"
+            + ("\n- 镜头运动节点默认中立；x/y 是整段总位移（像素），zoom 是末帧倍率，angle 是总角度；"
+               "loop=True 时首尾回到原位" if camera else "")
         ],
     })
 
@@ -197,7 +211,7 @@ def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o):
             if inp.get("name") == "images":
                 if inp.get("link") is not None:
                     ledger.drop(inp["link"])
-                inp["link"] = ledger.add(dec["id"], 0, n["id"], 0, "IMAGE")
+                inp["link"] = ledger.add(img_src["id"], 0, n["id"], 0, "IMAGE")
     return interps
 
 
@@ -221,6 +235,8 @@ def main():
     ap.add_argument("--denoise", type=float, default=0)
     ap.add_argument("--dynamic", action="store_true",
                     help="动态帧数模式：每拍一个 APNG Latent Interpolate N + 一次解码（需要 comfyui_nodes 节点）")
+    ap.add_argument("--camera", action="store_true",
+                    help="动态模式配 --camera：解码后插入 APNG Camera Move（默认中立，图上再调）")
     ap.add_argument("--size", type=int, default=0, help="正方形边长；写 640 就是 640x640")
     ap.add_argument("--width", type=int, default=0)
     ap.add_argument("--height", type=int, default=0)
@@ -517,7 +533,7 @@ def main():
     apply_notes(nodes)
 
     if a.dynamic:
-        apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o)
+        apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, a.camera)
         print("dynamic: %d 拍 -> %d 个插值节点 + 1 次解码（帧数合计 %d）"
               % (len(segs), len(segs), sum(segs)))
     else:
@@ -873,6 +889,8 @@ def compile_prompt(lock, style, action, mode="tags"):
 
 def _validate_static(nodes, links, by_id, savers):
     probs = []
+    if any(n["type"] == DYN_CAMERA for n in nodes):
+        probs.append("%s 目前只支持 --dynamic 模式" % DYN_CAMERA)
     interps = [n for n in nodes if n["type"] == "LatentInterpolate"]
     nframes = len(interps)
     if nframes < 2:
@@ -961,15 +979,45 @@ def _validate_dynamic(nodes, links, by_id, savers):
         probs.append("动态模式应该只有 1 个 VAEDecode，当前 %d" % len(decs))
     if len(savers) != 3:
         probs.append("保存节点数量 %d != 3" % len(savers))
+    cams = [n for n in nodes if n["type"] == DYN_CAMERA]
+    if len(cams) > 1:
+        probs.append("动态模式最多 1 个 %s，当前 %d" % (DYN_CAMERA, len(cams)))
+    for cam in cams:
+        w = cam.get("widgets_values") or []
+        if len(w) < 7:
+            probs.append("镜头节点 %s widgets 不全（应为 x/y/zoom/angle/easing/loop/border）" % cam["id"])
+        else:
+            for idx in (0, 1, 2, 3):
+                try:
+                    float(w[idx])
+                except (TypeError, ValueError):
+                    probs.append("镜头节点 %s 第 %d 个参数不是数字" % (cam["id"], idx + 1))
+            if w[4] not in CAM_EASINGS:
+                probs.append("镜头节点 %s easing=%r 非法" % (cam["id"], w[4]))
+            if not isinstance(w[5], bool):
+                probs.append("镜头节点 %s loop 必须是布尔" % cam["id"])
+            if w[6] not in ("reflection", "border", "zeros"):
+                probs.append("镜头节点 %s border=%r 非法" % (cam["id"], w[6]))
+        if not any(i.get("name") == "images" and i.get("link") is not None for i in cam.get("inputs") or []):
+            probs.append("镜头节点 %s 没接 images" % cam["id"])
     if decs:
         dec_id = decs[0]["id"]
+        expected_src = cams[0]["id"] if cams else dec_id
+        if cams:
+            cam_src = None
+            for inp in cams[0].get("inputs") or []:
+                if inp.get("name") == "images" and inp.get("link") in links:
+                    cam_src = links[inp["link"]][1]
+            if cam_src != dec_id:
+                probs.append("%s 没有接在唯一的 VAEDecode 上" % DYN_CAMERA)
         for s_ in savers:
             src = None
             for inp in s_.get("inputs") or []:
                 if inp.get("name") == "images" and inp.get("link") in links:
                     src = links[inp["link"]][1]
-            if src != dec_id:
-                probs.append("%s 没有接在唯一的 VAEDecode 上" % s_["type"])
+            if src != expected_src:
+                probs.append("%s 没有接在唯一的 VAEDecode%s 上" % (
+                    s_["type"], " / 镜头节点" if cams else ""))
     stats = [n for n in nodes if n["type"] == DYN_STATS]
     if len(stats) != 1:
         probs.append("%s 数量 %d != 1" % (DYN_STATS, len(stats)))
@@ -984,6 +1032,14 @@ def _validate_dynamic(nodes, links, by_id, savers):
                 ss = None
             if ss is not None and ss != total:
                 probs.append("帧报告 segs 之和 %d 与各拍 frames 之和 %d 不一致" % (ss, total))
+        if decs:
+            expected_src = cams[0]["id"] if cams else decs[0]["id"]
+            src = None
+            for inp in stats[0].get("inputs") or []:
+                if inp.get("name") == "images" and inp.get("link") in links:
+                    src = links[inp["link"]][1]
+            if src != expected_src:
+                probs.append("帧报告没有接在最终图像源（解码/镜头节点）上")
     return probs
 
 

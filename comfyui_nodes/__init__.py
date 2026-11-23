@@ -16,7 +16,10 @@
 插值公式与 ComfyUI 原生 LatentInterpolate 完全一致（单位化方向 + 幅度线性插值），
 比例序列与 scripts/comfy_lib.py 的 build_curve 逐值相同，所以静态图和动态图出帧一致。
 """
+import math
+
 import torch
+import torch.nn.functional as F
 
 CATEGORY = "APNG Motion"
 LUM = (0.299, 0.587, 0.114)
@@ -183,14 +186,117 @@ class APNGFrameStats:
         return {"ui": {"text": [txt]}, "result": (txt,)}
 
 
+CAMERA_EASINGS = ["linear", "sine", "cubic", "quint", "back", "elastic", "bounce"]
+
+
+def _ease(name, t):
+    """0..1 的缓动。公式是公开的标准 easing，不依赖第三方库。"""
+    t = min(max(float(t), 0.0), 1.0)
+    if name == "linear":
+        return t
+    if name == "sine":
+        return 0.5 - 0.5 * math.cos(math.pi * t)
+    if name == "cubic":
+        return t * t * t
+    if name == "quint":
+        return t ** 5
+    if name == "back":
+        s = 1.70158
+        return t * t * ((s + 1.0) * t - s)
+    if name == "elastic":
+        if t in (0.0, 1.0):
+            return t
+        p = 0.3
+        return -(2.0 ** (10.0 * (t - 1.0))) * math.sin((t - 1.0 - p / 4.0) * (2.0 * math.pi) / p)
+    if name == "bounce":
+        n1, d1 = 7.5625, 2.75
+        if t < 1.0 / d1:
+            return n1 * t * t
+        if t < 2.0 / d1:
+            t -= 1.5 / d1
+            return n1 * t * t + 0.75
+        if t < 2.5 / d1:
+            t -= 2.25 / d1
+            return n1 * t * t + 0.9375
+        t -= 2.625 / d1
+        return n1 * t * t + 0.984375
+    raise ValueError("未知 easing: %s" % name)
+
+
+def camera_progress(frames, easing="sine", loop=True):
+    """整段镜头的推进量。loop=True 时 0→1→0，首尾回到原位。"""
+    n = int(frames)
+    if n <= 1:
+        return [0.0]
+    out = []
+    for i in range(n):
+        t = i / float(n - 1)
+        p = (1.0 - math.cos(2.0 * math.pi * t)) / 2.0 if loop else t
+        out.append(_ease(easing, p))
+    return out
+
+
+class APNGCameraMove:
+    """整段镜头运动：平移 / 缩放 / 旋转，纯像素变换，不重新采样。
+
+    正 x 向右、正 y 向下、正 angle 逆时针（屏幕坐标）。zoom>1 推近，<1 拉远。
+    loop=True 时使用 0→1→0 的往返路径，首尾帧回到原位，适合循环动图。
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",),
+                "x": ("FLOAT", {"default": 0.0, "min": -2048.0, "max": 2048.0, "step": 1.0}),
+                "y": ("FLOAT", {"default": 0.0, "min": -2048.0, "max": 2048.0, "step": 1.0}),
+                "zoom": ("FLOAT", {"default": 1.0, "min": 0.5, "max": 4.0, "step": 0.01}),
+                "angle": ("FLOAT", {"default": 0.0, "min": -360.0, "max": 360.0, "step": 1.0}),
+                "easing": (CAMERA_EASINGS, {"default": "sine"}),
+                "loop": ("BOOLEAN", {"default": True}),
+                "border": (["reflection", "border", "zeros"], {"default": "reflection"}),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "move"
+    CATEGORY = "APNG Motion"
+
+    def move(self, images, x, y, zoom, angle, easing, loop, border):
+        n, h, w, c = images.shape
+        if n == 0:
+            return (images,)
+        ps = camera_progress(n, easing, loop)
+        p = torch.tensor(ps, dtype=images.dtype, device=images.device).view(n, 1, 1)
+        scale = 1.0 / (1.0 + (float(zoom) - 1.0) * p)
+        rad = math.radians(float(angle)) * p
+        cos, sin = torch.cos(rad), torch.sin(rad)
+        # affine_grid 的 theta 是 output->input；平移取负号，画面才向参数方向移动。
+        tx = (-2.0 * float(x) * p) / float(w)
+        ty = (-2.0 * float(y) * p) / float(h)
+        theta = torch.zeros((n, 2, 3), dtype=images.dtype, device=images.device)
+        theta[:, 0, 0] = (scale * cos).view(-1)
+        theta[:, 0, 1] = (-scale * sin).view(-1)
+        theta[:, 0, 2] = tx.view(-1)
+        theta[:, 1, 0] = (scale * sin).view(-1)
+        theta[:, 1, 1] = (scale * cos).view(-1)
+        theta[:, 1, 2] = ty.view(-1)
+        grid = F.affine_grid(theta, (n, c, h, w), align_corners=False)
+        src = images.permute(0, 3, 1, 2)
+        out = F.grid_sample(src, grid, mode="bilinear", padding_mode=border, align_corners=False)
+        return (out.permute(0, 2, 3, 1).clamp(0.0, 1.0),)
+
+
 NODE_CLASS_MAPPINGS = {
     "APNGLatentInterpolateN": APNGLatentInterpolateN,
     "APNGLatentConcat": APNGLatentConcat,
     "APNGFrameStats": APNGFrameStats,
+    "APNGCameraMove": APNGCameraMove,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "APNGLatentInterpolateN": "APNG Latent Interpolate N",
     "APNGLatentConcat": "APNG Latent Concat",
     "APNGFrameStats": "APNG Frame Stats",
+    "APNGCameraMove": "APNG Camera Move",
 }

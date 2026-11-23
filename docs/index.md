@@ -63,7 +63,7 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story asse
 
 - [安装](install.md)
 - [用法](usage.md)（含 [帧数怎么选](usage.md)、[提示词怎么写](workflows.md#提示词写法)）
-- [工作流：五份可直接导入的 JSON](workflows.md) · [过渡帧怎么排](workflows.md#过渡帧怎么排)
+- [工作流：可直接导入的 JSON](workflows.md) · [过渡帧怎么排](workflows.md#过渡帧怎么排)
 - [动作库：17 组表情包动作](motion-presets.md)
 - [成品落盘](output.md)
 - [方案对比：APNG / GIF / Live2D / 视频](synthesis-comparison.md)

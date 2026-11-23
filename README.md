@@ -169,7 +169,14 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
     --story assets/story.example.json --dynamic --out my-dynamic.json
 ```
 
-3 beats / 24 frames becomes **26 nodes / 39 links** instead of 67. Each beat is one
+Add a whole-sequence camera move (pan / zoom / rotate, driven by an easing curve):
+
+```bash
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
+    --story assets/story.example.json --dynamic --camera --out my-dynamic-camera.json
+```
+
+3 beats / 24 frames becomes **26 nodes / 39 links** instead of 67, or 27 with `--camera`. Each beat is one
 `APNG Latent Interpolate N` with `frames`, `role`, `curve` widgets; one `VAEDecode` decodes the whole
 batch; `APNG Frame Stats` prints frames, `frames/fps` duration, adjacent-frame diff (min/max/avg and
 identical pairs), per-beat seam checks and the loop seam before anything is written to disk — same
@@ -182,13 +189,14 @@ thresholds as `check_anim.py`.
 | Adjacent-frame diff | `APNG Frame Stats` output |
 | Seam uniqueness | `segs` on the stats node |
 | Storyboard | the K keyframe KSamplers, unchanged |
+| Camera motion | `x` / `y` / `zoom` / `angle` / `easing` / `loop` on `APNG Camera Move` |
 
 Per-frame dwell and per-beat ease still cannot be expressed because ComfyUI savers take one global
 `fps`; use `retime.py` after export. Full page: [docs/en/dynamic.md](docs/en/dynamic.md).
 
 ## Workflows
 
-Seven JSON files, drop one into ComfyUI and queue (the two dynamic ones need the bundled `comfyui_nodes` first):
+Nine JSON files, drop one into ComfyUI and queue (the four dynamic ones need the bundled `comfyui_nodes` first):
 
 | Environment | 3 beats | 4 beats |
 | --- | --- | --- |
@@ -196,6 +204,8 @@ Seven JSON files, drop one into ComfyUI and queue (the two dynamic ones need the
 | DiT family (MOSS-Image) | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
 | Dynamic frames (UNet, 3 beats / 24f) | [`workflow-sdxl-dynamic.json`](workflows/workflow-sdxl-dynamic.json) | — |
 | Dynamic frames (DiT, 3 beats / 24f) | [`workflow-moss-dynamic.json`](workflows/workflow-moss-dynamic.json) | — |
+| Dynamic + camera (UNet, 3 beats / 24f) | [`workflow-sdxl-dynamic-camera.json`](workflows/workflow-sdxl-dynamic-camera.json) | — |
+| Dynamic + camera (DiT, 3 beats / 24f) | [`workflow-moss-dynamic-camera.json`](workflows/workflow-moss-dynamic-camera.json) | — |
 
 The `moss` file names are historical; the graph holds any DiT model — swap the three loaders for FLUX,
 SD3, Krea or Anima and keep the structure.
@@ -417,6 +427,11 @@ Built on ComfyUI, [ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes) an
 [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite).
 Repository layout is inspired by [book-to-skill](https://github.com/virgiliojr94/book-to-skill).
 
+The whole-sequence camera idea (one pan / zoom / rotate path with an easing curve over the frame
+index) was inspired by [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator).
+That project ships no license file, so **no code was copied**; `APNGCameraMove` is an independent
+`torch.nn.functional.affine_grid` + `grid_sample` implementation that never re-samples frames.
+
 KJNodes, VideoHelperSuite and ComfyUI are GPL-3.0 projects. They are used here as
 runtime dependencies through their ComfyUI nodes only; no GPL source code is copied
 into this repository. Everything in `scripts/`, `tests/`, `workflows/`, `assets/` and
@@ -604,7 +619,14 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
     --story assets/story.example.json --dynamic --out my-dynamic.json
 ```
 
-3 拍 24 帧从 67 个节点变成 **26 个节点 / 39 条连线**。每拍一个 `APNG Latent Interpolate N`，
+加整段镜头运动（平移 / 缩放 / 旋转，缓动曲线驱动）：
+
+```bash
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
+    --story assets/story.example.json --dynamic --camera --out my-dynamic-camera.json
+```
+
+3 拍 24 帧从 67 个节点变成 **26 个节点 / 39 条连线**，加 `--camera` 是 27 个。每拍一个 `APNG Latent Interpolate N`，
 `frames` / `role` / `curve` 都是图上的 widget；一个 `VAEDecode` 解完全部帧；`APNG Frame Stats`
 在存盘前打印帧数、`frames/fps` 时长、相邻帧差（min/max/avg、相同帧对数）、每拍接缝和循环接缝，
 阈值与 `check_anim.py` 一致。
@@ -616,13 +638,14 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
 | 相邻帧差 | `APNG Frame Stats` 输出 |
 | 接缝唯一性 | 报告节点的 `segs` |
 | 分镜 / 故事板 | K 个关键帧 KSampler，结构不变 |
+| 镜头运动 | `APNG Camera Move` 的 `x`/`y`/`zoom`/`angle`/`easing`/`loop`，整段统一变换 |
 
 逐帧停留和拍内缓动仍不能在工作流里表达（保存节点只有一个全局 `fps`），出片后用 `retime.py`。
 完整页：[docs/dynamic.md](docs/dynamic.md)。
 
 ### 工作流
 
-七份 JSON，拖进 ComfyUI 就能跑（两份动态帧数的先装 `comfyui_nodes`）：
+九份 JSON，拖进 ComfyUI 就能跑（四份动态帧数的先装 `comfyui_nodes`）：
 
 | 环境 | 3 拍 | 4 拍 |
 | --- | --- | --- |
@@ -630,6 +653,8 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
 | DiT 系（MOSS-Image） | [`workflow-moss.json`](workflows/workflow-moss.json) | [`workflow-moss-4beat.json`](workflows/workflow-moss-4beat.json) |
 | 动态帧数（UNet，3 拍 24 帧） | [`workflow-sdxl-dynamic.json`](workflows/workflow-sdxl-dynamic.json) | — |
 | 动态帧数（DiT，3 拍 24 帧） | [`workflow-moss-dynamic.json`](workflows/workflow-moss-dynamic.json) | — |
+| 动态帧数 + 镜头（UNet，3 拍 24 帧） | [`workflow-sdxl-dynamic-camera.json`](workflows/workflow-sdxl-dynamic-camera.json) | — |
+| 动态帧数 + 镜头（DiT，3 拍 24 帧） | [`workflow-moss-dynamic-camera.json`](workflows/workflow-moss-dynamic-camera.json) | — |
 
 `moss` 只是历史文件名，图里装的是任何 DiT 模型：换成 FLUX / SD3 / Krea / Anima 只换三个加载器，结构不动。
 
@@ -835,6 +860,11 @@ dist/                 打包产物（已 gitignore）
 基于 ComfyUI、[ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes)、
 [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)。
 仓库结构参考 [book-to-skill](https://github.com/virgiliojr94/book-to-skill)。
+
+整段镜头（一条平移 / 缩放 / 旋转路径 + 按帧号取缓动）的思路参考
+[ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator)。
+该仓库没有许可证文件，**未复用任何代码**；`APNGCameraMove` 是
+`torch.nn.functional.affine_grid` + `grid_sample` 的独立实现，不重新采样。
 
 KJNodes、VideoHelperSuite 与 ComfyUI 本体都是 GPL-3.0。这里只在 workflow 里调用它们的节点，
 没有把 GPL 源码抄进本仓库；`scripts/`、`tests/`、`workflows/`、`assets/`、`docs/` 全部是原创、

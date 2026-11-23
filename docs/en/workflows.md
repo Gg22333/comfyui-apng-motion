@@ -15,6 +15,8 @@ The download links below are mirrored into `docs/assets/workflows/` by `scripts/
 | Preview (MOSS, 60f / 11 beats) | — | [workflow-moss-preview.json](../assets/workflows/workflow-moss-preview.json) | Builds the repo preview: same seed, `denoise 0.85`, 20fps, 3.00 s |
 | Dynamic frames (UNet, 3 beats / 24f) | [workflow-sdxl-dynamic.json](../assets/workflows/workflow-sdxl-dynamic.json) | — | Run `install_nodes.py` first, restart ComfyUI; `frames` on each interpolate node is a canvas widget |
 | Dynamic frames (DiT, 3 beats / 24f) | [workflow-moss-dynamic.json](../assets/workflows/workflow-moss-dynamic.json) | — | Same install; swap the three loaders for FLUX / SD3 / Krea / Anima |
+| Dynamic frames + camera (UNet, 3 beats / 24f) | [workflow-sdxl-dynamic-camera.json](../assets/workflows/workflow-sdxl-dynamic-camera.json) | — | Adds one `APNG Camera Move`; produced by `--camera`, neutral defaults |
+| Dynamic frames + camera (DiT, 3 beats / 24f) | [workflow-moss-dynamic-camera.json](../assets/workflows/workflow-moss-dynamic-camera.json) | — | Same; camera sits between decode and save |
 
 24 frames is the default. For 8 / 30 / 60 frames you do not switch files:
 

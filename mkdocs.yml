@@ -53,7 +53,7 @@ nav:
       - 模型与架构: models.md
       - 提示词写法: prompting.md
   - 工作流:
-      - 五份工作流: workflows.md
+      - 工作流文件: workflows.md
       - 动态帧数: dynamic.md
       - 动作库: motion-presets.md
   - 参考:
@@ -88,7 +88,7 @@ plugins:
             模型与架构: Models and architectures
             提示词写法: Prompting
             工作流: Workflows
-            五份工作流: Five importable graphs
+            工作流文件: Workflow files
             动态帧数: Dynamic frame mode
             动作库: Motion library
             参考: Reference

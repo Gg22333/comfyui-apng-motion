@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 1.3.9 — 2026-11-24
+
+**整段镜头运动：平移 / 缩放 / 旋转 + 缓动，一次作用于全部帧。**
+
+- **`APNGCameraMove`（`APNG Camera Move`）**：`images → IMAGE` 的纯像素仿射变换，
+  参数 `x / y / zoom / angle / easing / loop / border`。不重新采样、不加依赖、
+  不碰采样器，只 `torch.nn.functional.affine_grid` + `grid_sample`。
+  `easing` 支持 `linear / sine / cubic / quint / back / elastic / bounce`；
+  `loop=True` 时推进量走 0→1→0，首尾帧像素完全一致。
+- **`emit_workflow.py --camera`**：动态模式在 `VAEDecode` 后插镜头节点，三个保存节点与
+  `APNGFrameStats` 全部改接镜头输出，帧差 / 接缝检查看的是最终像素。3 拍 24 帧 = 27 节点。
+- **`--validate`**：新增镜头节点校验（参数类型、easing/loop/border 取值、接线必须是
+  `VAEDecode → APNGCameraMove → 保存/报告`），静态图里出现镜头节点直接报错。
+- **随包工作流**：`workflow-sdxl-dynamic-camera.json`、`workflow-moss-dynamic-camera.json`。
+- **测试**：`camera_progress` 端点、缓动端点、平移方向（±x）、缩放、`loop` 首末帧一致、
+  非法 widget / 错误接线 / 静态图混用镜头节点的负例。
+- **引用**：整段镜头 + 缓动的思路来自
+  [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator)。
+  该仓库无 LICENSE 文件，**未复用任何代码**；见 NOTICE 与 CITATION.cff。
+- **版本号**：1.3.8 → 1.3.9。
+
 ## 1.3.8 — 2026-11-24
 
 **工作流里直接调帧数、看帧差、看接缝。** 新增随包 ComfyUI 自定义节点（`comfyui_nodes/`），

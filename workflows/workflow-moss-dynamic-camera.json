@@ -1,0 +1,1484 @@
+{
+  "id": "91ae3ee1-b52b-4f2e-8d12-843188838bc9",
+  "revision": 0,
+  "last_node_id": 78,
+  "last_link_id": 217,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "UNETLoader",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        340,
+        100
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1,
+            9,
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "moss_image_base_8stepdmd_int8_convrot.safetensors",
+        "default"
+      ],
+      "title": "Moss 主模型"
+    },
+    {
+      "id": 2,
+      "type": "CLIPLoader",
+      "pos": [
+        40,
+        190
+      ],
+      "size": [
+        340,
+        110
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            2,
+            3,
+            4,
+            5,
+            140
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "qwen3.5_9b_moss_image_sft_w4a8_gptq.safetensors",
+        "moss_image",
+        "default"
+      ],
+      "title": "Moss 文本编码器"
+    },
+    {
+      "id": 3,
+      "type": "VAELoader",
+      "pos": [
+        40,
+        330
+      ],
+      "size": [
+        340,
+        90
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            212
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "moss_image_vae_bf16.safetensors"
+      ],
+      "title": "Moss VAE"
+    },
+    {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        60
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            142
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, neutral expression, mouth closed, head straight, anime screencap, clean lineart, flat cel shading"
+      ],
+      "title": "K0 首帧提示"
+    },
+    {
+      "id": 5,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        240
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            7,
+            11,
+            15
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "worst quality, low quality, blurry, watermark, text, signature, bad anatomy, extra fingers, different hair color, different eye color, color shift, style change, multiple views"
+      ],
+      "title": "负向提示词"
+    },
+    {
+      "id": 6,
+      "type": "EmptyFlux2LatentImage",
+      "pos": [
+        420,
+        420
+      ],
+      "size": [
+        320,
+        110
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyFlux2LatentImage"
+      },
+      "widgets_values": [
+        512,
+        512,
+        1
+      ],
+      "title": "尺寸"
+    },
+    {
+      "id": 7,
+      "type": "KSampler",
+      "pos": [
+        870,
+        60
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 143
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            12,
+            16,
+            201,
+            206
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456789,
+        "fixed",
+        8,
+        1.0,
+        "euler",
+        "simple",
+        1.0
+      ],
+      "title": "K0 首帧：neutral expression"
+    },
+    {
+      "id": 8,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        620
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            145
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, big smile, eyes half closed, blush, anime screencap, clean lineart, flat cel shading"
+      ],
+      "title": "K1 提示"
+    },
+    {
+      "id": 9,
+      "type": "KSampler",
+      "pos": [
+        870,
+        600
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 9
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 146
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 11
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            202,
+            203
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456789,
+        "fixed",
+        8,
+        1.0,
+        "euler",
+        "simple",
+        0.4
+      ],
+      "title": "K1 关键帧：big smile"
+    },
+    {
+      "id": 10,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        900
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            148
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, 1girl, solo, upper body, looking at viewer, simple background, silver hair, blue eyes, school uniform, laughing, mouth open, blush, anime screencap, clean lineart, flat cel shading"
+      ],
+      "title": "K2 提示"
+    },
+    {
+      "id": 11,
+      "type": "KSampler",
+      "pos": [
+        870,
+        880
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 13
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 149
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 15
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            204,
+            205
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        123456789,
+        "fixed",
+        8,
+        1.0,
+        "euler",
+        "simple",
+        0.4
+      ],
+      "title": "K2 关键帧：laughing"
+    },
+    {
+      "id": 61,
+      "type": "SaveAnimatedPNG",
+      "pos": [
+        1690,
+        1000
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {},
+      "order": 60,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 215
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveAnimatedPNG"
+      },
+      "widgets_values": [
+        "APNG/final/apng/anim24",
+        10,
+        4
+      ],
+      "title": "输出 APNG（24 帧 10fps）"
+    },
+    {
+      "id": 62,
+      "type": "SaveAnimatedWEBP",
+      "pos": [
+        2150,
+        1000
+      ],
+      "size": [
+        340,
+        200
+      ],
+      "flags": {},
+      "order": 61,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 216
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveAnimatedWEBP"
+      },
+      "widgets_values": [
+        "APNG/final/webp/anim24",
+        10,
+        true,
+        90,
+        "default"
+      ],
+      "title": "输出 WebP"
+    },
+    {
+      "id": 63,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        2150,
+        1230
+      ],
+      "size": [
+        360,
+        300
+      ],
+      "flags": {},
+      "order": 62,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 217
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": [
+        10,
+        0,
+        "APNG/final/gif/anim24",
+        "image/gif",
+        false,
+        true
+      ],
+      "title": "输出 GIF"
+    },
+    {
+      "id": 64,
+      "type": "CLIPTextEncode",
+      "pos": [
+        6050,
+        100
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 63,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 140
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            198,
+            199,
+            200
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "subtle head motion, stable lighting"
+      ],
+      "title": "全局动作指导（所有关键帧共享）"
+    },
+    {
+      "id": 65,
+      "type": "ConditioningCombine",
+      "pos": [
+        3630,
+        600
+      ],
+      "size": [
+        315,
+        46
+      ],
+      "flags": {},
+      "order": 64,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_1",
+          "type": "CONDITIONING",
+          "link": 198
+        },
+        {
+          "name": "conditioning_2",
+          "type": "CONDITIONING",
+          "link": 142
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            143
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningCombine"
+      },
+      "title": "合并 K0（全局动作 + 本帧）"
+    },
+    {
+      "id": 66,
+      "type": "ConditioningCombine",
+      "pos": [
+        3630,
+        880
+      ],
+      "size": [
+        315,
+        46
+      ],
+      "flags": {},
+      "order": 65,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_1",
+          "type": "CONDITIONING",
+          "link": 199
+        },
+        {
+          "name": "conditioning_2",
+          "type": "CONDITIONING",
+          "link": 145
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            146
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningCombine"
+      },
+      "title": "合并 K1（全局动作 + 本帧）"
+    },
+    {
+      "id": 67,
+      "type": "ConditioningCombine",
+      "pos": [
+        3630,
+        1160
+      ],
+      "size": [
+        315,
+        46
+      ],
+      "flags": {},
+      "order": 66,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_1",
+          "type": "CONDITIONING",
+          "link": 200
+        },
+        {
+          "name": "conditioning_2",
+          "type": "CONDITIONING",
+          "link": 148
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            149
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningCombine"
+      },
+      "title": "合并 K2（全局动作 + 本帧）"
+    },
+    {
+      "id": 68,
+      "type": "Note",
+      "pos": [
+        6470,
+        1080
+      ],
+      "size": [
+        520,
+        380
+      ],
+      "flags": {},
+      "order": 67,
+      "mode": 0,
+      "widgets_values": [
+        "【可调参数清单】\n全片动作：\"全局动作指导（所有关键帧共享）\" 这个 CLIPTextEncode。\n  填动作、镜头、光照、风格；改一处，K0..Kn 全部生效。留空=不加额外条件。\n每帧表情：K0 / K1 / K2 ... 各自的 CLIPTextEncode，可独立改。\n采样：每个 KSampler 的 seed / steps / cfg / denoise / sampler / scheduler 都能单独改。\n  关键帧 denoise 按【架构】给，不按模型名给：\n    UNet 系（SD1.5 / SDXL）        0.35-0.45   steps 20-30   cfg 5-7\n    DiT 系（FLUX / SD3 / Krea）    0.45-0.55   steps 20-28   cfg 1.0\n    DiT + DMD（MOSS-Image）        0.82-0.90   steps 8       cfg 1.0\n  越高越自由，但容易出现色斑。蒸馏模型加 steps 只会更糊，不要加。\n节奏：N 个 LatentInterpolate 的 ratio 就是缓动曲线（N = frames）。线性最均匀，缓动两端慢。\n速度：三个保存节点的 fps 必须改成同一个值。fps × N = 时长。\n  但 ComfyUI 只能给一个全局 fps，每拍停留表达不出来 —— 出片后跑\n  python scripts/retime.py <apng> --story <剧情卡> 重写逐帧延时，像素一个都不动。\n命名：三个保存节点分别写到 APNG/final/apng、webp、gif。\n画质：APNG 用 compress_level；WebP 用 lossless/quality；GIF 由 VHS 的 loop/pingpong 控制。\n避坑：关键帧必须共用同一 seed 和同一首帧 latent；denoise 过高会让无关区域重绘，插值时出现色斑。\n帧数、fps、每拍停留、提示词怎么写：看右边【提示词写法】这个 Note。"
+      ]
+    },
+    {
+      "id": 69,
+      "type": "Note",
+      "pos": [
+        7050,
+        1080
+      ],
+      "size": [
+        760,
+        780
+      ],
+      "flags": {},
+      "order": 68,
+      "mode": 0,
+      "widgets_values": [
+        "【提示词写法（按架构分方言，不按模型名）】\n\n先认清三件事，再决定怎么写：\n  架构：UNet 还是 DiT —— 决定 denoise 区间，不影响文字写法\n  文本编码器：CLIP / T5 / Qwen-VL —— 决定提示词方言\n  步数范式：常规 20-30 步 还是 DMD/Turbo 蒸馏 —— 决定 steps\n  注意：MOSS-Image 是 DiT 的一种，不是 DiT 之外的另一类。\n        SDXL 是 UNet，不是 DiT。\n\n■ 方言 A · CLIP 标签（SD1.5 / SDXL）\n  格式：角色与场景标签, 这一拍动作, 画风标签\n  · 英文逗号分隔，重要标签往前放。\n  · 画风必须放最后：anime screencap, clean lineart, flat cel shading。\n  · 写画面不写效果：写「eyes wide, pupils small」不写「shocked」。\n  · 负向单独一个 CLIPTextEncode，不要混进正向。\n  例：1girl, solo, full body, black short hair, blue eyes, beige hoodie,\n      sitting on floor, bedroom at night, warm lamp light /\n      这一拍动作 /\n      anime screencap, clean lineart, flat cel shading\n\n■ 方言 B · 中文散文（MOSS-Image / Krea 2 / Qwen-Image 的 Qwen-VL 系）\n  格式：中文散文，换行分段，每段以「。」结尾\n  · 不堆 quality tag：masterpiece / best quality 对它是噪声。\n  · 场景 → 人物 → 这一拍 → 画风，四件事说全。\n  · 用可测量的身体描述代替形容词：\n      震惊 = 双眼睁大、瞳孔缩小、嘴张开\n      疲惫嫌弃 = 眼半闭、瞳孔偏低、唇压成直线\n  · 构图写死：固定机位、平视、全身镜头、从头到脚完整入画。\n  · 负向同样用中文，放单独的 CLIPTextEncode。\n\n■ 方言 C · T5 自然语言（FLUX / SD3 / SD3.5）\n  格式：完整英文句子，一段话讲清画面\n  · 不用 (word:1.3) 权重括号，T5 不吃这套。\n  · 一句话一件事：主体、动作、环境、光线、镜头、材质。\n  · 可以长，但不要堆同义词。\n  · FLUX 走 FluxGuidance 3.5 / cfg 1.0；SD3 用 cfg 4-7。\n\n■ 画面里要出现文字时（Layout）\n  · 用绝对像素 bbox [x0,y0,x1,y1]，不要归一化坐标。\n  · 宽高必须是 16 的倍数。\n  · 不要写「headline here」这类占位符，直接写要显示的原文。\n  · 只描述可见内容，不要把「怎么生成」这种工具指令写进画面描述。\n\n■ 逐拍三段式（写剧情卡时照这个来）\n  lock   场景 + 人物 + 机位，全片一个字都不改\n  action 这一拍唯一的变量；每拍只改一个变量\n  style  画风收尾，全片统一\n  改两个变量，插值出来就是两张不同的脸。\n\n■ 帧数、fps、每拍停留\n           慢（叙事）        标准             快（弹幕感）\n   8 帧   6fps / 1.33s    8fps / 1.00s    10fps / 0.80s\n  24 帧   8fps / 3.00s   10fps / 2.40s    12fps / 2.00s\n  30 帧  10fps / 3.00s   15fps / 2.00s    20fps / 1.50s\n  60 帧  20fps / 3.00s   25fps / 2.40s    30fps / 2.00s   ← 本仓库默认 20fps\n  · GIF 的帧延时只能量化到 10ms：24fps 会被写成 40ms，整片变 2.4s 而不是 2.5s。\n    要 GIF 干净就选 20 / 25 / 30fps；APNG / WebP 是毫秒精度，不受限。\n  · 每拍至少 0.20s，低于这个数观感是一闪而过。\n  · 改帧数：python scripts/emit_workflow.py --frames N --segs a,b,c,...\n    segs 之和必须等于 N；每拍至少 1 帧。\n\n■ 换故事不改节点\n  只改三个地方：全局动作指导、K0..Kn 各自提示、segs。\n  节点数量、连线、保存路径都不用动。"
+      ]
+    },
+    {
+      "id": 70,
+      "type": "APNGLatentInterpolateN",
+      "pos": [
+        7470,
+        60
+      ],
+      "size": [
+        320,
+        150
+      ],
+      "flags": {},
+      "order": 69,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 201
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 202
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            207
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGLatentInterpolateN"
+      },
+      "widgets_values": [
+        8,
+        "first",
+        "linear"
+      ],
+      "title": "拍 0：K0→K1（frames=8）"
+    },
+    {
+      "id": 71,
+      "type": "APNGLatentInterpolateN",
+      "pos": [
+        7470,
+        300
+      ],
+      "size": [
+        320,
+        150
+      ],
+      "flags": {},
+      "order": 70,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 203
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 204
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            208
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGLatentInterpolateN"
+      },
+      "widgets_values": [
+        8,
+        "middle",
+        "linear"
+      ],
+      "title": "拍 1：K1→K2（frames=8）"
+    },
+    {
+      "id": 72,
+      "type": "APNGLatentInterpolateN",
+      "pos": [
+        7470,
+        540
+      ],
+      "size": [
+        320,
+        150
+      ],
+      "flags": {},
+      "order": 71,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 205
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 206
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            210
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGLatentInterpolateN"
+      },
+      "widgets_values": [
+        8,
+        "last",
+        "linear"
+      ],
+      "title": "拍 2：K2→K0（frames=8）"
+    },
+    {
+      "id": 73,
+      "type": "APNGLatentConcat",
+      "pos": [
+        7850,
+        890
+      ],
+      "size": [
+        280,
+        60
+      ],
+      "flags": {},
+      "order": 72,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 207
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 208
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            209
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGLatentConcat"
+      },
+      "widgets_values": [],
+      "title": "拼 batch 1"
+    },
+    {
+      "id": 74,
+      "type": "APNGLatentConcat",
+      "pos": [
+        7850,
+        1000
+      ],
+      "size": [
+        280,
+        60
+      ],
+      "flags": {},
+      "order": 73,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples1",
+          "type": "LATENT",
+          "link": 209
+        },
+        {
+          "name": "samples2",
+          "type": "LATENT",
+          "link": 210
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            211
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGLatentConcat"
+      },
+      "widgets_values": [],
+      "title": "拼 batch 2"
+    },
+    {
+      "id": 75,
+      "type": "VAEDecode",
+      "pos": [
+        8190,
+        60
+      ],
+      "size": [
+        240,
+        46
+      ],
+      "flags": {},
+      "order": 74,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 211
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 212
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            213
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": "解码全部帧"
+    },
+    {
+      "id": 76,
+      "type": "APNGCameraMove",
+      "pos": [
+        8190,
+        140
+      ],
+      "size": [
+        320,
+        260
+      ],
+      "flags": {},
+      "order": 75,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 213
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            214,
+            215,
+            216,
+            217
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGCameraMove"
+      },
+      "widgets_values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        "sine",
+        true,
+        "reflection"
+      ],
+      "title": "镜头运动（x/y/zoom/angle；默认中立）"
+    },
+    {
+      "id": 77,
+      "type": "APNGFrameStats",
+      "pos": [
+        8550,
+        140
+      ],
+      "size": [
+        340,
+        300
+      ],
+      "flags": {},
+      "order": 76,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 214
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "APNGFrameStats"
+      },
+      "widgets_values": [
+        10,
+        "8,8,8"
+      ],
+      "title": "帧报告（帧数 / 时长 / 相邻帧差 / 接缝）"
+    },
+    {
+      "id": 78,
+      "type": "Note",
+      "pos": [
+        7850,
+        1140
+      ],
+      "size": [
+        460,
+        240
+      ],
+      "flags": {},
+      "order": 77,
+      "mode": 0,
+      "widgets_values": [
+        "动态帧数模式（APNG 节点）\n- 每拍一个「APNG Latent Interpolate N」：frames = 这一拍的帧数，改数字即改帧数\n- 总帧数 = 各拍 frames 之和；时长 = 总帧数 / fps（fps 在三个保存节点上）\n- role 按拍序固定为 first / middle / last，删拍加拍时记得同步\n- 「帧报告」节点打印相邻帧差与循环接缝差，阈值与 check_anim.py 一致\n- 改完 frames 要同步把 Frame Stats 的 segs 改成新的逗号列表\n- 镜头运动节点默认中立；x/y 是整段总位移（像素），zoom 是末帧倍率，angle 是总角度；loop=True 时首尾回到原位"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      7,
+      0,
+      "MODEL"
+    ],
+    [
+      2,
+      2,
+      0,
+      4,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      2,
+      0,
+      5,
+      0,
+      "CLIP"
+    ],
+    [
+      4,
+      2,
+      0,
+      8,
+      0,
+      "CLIP"
+    ],
+    [
+      5,
+      2,
+      0,
+      10,
+      0,
+      "CLIP"
+    ],
+    [
+      7,
+      5,
+      0,
+      7,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      6,
+      0,
+      7,
+      3,
+      "LATENT"
+    ],
+    [
+      9,
+      1,
+      0,
+      9,
+      0,
+      "MODEL"
+    ],
+    [
+      11,
+      5,
+      0,
+      9,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      12,
+      7,
+      0,
+      9,
+      3,
+      "LATENT"
+    ],
+    [
+      13,
+      1,
+      0,
+      11,
+      0,
+      "MODEL"
+    ],
+    [
+      15,
+      5,
+      0,
+      11,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      16,
+      7,
+      0,
+      11,
+      3,
+      "LATENT"
+    ],
+    [
+      140,
+      2,
+      0,
+      64,
+      0,
+      "CLIP"
+    ],
+    [
+      142,
+      4,
+      0,
+      65,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      143,
+      65,
+      0,
+      7,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      145,
+      8,
+      0,
+      66,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      146,
+      66,
+      0,
+      9,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      148,
+      10,
+      0,
+      67,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      149,
+      67,
+      0,
+      11,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      198,
+      64,
+      0,
+      65,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      199,
+      64,
+      0,
+      66,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      200,
+      64,
+      0,
+      67,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      201,
+      7,
+      0,
+      70,
+      0,
+      "LATENT"
+    ],
+    [
+      202,
+      9,
+      0,
+      70,
+      1,
+      "LATENT"
+    ],
+    [
+      203,
+      9,
+      0,
+      71,
+      0,
+      "LATENT"
+    ],
+    [
+      204,
+      11,
+      0,
+      71,
+      1,
+      "LATENT"
+    ],
+    [
+      205,
+      11,
+      0,
+      72,
+      0,
+      "LATENT"
+    ],
+    [
+      206,
+      7,
+      0,
+      72,
+      1,
+      "LATENT"
+    ],
+    [
+      207,
+      70,
+      0,
+      73,
+      0,
+      "LATENT"
+    ],
+    [
+      208,
+      71,
+      0,
+      73,
+      1,
+      "LATENT"
+    ],
+    [
+      209,
+      73,
+      0,
+      74,
+      0,
+      "LATENT"
+    ],
+    [
+      210,
+      72,
+      0,
+      74,
+      1,
+      "LATENT"
+    ],
+    [
+      211,
+      74,
+      0,
+      75,
+      0,
+      "LATENT"
+    ],
+    [
+      212,
+      3,
+      0,
+      75,
+      1,
+      "VAE"
+    ],
+    [
+      213,
+      75,
+      0,
+      76,
+      0,
+      "IMAGE"
+    ],
+    [
+      214,
+      76,
+      0,
+      77,
+      0,
+      "IMAGE"
+    ],
+    [
+      215,
+      76,
+      0,
+      61,
+      0,
+      "IMAGE"
+    ],
+    [
+      216,
+      76,
+      0,
+      62,
+      0,
+      "IMAGE"
+    ],
+    [
+      217,
+      76,
+      0,
+      63,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

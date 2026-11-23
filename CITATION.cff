@@ -7,14 +7,15 @@ authors:
 repository-code: "https://github.com/Gg22333/comfyui-apng-motion"
 url: "https://gg22333.github.io/comfyui-apng-motion/"
 license: MIT
-version: "1.3.8"
+version: "1.3.9"
 date-released: "2026-11-24"
 abstract: >-
   A ComfyUI skill and toolkit that turns 3-8 keyframes into coherent APNG, WebP
   and GIF animations at 8/12/24/30/60 frames. Uses latent interpolation rather
   than per-frame generation, ships ready-to-import workflows for SDXL and
   DiT-family models (MOSS-Image, FLUX, SD3, Krea, Anima), and includes a motion
-  preset library, frame-timing control (fps, per-beat dwell, easing) and
+  preset library, frame-timing control (fps, per-beat dwell, easing), an
+  optional whole-sequence camera move (pan / zoom / rotate with easing) and
   three prompt dialects (CLIP tags, Qwen-VL prose, T5 sentences).
 keywords:
   - comfyui
@@ -27,3 +28,13 @@ keywords:
   - moss-image
   - prompt-engineering
   - storyboard
+references:
+  - type: software
+    title: ComfyUI-AstralAnimator
+    authors:
+      - name: "ShmuelRonen"
+    repository-code: "https://github.com/ShmuelRonen/ComfyUI-AstralAnimator"
+    url: "https://github.com/ShmuelRonen/ComfyUI-AstralAnimator"
+    notes: >-
+      Conceptual inspiration only: a whole-sequence camera move driven by an
+      easing curve. The project ships no license file and no code was reused.

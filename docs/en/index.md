@@ -65,7 +65,7 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story asse
 
 - [Install](install.md)
 - [Usage](usage.md) · [How to lay out transition frames](workflows.md#how-to-lay-out-transition-frames)
-- [Workflows: five importable graphs](workflows.md)
+- [Workflows: importable graphs](workflows.md)
 - [Motion library: 17 sticker actions](motion-presets.md)
 - [Output layout](output.md)
 - [Approach comparison: APNG / GIF / Live2D / video](synthesis-comparison.md)

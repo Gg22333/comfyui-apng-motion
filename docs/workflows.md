@@ -15,6 +15,8 @@
 | 预览用（MOSS，60 帧 11 拍） | — | [workflow-moss-preview.json](assets/workflows/workflow-moss-preview.json) | 生成仓库那张预览图，同 seed、`denoise 0.85`、20fps、3.00 秒 |
 | 动态帧数（UNet，3 拍 24 帧） | [workflow-sdxl-dynamic.json](assets/workflows/workflow-sdxl-dynamic.json) | — | 先跑 `install_nodes.py` 装 `comfyui_nodes`，重启 ComfyUI；每拍 `frames` 是图上 widget |
 | 动态帧数（DiT，3 拍 24 帧） | [workflow-moss-dynamic.json](assets/workflows/workflow-moss-dynamic.json) | — | 同上；换 FLUX / SD3 / Krea / Anima 只换三个加载器 |
+| 动态帧数 + 镜头（UNet，3 拍 24 帧） | [workflow-sdxl-dynamic-camera.json](assets/workflows/workflow-sdxl-dynamic-camera.json) | — | 比动态图多一个 `APNG Camera Move`；`--camera` 生成，参数默认中立 |
+| 动态帧数 + 镜头（DiT，3 拍 24 帧） | [workflow-moss-dynamic-camera.json](assets/workflows/workflow-moss-dynamic-camera.json) | — | 同上；镜头节点接在解码之后、保存之前 |
 
 24 帧是默认。想要 8 / 30 / 60 帧不用换文件：
 
