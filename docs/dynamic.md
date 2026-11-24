@@ -87,6 +87,8 @@ K 个关键帧 KSampler（同 seed，首帧 latent）
 - `loop=True` 时 `p = ease((1 - cos(2πt)) / 2)`，首尾两帧都回到 0，循环播放不跳；`loop=False` 是单向推进。
 - `zoom` 是**末帧**的倍率（`loop=True` 时是中点最大）；「推近再回来」用 `loop=True` + `zoom=1.2`。
 - `loop=True` 且总帧数 N=2 时，首尾都是原位，等于没有运动；要动就关 `loop` 或加帧。
+- `loop=True` 时所有缓动在两端的瞬时速度都是 0（0→1→0 本身就把端点压平），
+  `_in` / `_out` 改变的是中段形状，不是起停快慢。
 - 镜头和分镜是两件事：**分镜**改的是关键帧内容（K 个 KSampler + 各自的提示词），
   **镜头**只对已经解码好的像素做统一变换。两者可以叠加。
 - 只存成品：`--camera` 的图里三个保存节点和 `APNGFrameStats` 都接在镜头节点之后，
@@ -108,6 +110,7 @@ K 拍各采样一次（不是每帧一次），latent 插值成整段，一次�
 | `refine` | 第 2 拍起的 denoise（默认 0.4，与 dynamic 图一致） |
 | `curve` | `linear` / `ease` / `snap`，拍内插值曲线 |
 | `x/y/zoom/angle/easing/loop/border` | 与 `APNG Camera Move` 同义；中立值时不额外重采样 |
+| `segs` | 可选，逗号分隔的每拍帧数（如 `10,12,4,12`）；留空则平均分 |
 
 采样次数 = 拍数，所以 3 拍 24 帧仍然是 3 次采样，不会退化成逐帧重绘。
 

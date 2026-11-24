@@ -93,6 +93,8 @@ Semantics:
   `loop=True` with `zoom=1.2`.
 - `loop=True` with only N=2 frames returns to the origin on both frames, i.e. no motion; use
   `loop=False` or add frames.
+- With `loop=True` every easing has zero velocity at both ends (the 0→1→0 path flattens them),
+  so `_in` / `_out` reshape the middle, not the start/stop.
 - Camera and storyboard are different layers: the **storyboard** changes keyframe content (K
   KSamplers with their own prompts); the **camera** transforms already-decoded pixels. They compose.
 - Finished output only: with `--camera`, the three savers and `APNGFrameStats` all read the camera
@@ -116,6 +118,7 @@ interpolated into the full sequence, one decode, then the camera.
 | `refine` | Denoise for beat 2 onward (default 0.4, same as the dynamic graph) |
 | `curve` | `linear` / `ease` / `snap` in-beat interpolation |
 | `x/y/zoom/angle/easing/loop/border` | Same meaning as `APNG Camera Move`; neutral values skip the extra resample |
+| `segs` | Optional comma-separated frames per beat (e.g. `10,12,4,12`); empty means even split |
 
 Sampling count equals beat count, so 3 beats / 24 frames still costs 3 samples, never per-frame re-drawing.
 

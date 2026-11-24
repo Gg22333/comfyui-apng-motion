@@ -267,6 +267,12 @@ def test_oneshot_helpers():
     assert mod.split_segments(24, 3) == [8, 8, 8]
     assert mod.split_segments(25, 3) == [8, 8, 9]
     assert mod.split_segments(2, 2) == [1, 1]
+    assert mod.parse_segs("8,8,8") == [8, 8, 8]
+    assert mod.parse_segs("10，12，4") == [10, 12, 4]
+    assert mod.parse_segs("") == []
+    assert mod.parse_segs(None) == []
+    with pytest.raises(ValueError):
+        mod.parse_segs("a,b")
 
 
 def test_camera_emit_shape(tmp_path):

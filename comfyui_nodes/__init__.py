@@ -127,6 +127,13 @@ def _mad(a, b):
     return float((_lum(a) - _lum(b)).abs().mean().item()) * 255.0
 
 
+def _color_drift(a, b):
+    """RGB 三通道均值相对第 1 帧的最大偏移，与 check_anim.py 的 color drift 同量纲。"""
+    am = a[..., :3].mean(dim=(0, 1))
+    bm = b[..., :3].mean(dim=(0, 1))
+    return float((am - bm).abs().max().item()) * 255.0
+
+
 class APNGFrameStats:
     @classmethod
     def INPUT_TYPES(cls):
@@ -182,6 +189,10 @@ class APNGFrameStats:
             loop_ok = 0.3 <= loop_full <= 6.0
             lines.append("%s loop K%d->K0 full=%.2f (0.3..6.0)" % (
                 "OK  " if loop_ok else "FAIL", len(seg_list), loop_full))
+            for i, st in enumerate(starts[1:], start=1):
+                d = _color_drift(img[st], img[0])
+                lines.append("%s K%d color drift=%.2f vs K0" % (
+                    "WARN" if d > 20.0 else "OK  ", i, d))
         txt = "\n".join(lines)
         print("[APNG] " + txt.replace("\n", "\n[APNG] "))
         return {"ui": {"text": [txt]}, "result": (txt,)}
@@ -346,6 +357,23 @@ def split_actions(text):
     return [p.strip() for p in parts if p.strip()]
 
 
+def parse_segs(text):
+    """'8,8,8' -> [8, 8, 8]；空或 None -> []。"""
+    t = "" if text is None else str(text).replace("，", ",").strip()
+    if not t:
+        return []
+    out = []
+    for part in t.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        try:
+            out.append(int(part))
+        except ValueError:
+            raise ValueError("segs 只能是逗号分隔的整数，例如 8,8,8；收到 %r" % text)
+    return out
+
+
 def split_segments(total, k):
     """把总帧数平均分给 k 拍，余数给最后一拍。"""
     total, k = int(total), int(k)
@@ -390,6 +418,7 @@ class APNGOneShot:
                 "easing": (CAMERA_EASINGS, {"default": "sine"}),
                 "loop": ("BOOLEAN", {"default": True}),
                 "border": (["reflection", "border", "zeros"], {"default": "reflection"}),
+                "segs": ("STRING", {"default": "", "multiline": False}),
             }
         }
 
@@ -399,7 +428,7 @@ class APNGOneShot:
 
     def animate(self, model, clip, vae, positive, negative, width, height, frames, actions,
                 steps, cfg, sampler_name, scheduler, seed, refine, curve,
-                x, y, zoom, angle, easing, loop, border):
+                x, y, zoom, angle, easing, loop, border, segs=""):
         acts = split_actions(actions)
         if len(acts) < 2:
             raise ValueError("actions 至少两拍，用 | 分隔，例如 neutral|notice|react")
@@ -407,6 +436,17 @@ class APNGOneShot:
         frames = int(frames)
         if frames < k:
             raise ValueError("frames=%d 小于拍数 %d，每一拍至少一帧" % (frames, k))
+
+        counts = parse_segs(segs)
+        if counts:
+            if len(counts) != k:
+                raise ValueError("segs 有 %d 段，但 actions 有 %d 拍" % (len(counts), k))
+            if any(c < 1 for c in counts):
+                raise ValueError("segs 每一段至少 1 帧")
+            if sum(counts) != frames:
+                raise ValueError("segs 之和 %d 与 frames=%d 不一致" % (sum(counts), frames))
+        else:
+            counts = split_segments(frames, k)
 
         import nodes as comfy_nodes
 
@@ -424,7 +464,7 @@ class APNGOneShot:
             latent = out
 
         seq = []
-        for i, cnt in enumerate(split_segments(frames, k)):
+        for i, cnt in enumerate(counts):
             if cnt <= 0:
                 continue
             role = "first" if i == 0 else ("last" if i == k - 1 else "middle")

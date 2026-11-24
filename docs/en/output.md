@@ -125,6 +125,10 @@ python scripts/check_output.py --profile profiles/xl.json --fix
 
 Expected: `frames=24`, `loop=0`, `identical_pairs=0`, `color_drift < 6`.
 
+For camera-moved clips add `--camera`, or `--workflow <workflow.json>` so the script reads whether the
+graph has a non-neutral camera (otherwise a legitimate pan is reported as colour flashing). Add
+`--curve` to print the drift curve: returning near the start means closed loop, a monotone climb means accumulation.
+
 5. Run `check_output.py` again: `FAIL 总数: 0`.
 
 ---

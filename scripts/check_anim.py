@@ -6,6 +6,8 @@
     python check_anim.py "D:/output/anim24_00001_.png" --expect 24
     python check_anim.py "D:/output/anim60_00001_.png" --segs 10,12,4,12,10,12
     python check_anim.py "D:/output/anim24_00001.gif" --json
+    python check_anim.py "D:/output/anim24_00001_.png" --curve
+    python check_anim.py "D:/output/anim24_00001_.png" --workflow my-graph.json
 
 输出: 格式、尺寸、帧数、每帧时长、循环次数、相邻帧平均像素差。
 给 --segs 时额外输出每一拍的边界差和画面下半区的差异。
@@ -48,6 +50,28 @@ def lower_diff(a, b, frac=0.5):
     return mean_abs_diff(a.crop(box), b.crop(box))
 
 
+def camera_from_workflow(path):
+    """工作流里有非中立 APNGCameraMove 就返回 True。读不到文件返回 False。"""
+    try:
+        with open(path, encoding="utf-8-sig") as fh:
+            wf = json.load(fh)
+    except Exception:
+        return False
+    for n in wf.get("nodes") or []:
+        if n.get("type") != "APNGCameraMove":
+            continue
+        w = n.get("widgets_values") or []
+        if len(w) < 4:
+            continue
+        try:
+            vals = [float(w[i]) for i in range(4)]
+        except (TypeError, ValueError):
+            continue
+        if any(abs(v - d) > 1e-9 for v, d in zip(vals, (0.0, 0.0, 1.0, 0.0))):
+            return True
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("path")
@@ -58,11 +82,22 @@ def main():
     ap.add_argument("--json", action="store_true", help="只输出 JSON")
     ap.add_argument("--camera", action="store_true",
                     help="画面带整段镜头运动（APNG Camera Move）；放宽颜色漂移判定，避免把位移误报成闪色")
+    ap.add_argument("--workflow", default="",
+                    help="从工作流 JSON 读取是否存在非中立 APNGCameraMove；有则等同 --camera")
+    ap.add_argument("--curve", action="store_true",
+                    help="打印相对第 1 帧的漂移曲线，并判断是闭合还是累积")
     args = ap.parse_args()
 
     if not os.path.exists(args.path):
         print("MISSING:", args.path)
         return 2
+    camera = bool(args.camera)
+    if not camera and args.workflow:
+        if camera_from_workflow(args.workflow):
+            camera = True
+            print("note    : 工作流里有非中立 APNG Camera Move，按 --camera 处理")
+        else:
+            print("note    : 工作流里没有非中立镜头，按静态机位判定")
     try:
         im = Image.open(args.path)
     except Exception as exc:
@@ -105,7 +140,7 @@ def main():
         "diff_avg": round(sum(diffs) / len(diffs), 2) if diffs else None,
         "identical_pairs": identical,
         "color_drift": round(drift, 2),
-        "camera": bool(args.camera),
+        "camera": camera,
     }
 
     # ---- 逐拍检查 ----
@@ -173,16 +208,27 @@ def main():
             print(f"timing  : {res['duration_ms']} ms/frame  total={res['total_s']} s")
         print(f"diff    : min={res['diff_min']}  max={res['diff_max']}  avg={res['diff_avg']}")
         print(f"color   : drift={res['color_drift']}（相对第 1 帧的平均 RGB 最大偏移）")
-        lim_fail, lim_warn = (45, 20) if args.camera else (20, 6)
+        lim_fail, lim_warn = (45, 20) if camera else (20, 6)
         if drift > lim_fail:
-            if args.camera:
+            if camera:
                 print("FAIL    : 颜色漂移 > %d，超过镜头运动的合理位移，先确认 x/y/zoom/angle 没写太大" % lim_fail)
             else:
                 print("FAIL    : 颜色漂移 > %d，大概率是色块闪，回去查 denoise 和提示词里的光照词" % lim_fail)
         elif drift > lim_warn:
             print("WARN    : 颜色漂移偏大，检查关键帧里是否有 eyes closed / 光照词变化")
-        if args.camera:
-            print("note    : --camera 已放宽漂移阈值；这里的漂移来自整段位移，不等于色块闪")
+        if camera:
+            print("note    : 已放宽漂移阈值；这里的漂移来自整段位移，不等于色块闪")
+        if args.curve and frames:
+            idx = sorted(set([0] + [round((n - 1) * k / 10.0) for k in range(1, 10)] + [n - 1]))
+            curve = [round(mean_abs_diff(frames[0], frames[i]), 2) for i in idx]
+            print("curve   : " + "  ".join("f%d=%.2f" % (i, v) for i, v in zip(idx, curve)))
+            peak = max(curve)
+            last = curve[-1]
+            if peak > 6.0 and last < peak * 0.4:
+                print("shape   : 闭合（峰值 %.2f -> 末帧 %.2f，回到起点附近）" % (peak, last))
+            elif peak > 6.0:
+                print("shape   : 累积（峰值 %.2f -> 末帧 %.2f，没有回落）" % (peak, last))
+            res["curve"] = {"frames": idx, "drift": curve}
         if identical:
             print(f"WARN    : {identical} 对相邻帧完全相同，APNG 会被合并、时长相加")
         elif diffs and min(diffs) < 0.15:
