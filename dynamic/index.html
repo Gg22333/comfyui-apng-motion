@@ -855,6 +855,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#42-预设与出图前预览" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 预设与出图前预览
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#41-单节点版apng-one-shot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1344,6 +1355,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#42-预设与出图前预览" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 预设与出图前预览
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#41-单节点版apng-one-shot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1573,6 +1595,60 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
   <code>emit_workflow.py --run</code> 检测到非中立镜头参数时会自动带上这个开关。</p>
 </li>
 </ul>
+<h3 id="42-预设与出图前预览">4.2 预设与出图前预览<a class="headerlink" href="#42-预设与出图前预览" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">emit_workflow</span><span class="p">.</span><span class="n">py</span> <span class="p">-</span><span class="n">-base</span> <span class="n">workflows</span><span class="p">/</span><span class="n">workflow-sdxl</span><span class="p">.</span><span class="n">json</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-story</span> <span class="n">assets</span><span class="p">/</span><span class="n">story</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">json</span> <span class="p">-</span><span class="n">-dynamic</span> <span class="p">-</span><span class="n">-camera-preset</span> <span class="n">dolly_in</span> <span class="p">-</span><span class="n">-out</span> <span class="n">my</span><span class="p">.</span><span class="n">json</span>
+
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">make_camera_preview</span><span class="p">.</span><span class="n">py</span> <span class="n">still</span><span class="p">.</span><span class="n">png</span> <span class="p">-</span><span class="n">-preset</span> <span class="n">pan_left</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-frames</span> <span class="n">24</span> <span class="p">-</span><span class="n">-fps</span> <span class="n">10</span> <span class="p">-</span><span class="n">-out</span> <span class="n">preview</span><span class="p">.</span><span class="n">gif</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>预设</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>still</code></td>
+<td>不动</td>
+</tr>
+<tr>
+<td><code>zoom_in</code> / <code>zoom_out</code></td>
+<td>推近 / 拉远</td>
+</tr>
+<tr>
+<td><code>dolly_in</code> / <code>dolly_out</code></td>
+<td>2D 代理：用 zoom 模拟推近，<strong>不产生视差</strong></td>
+</tr>
+<tr>
+<td><code>pan_left</code> / <code>pan_right</code> / <code>pan_up</code> / <code>pan_down</code></td>
+<td>横向 / 纵向平移，幅度按画面宽高的比例算</td>
+</tr>
+<tr>
+<td><code>roll_cw</code> / <code>roll_ccw</code></td>
+<td>顺时针 / 逆时针旋转</td>
+</tr>
+<tr>
+<td><code>spiral</code></td>
+<td>旋转 + 推近</td>
+</tr>
+<tr>
+<td><code>breathe</code></td>
+<td>轻微缩放呼吸（建议配 <code>loop=True</code>）</td>
+</tr>
+<tr>
+<td><code>rise</code></td>
+<td>上移 + 轻微推近</td>
+</tr>
+</tbody>
+</table>
+<p><code>--camera-speed</code> 管倍速，<code>--camera-amp</code> 管幅度。<code>orbit_*</code>、<code>tilt_*</code>、<code>crane_up</code>、<code>shake</code>
+这类需要 3D 或逐帧抖动，<strong>直接报错</strong>而不是静默不动 —— 2D 仿射做不了，就不装作能做。</p>
+<p>预览脚本只用 Pillow：拿一张静图，按同一套缓动和仿射生成 GIF/APNG/WebP，一秒出，
+不占显存、不采样。先把运镜在预览里定下来，再去烧 GPU。预览会保留每一帧
+（Pillow 写 GIF 默认会合并相同帧、把时长相加，这里已经处理）。</p>
 <h3 id="41-单节点版apng-one-shot">4.1 单节点版：<code>APNG One Shot</code><a class="headerlink" href="#41-单节点版apng-one-shot" title="Permanent link">&para;</a></h3>
 <p>不想搭图就用它：<code>model / clip / vae / positive / negative</code> 进，<code>IMAGE</code> 出。内部等价于 dynamic 图 ——
 K 拍各采样一次（不是每帧一次），latent 插值成整段，一次解码，再走镜头。</p>

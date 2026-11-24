@@ -855,6 +855,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#42-presets-and-preview-before-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Presets and preview before rendering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#41-single-node-version-apng-one-shot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1344,6 +1355,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#42-presets-and-preview-before-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Presets and preview before rendering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#41-single-node-version-apng-one-shot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1580,6 +1602,21 @@ Defaults are neutral; adjust on the canvas after emitting.</p>
   automatically when the camera widgets are off-centre.</p>
 </li>
 </ul>
+<h3 id="42-presets-and-preview-before-rendering">4.2 Presets and preview before rendering<a class="headerlink" href="#42-presets-and-preview-before-rendering" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">emit_workflow</span><span class="p">.</span><span class="n">py</span> <span class="p">-</span><span class="n">-base</span> <span class="n">workflows</span><span class="p">/</span><span class="n">workflow-sdxl</span><span class="p">.</span><span class="n">json</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-story</span> <span class="n">assets</span><span class="p">/</span><span class="n">story</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">json</span> <span class="p">-</span><span class="n">-dynamic</span> <span class="p">-</span><span class="n">-camera-preset</span> <span class="n">dolly_in</span> <span class="p">-</span><span class="n">-out</span> <span class="n">my</span><span class="p">.</span><span class="n">json</span>
+
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">make_camera_preview</span><span class="p">.</span><span class="n">py</span> <span class="n">still</span><span class="p">.</span><span class="n">png</span> <span class="p">-</span><span class="n">-preset</span> <span class="n">pan_left</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-frames</span> <span class="n">24</span> <span class="p">-</span><span class="n">-fps</span> <span class="n">10</span> <span class="p">-</span><span class="n">-out</span> <span class="n">preview</span><span class="p">.</span><span class="n">gif</span>
+</code></pre></div>
+<p>Presets: <code>still</code>, <code>zoom_in</code>, <code>zoom_out</code>, <code>dolly_in</code>, <code>dolly_out</code>, <code>pan_left</code>, <code>pan_right</code>,
+<code>pan_up</code>, <code>pan_down</code>, <code>roll_cw</code>, <code>roll_ccw</code>, <code>spiral</code>, <code>breathe</code>, <code>rise</code>.
+<code>--camera-speed</code> scales the move, <code>--camera-amp</code> scales the amplitude.
+<code>dolly_in/out</code> are <strong>2D proxies</strong> (zoom, no parallax). <code>orbit_*</code>, <code>tilt_*</code>, <code>crane_up</code>,
+<code>shake</code> need 3D or per-frame jitter and raise an error instead of silently doing nothing.</p>
+<p>The preview script is Pillow-only: one still, the same easing and affine math, a GIF in a
+second, no GPU, no sampling. Decide the move in the preview first, then spend the render.
+Every frame is kept (Pillow's GIF writer otherwise merges identical frames and sums durations).</p>
 <h3 id="41-single-node-version-apng-one-shot">4.1 Single-node version: <code>APNG One Shot</code><a class="headerlink" href="#41-single-node-version-apng-one-shot" title="Permanent link">&para;</a></h3>
 <p>If you would rather not wire a graph: feed <code>model / clip / vae / positive / negative</code>, get <code>IMAGE</code>.
 It is equivalent to the dynamic graph — K beats each sampled once (not once per frame), latents
