@@ -123,7 +123,7 @@ K 拍各采样一次（不是每帧一次），latent 插值成整段，一次�
 | --- | --- | --- | --- |
 | `APNG Latent Interpolate N` | `samples1`, `samples2`, `frames`, `role`, `curve` | `LATENT`（batch=frames） | 插值公式与 ComfyUI 原生 `LatentInterpolate` 相同；`role` 按拍序 first/middle/last |
 | `APNG Latent Concat` | `samples1`, `samples2` | `LATENT` | 只在 batch 维拼接，不改宽高 |
-| `APNG Frame Stats` | `images`, `fps`, `segs` | `STRING` + UI 文本 | `OUTPUT_NODE`，不需要下游接线也能执行 |
+| `APNG Frame Stats` | `images`, `fps`, `segs` | `STRING` + UI 文本 | `OUTPUT_NODE`，不需要下游接线也能执行；打印帧数 / 帧差 / 接缝 / 关键帧色漂 / 漂移曲线与「闭合 / 累积」判定 |
 
 `segs` 必须与各拍 `frames` 之和一致，否则 `--validate` 直接报错：
 

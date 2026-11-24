@@ -346,6 +346,27 @@ def test_camera_node_rejected_in_static_graph(tmp_path):
     assert "只支持 --dynamic 模式" in log, log
 
 
+def test_frame_stats_curve_and_shape():
+    try:
+        import torch
+        if not hasattr(torch, "zeros"):
+            raise ImportError("stub torch")
+    except Exception:
+        pytest.skip("需要真 torch 才验证帧报告曲线")
+    mod = load_nodes()
+    rise = torch.zeros((7, 8, 8, 3))
+    for i in range(7):
+        rise[i] = i / 10.0
+    txt = mod.APNGFrameStats().report(rise, 10, "")["result"][0]
+    assert "curve   :" in txt
+    assert "shape   : 累积" in txt, txt
+    loop = torch.zeros((7, 8, 8, 3))
+    for i, v in enumerate([0.0, 0.2, 0.4, 0.2, 0.0, 0.2, 0.0]):
+        loop[i] = v
+    txt2 = mod.APNGFrameStats().report(loop, 10, "")["result"][0]
+    assert "shape   : 闭合" in txt2, txt2
+
+
 def test_camera_move_direction_zoom_and_loop():
     try:
         import torch

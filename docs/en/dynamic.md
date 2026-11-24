@@ -133,7 +133,7 @@ Sampling count equals beat count, so 3 beats / 24 frames still costs 3 samples, 
 | --- | --- | --- | --- |
 | `APNG Latent Interpolate N` | `samples1`, `samples2`, `frames`, `role`, `curve` | `LATENT` (batch=frames) | Same math as native `LatentInterpolate`; `role` follows beat order first/middle/last |
 | `APNG Latent Concat` | `samples1`, `samples2` | `LATENT` | Concatenates on the batch dimension only |
-| `APNG Frame Stats` | `images`, `fps`, `segs` | `STRING` + UI text | `OUTPUT_NODE`; runs even with no downstream link |
+| `APNG Frame Stats` | `images`, `fps`, `segs` | `STRING` + UI text | `OUTPUT_NODE`; runs even with no downstream link; prints frames / diffs / seams / keyframe colour drift / drift curve (closed vs accumulating) |
 
 `segs` must match the sum of all `frames` widgets or `--validate` fails:
 

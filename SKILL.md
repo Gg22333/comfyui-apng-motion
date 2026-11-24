@@ -366,7 +366,7 @@ K 个关键帧 KSampler（不变）
 - `easing`：`linear`；`sine/sine_in/sine_out`；`cubic/quint/back/elastic/bounce` 各带 `_in/_out`（19 种）；`loop=True` 首尾帧像素一致。
 - `border`：`reflection` / `border` / `zeros`。总帧数 2 且 `loop=True` 时等于不动。
 - `loop=True` 时缓动两端速度都是 0，`_in/_out` 只改中段形状。
-- 出图自检：`check_anim.py <文件> --curve` 看漂移是闭合还是累积；`--workflow <图.json>` 自动识别非中立镜头。
+- 出图自检：`check_anim.py <文件> --curve` 看漂移是闭合还是累积；`--workflow <图.json>` 自动识别非中立镜头。图里的 `APNGFrameStats` 也会打印同口径漂移曲线（闭合 / 累积）。
 
 #### 2.4.2 懒人节点 `APNG One Shot`
 

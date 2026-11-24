@@ -168,6 +168,15 @@ class APNGFrameStats:
                 round(sum(diffs) / len(diffs), 2) if diffs else None),
             "identical_pairs=%d" % identical,
         ]
+        if n > 1:
+            idx = sorted(set([0] + [round((n - 1) * k / 10.0) for k in range(1, 10)] + [n - 1]))
+            curve = [round(_mad(img[0], img[i]), 2) for i in idx]
+            lines.append("curve   : " + "  ".join("f%d=%.2f" % (i, v) for i, v in zip(idx, curve)))
+            peak, last = max(curve), curve[-1]
+            if peak > 6.0 and last < peak * 0.4:
+                lines.append("shape   : 闭合（峰值 %.2f -> 末帧 %.2f，回到起点附近）" % (peak, last))
+            elif peak > 6.0:
+                lines.append("shape   : 累积（峰值 %.2f -> 末帧 %.2f，没有回落）" % (peak, last))
         if identical:
             lines.append("WARN   : 有相邻帧完全相同，APNG 会合并帧、时长相加")
         seg_list = [int(x) for x in str(segs).replace("，", ",").split(",") if x.strip()]
