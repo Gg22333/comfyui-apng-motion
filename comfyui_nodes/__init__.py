@@ -8,6 +8,7 @@
   APNG Latent Interpolate N  两个关键帧 -> 指定帧数的 latent batch
   APNG Latent Concat         把多拍 batch 按顺序拼起来
   APNG Frame Stats           出图前报帧数 / 时长 / 相邻帧差 / 接缝差（阈值同 check_anim.py）
+  APNG One Shot              一个节点走完「K 个关键帧 -> 插值 -> 解码 -> 镜头」，适合单条动图
 
 安装
   把整个 comfyui_nodes 目录复制进 ComfyUI/custom_nodes/，或
@@ -186,16 +187,26 @@ class APNGFrameStats:
         return {"ui": {"text": [txt]}, "result": (txt,)}
 
 
-CAMERA_EASINGS = ["linear", "sine", "cubic", "quint", "back", "elastic", "bounce"]
+CAMERA_EASINGS = [
+    "linear",
+    "sine", "sine_in", "sine_out",
+    "cubic", "cubic_in", "cubic_out",
+    "quint", "quint_in", "quint_out",
+    "back", "back_in", "back_out",
+    "elastic", "elastic_in", "elastic_out",
+    "bounce", "bounce_in", "bounce_out",
+]
+
+# 裸名保持历史行为，不重定义已有工作流的出帧：
+#   sine = 缓入缓出；cubic / quint / back / elastic = 缓入；bounce = 缓出
+_EASE_ALIAS = {"sine": "sine_inout", "cubic": "cubic_in", "quint": "quint_in",
+               "back": "back_in", "elastic": "elastic_in", "bounce": "bounce_out"}
 
 
-def _ease(name, t):
-    """0..1 的缓动。公式是公开的标准 easing，不依赖第三方库。"""
-    t = min(max(float(t), 0.0), 1.0)
-    if name == "linear":
-        return t
+def _ease_in(name, t):
+    """缓入：慢起快收。"""
     if name == "sine":
-        return 0.5 - 0.5 * math.cos(math.pi * t)
+        return 1.0 - math.cos(math.pi * t / 2.0)
     if name == "cubic":
         return t * t * t
     if name == "quint":
@@ -203,11 +214,18 @@ def _ease(name, t):
     if name == "back":
         s = 1.70158
         return t * t * ((s + 1.0) * t - s)
+    if name == "bounce":
+        return 1.0 - _ease_out("bounce", 1.0 - t)
     if name == "elastic":
         if t in (0.0, 1.0):
             return t
         p = 0.3
         return -(2.0 ** (10.0 * (t - 1.0))) * math.sin((t - 1.0 - p / 4.0) * (2.0 * math.pi) / p)
+    raise ValueError("未知缓动族: %s" % name)
+
+
+def _ease_out(name, t):
+    """缓出：快起慢收。bounce 用原生公式，其余用 in 的镜像。"""
     if name == "bounce":
         n1, d1 = 7.5625, 2.75
         if t < 1.0 / d1:
@@ -220,6 +238,32 @@ def _ease(name, t):
             return n1 * t * t + 0.9375
         t -= 2.625 / d1
         return n1 * t * t + 0.984375
+    return 1.0 - _ease_in(name, 1.0 - t)
+
+
+def _ease_inout(name, t):
+    """缓入缓出：前半段缓入、后半段缓出，两端都平滑。"""
+    if t < 0.5:
+        return 0.5 * _ease_in(name, 2.0 * t)
+    return 1.0 - 0.5 * _ease_in(name, 2.0 - 2.0 * t)
+
+
+def _ease(name, t):
+    """0..1 的缓动。公式是公开的标准 easing，不依赖第三方库。"""
+    t = min(max(float(t), 0.0), 1.0)
+    if t <= 0.0:
+        return 0.0
+    if t >= 1.0:
+        return 1.0
+    if name == "linear":
+        return t
+    name = _EASE_ALIAS.get(name, name)
+    if name.endswith("_inout"):
+        return _ease_inout(name[:-6], t)
+    if name.endswith("_out"):
+        return _ease_out(name[:-4], t)
+    if name.endswith("_in"):
+        return _ease_in(name[:-3], t)
     raise ValueError("未知 easing: %s" % name)
 
 
@@ -234,6 +278,37 @@ def camera_progress(frames, easing="sine", loop=True):
         p = (1.0 - math.cos(2.0 * math.pi * t)) / 2.0 if loop else t
         out.append(_ease(easing, p))
     return out
+
+
+def camera_is_neutral(x, y, zoom, angle):
+    return (abs(float(x)) < 1e-9 and abs(float(y)) < 1e-9
+            and abs(float(zoom) - 1.0) < 1e-9 and abs(float(angle)) < 1e-9)
+
+
+def apply_camera(images, x, y, zoom, angle, easing, loop, border):
+    """对整段 IMAGE 施加同一条相机路径。纯像素仿射，不重新采样。"""
+    n, h, w, c = images.shape
+    if n == 0 or camera_is_neutral(x, y, zoom, angle):
+        return images
+    ps = camera_progress(n, easing, loop)
+    p = torch.tensor(ps, dtype=images.dtype, device=images.device).view(n, 1, 1)
+    scale = 1.0 / (1.0 + (float(zoom) - 1.0) * p)
+    rad = math.radians(float(angle)) * p
+    cos, sin = torch.cos(rad), torch.sin(rad)
+    # affine_grid 的 theta 是 output->input；平移取负号，画面才向参数方向移动。
+    tx = (-2.0 * float(x) * p) / float(w)
+    ty = (-2.0 * float(y) * p) / float(h)
+    theta = torch.zeros((n, 2, 3), dtype=images.dtype, device=images.device)
+    theta[:, 0, 0] = (scale * cos).view(-1)
+    theta[:, 0, 1] = (-scale * sin).view(-1)
+    theta[:, 0, 2] = tx.view(-1)
+    theta[:, 1, 0] = (scale * sin).view(-1)
+    theta[:, 1, 1] = (scale * cos).view(-1)
+    theta[:, 1, 2] = ty.view(-1)
+    grid = F.affine_grid(theta, (n, c, h, w), align_corners=False)
+    src = images.permute(0, 3, 1, 2)
+    out = F.grid_sample(src, grid, mode="bilinear", padding_mode=border, align_corners=False)
+    return out.permute(0, 2, 3, 1).clamp(0.0, 1.0)
 
 
 class APNGCameraMove:
@@ -263,28 +338,104 @@ class APNGCameraMove:
     CATEGORY = "APNG Motion"
 
     def move(self, images, x, y, zoom, angle, easing, loop, border):
-        n, h, w, c = images.shape
-        if n == 0:
-            return (images,)
-        ps = camera_progress(n, easing, loop)
-        p = torch.tensor(ps, dtype=images.dtype, device=images.device).view(n, 1, 1)
-        scale = 1.0 / (1.0 + (float(zoom) - 1.0) * p)
-        rad = math.radians(float(angle)) * p
-        cos, sin = torch.cos(rad), torch.sin(rad)
-        # affine_grid 的 theta 是 output->input；平移取负号，画面才向参数方向移动。
-        tx = (-2.0 * float(x) * p) / float(w)
-        ty = (-2.0 * float(y) * p) / float(h)
-        theta = torch.zeros((n, 2, 3), dtype=images.dtype, device=images.device)
-        theta[:, 0, 0] = (scale * cos).view(-1)
-        theta[:, 0, 1] = (-scale * sin).view(-1)
-        theta[:, 0, 2] = tx.view(-1)
-        theta[:, 1, 0] = (scale * sin).view(-1)
-        theta[:, 1, 1] = (scale * cos).view(-1)
-        theta[:, 1, 2] = ty.view(-1)
-        grid = F.affine_grid(theta, (n, c, h, w), align_corners=False)
-        src = images.permute(0, 3, 1, 2)
-        out = F.grid_sample(src, grid, mode="bilinear", padding_mode=border, align_corners=False)
-        return (out.permute(0, 2, 3, 1).clamp(0.0, 1.0),)
+        return (apply_camera(images, x, y, zoom, angle, easing, loop, border),)
+
+
+def split_actions(text):
+    parts = str(text).replace("｜", "|").replace("\n", "|").split("|")
+    return [p.strip() for p in parts if p.strip()]
+
+
+def split_segments(total, k):
+    """把总帧数平均分给 k 拍，余数给最后一拍。"""
+    total, k = int(total), int(k)
+    base = total // k
+    segs = [base] * k
+    segs[-1] += total - base * k
+    return segs
+
+
+class APNGOneShot:
+    """一个节点出整段：K 个关键帧各采样一次 -> latent 插值 -> 一次解码 -> 镜头。
+
+    与 --dynamic 工作流等价（同样的 K 次采样、同样的插值公式），只是不用搭图。
+    每个动作本身是完整提示词片段，用 | 分隔；base positive 放不变的锁定词和画风。
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        import comfy.samplers
+        return {
+            "required": {
+                "model": ("MODEL",),
+                "clip": ("CLIP",),
+                "vae": ("VAE",),
+                "positive": ("CONDITIONING",),
+                "negative": ("CONDITIONING",),
+                "width": ("INT", {"default": 512, "min": 64, "max": 4096, "step": 8}),
+                "height": ("INT", {"default": 512, "min": 64, "max": 4096, "step": 8}),
+                "frames": ("INT", {"default": 24, "min": 2, "max": 240, "step": 1}),
+                "actions": ("STRING", {"default": "neutral|notice|react", "multiline": True}),
+                "steps": ("INT", {"default": 20, "min": 1, "max": 200}),
+                "cfg": ("FLOAT", {"default": 6.0, "min": 0.0, "max": 100.0, "step": 0.1}),
+                "sampler_name": (comfy.samplers.KSampler.SAMPLERS, {"default": "euler"}),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS, {"default": "normal"}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "refine": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 0.95, "step": 0.01}),
+                "curve": (["linear", "ease", "snap"], {"default": "linear"}),
+                "x": ("FLOAT", {"default": 0.0, "min": -2048.0, "max": 2048.0, "step": 1.0}),
+                "y": ("FLOAT", {"default": 0.0, "min": -2048.0, "max": 2048.0, "step": 1.0}),
+                "zoom": ("FLOAT", {"default": 1.0, "min": 0.5, "max": 4.0, "step": 0.01}),
+                "angle": ("FLOAT", {"default": 0.0, "min": -360.0, "max": 360.0, "step": 1.0}),
+                "easing": (CAMERA_EASINGS, {"default": "sine"}),
+                "loop": ("BOOLEAN", {"default": True}),
+                "border": (["reflection", "border", "zeros"], {"default": "reflection"}),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "animate"
+    CATEGORY = "APNG Motion"
+
+    def animate(self, model, clip, vae, positive, negative, width, height, frames, actions,
+                steps, cfg, sampler_name, scheduler, seed, refine, curve,
+                x, y, zoom, angle, easing, loop, border):
+        acts = split_actions(actions)
+        if len(acts) < 2:
+            raise ValueError("actions 至少两拍，用 | 分隔，例如 neutral|notice|react")
+        k = len(acts)
+        frames = int(frames)
+        if frames < k:
+            raise ValueError("frames=%d 小于拍数 %d，每一拍至少一帧" % (frames, k))
+
+        import nodes as comfy_nodes
+
+        latent = comfy_nodes.EmptyLatentImage().generate(int(width), int(height), 1)[0]
+        keys = []
+        for i, act in enumerate(acts):
+            cond = positive
+            if act:
+                extra = comfy_nodes.CLIPTextEncode().encode(clip, act)[0]
+                cond = comfy_nodes.ConditioningCombine().combine(positive, extra)[0]
+            (out,) = comfy_nodes.common_ksampler(
+                model, int(seed), int(steps), float(cfg), sampler_name, scheduler,
+                cond, negative, latent, denoise=1.0 if i == 0 else float(refine))
+            keys.append(out)
+            latent = out
+
+        seq = []
+        for i, cnt in enumerate(split_segments(frames, k)):
+            if cnt <= 0:
+                continue
+            role = "first" if i == 0 else ("last" if i == k - 1 else "middle")
+            a, b = keys[i], keys[(i + 1) % k]
+            for r in segment_ratios(cnt, role, curve):
+                seq.append(blend_latent(a["samples"], b["samples"], r))
+
+        batch = torch.cat(seq, dim=0)
+        images = comfy_nodes.VAEDecode().decode(vae, {"samples": batch})[0]
+        images = apply_camera(images, x, y, zoom, angle, easing, loop, border)
+        return (images,)
 
 
 NODE_CLASS_MAPPINGS = {
@@ -292,6 +443,7 @@ NODE_CLASS_MAPPINGS = {
     "APNGLatentConcat": APNGLatentConcat,
     "APNGFrameStats": APNGFrameStats,
     "APNGCameraMove": APNGCameraMove,
+    "APNGOneShot": APNGOneShot,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -299,4 +451,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "APNGLatentConcat": "APNG Latent Concat",
     "APNGFrameStats": "APNG Frame Stats",
     "APNGCameraMove": "APNG Camera Move",
+    "APNGOneShot": "APNG One Shot",
 }

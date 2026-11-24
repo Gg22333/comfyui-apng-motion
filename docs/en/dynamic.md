@@ -78,7 +78,7 @@ Defaults are neutral; adjust on the canvas after emitting.
 | `y` | Total vertical travel in pixels; positive moves down | -2048…2048 |
 | `zoom` | **Last-frame** scale; `>1` pushes in, `<1` pulls out | 0.5…4.0 |
 | `angle` | Total rotation in degrees; positive is counter-clockwise | -360…360 |
-| `easing` | `linear` `sine` `cubic` `quint` `back` `elastic` `bounce` | default `sine` |
+| `easing` | Progress curve: `linear`; `sine` / `sine_in` / `sine_out`; `cubic` `quint` `back` `elastic` `bounce` each with `_in` / `_out` (19 total) | default `sine` |
 | `loop` | `True` runs 0→1→0, so first and last frame match exactly | default `True` |
 | `border` | Out-of-range sampling: `reflection` / `border` / `zeros` | default `reflection` |
 
@@ -102,6 +102,22 @@ Semantics:
   move shifts the whole frame, so mean RGB drifts legitimately; `--camera` raises the drift limit
   from 20 to 45 so motion is not misread as colour flashing. `emit_workflow.py --run` adds the flag
   automatically when the camera widgets are off-centre.
+
+### 4.1 Single-node version: `APNG One Shot`
+
+If you would rather not wire a graph: feed `model / clip / vae / positive / negative`, get `IMAGE`.
+It is equivalent to the dynamic graph — K beats each sampled once (not once per frame), latents
+interpolated into the full sequence, one decode, then the camera.
+
+| Input | Meaning |
+| --- | --- |
+| `actions` | One prompt fragment per beat, separated by `\|` or newlines; base positive holds the shared lock/style |
+| `frames` | Total frames, split evenly across beats; the remainder goes to the last beat |
+| `refine` | Denoise for beat 2 onward (default 0.4, same as the dynamic graph) |
+| `curve` | `linear` / `ease` / `snap` in-beat interpolation |
+| `x/y/zoom/angle/easing/loop/border` | Same meaning as `APNG Camera Move`; neutral values skip the extra resample |
+
+Sampling count equals beat count, so 3 beats / 24 frames still costs 3 samples, never per-frame re-drawing.
 
 > The whole-sequence camera + easing idea was inspired by
 > [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator).

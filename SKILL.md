@@ -363,8 +363,14 @@ K 个关键帧 KSampler（不变）
 
 - 纯像素仿射：`affine_grid` + `grid_sample`，不重新采样、不碰采样器、无新依赖。
 - `x` 正向右、`y` 正向下、`angle` 正逆时针、`zoom>1` 推近；**都是整段总量**，不是每帧增量。
-- `easing`：`linear/sine/cubic/quint/back/elastic/bounce`；`loop=True` 首尾帧像素一致。
+- `easing`：`linear`；`sine/sine_in/sine_out`；`cubic/quint/back/elastic/bounce` 各带 `_in/_out`（19 种）；`loop=True` 首尾帧像素一致。
 - `border`：`reflection` / `border` / `zeros`。总帧数 2 且 `loop=True` 时等于不动。
+
+#### 2.4.2 懒人节点 `APNG One Shot`
+
+不想搭图时用：`model/clip/vae/positive/negative` → `IMAGE`。内部同样是「K 拍各采样一次 + latent 插值 +
+一次解码 + 镜头」，采样次数等于拍数，不会退化成逐帧重绘。`actions` 用 `|` 分隔每拍提示词，
+`frames` 平均分给各拍，`refine` 控制第 2 拍起的 denoise（默认 0.4）。
 - 思路来自 [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator)，
   该仓库无许可证文件，未复用代码。
 

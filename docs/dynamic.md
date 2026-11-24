@@ -76,7 +76,7 @@ K 个关键帧 KSampler（同 seed，首帧 latent）
 | `y` | 整段总纵向位移（像素），正数向下 | -2048…2048 |
 | `zoom` | **末帧**倍率，`>1` 推近，`<1` 拉远 | 0.5…4.0 |
 | `angle` | 整段总旋转角度（度），正数逆时针 | -360…360 |
-| `easing` | 进度曲线：`linear` `sine` `cubic` `quint` `back` `elastic` `bounce` | 默认 `sine` |
+| `easing` | 进度曲线：`linear`；`sine` / `sine_in` / `sine_out`；`cubic` `quint` `back` `elastic` `bounce` 各带 `_in` / `_out`，共 19 种 | 默认 `sine` |
 | `loop` | `True` 走 0→1→0 往返，首尾帧完全一致 | 默认 `True` |
 | `border` | 越界取样：`reflection` 镜像 / `border` 拉伸边缘 / `zeros` 黑边 | 默认 `reflection` |
 
@@ -95,6 +95,21 @@ K 个关键帧 KSampler（同 seed，首帧 latent）
 - 出图自检：`python scripts/check_anim.py <文件> --expect 24 --camera`。镜头位移会让整幅画面的
   RGB 均值一起平移，`--camera` 把漂移阈值从 20 放宽到 45，避免把正常位移误判成闪色；
   `emit_workflow.py --run` 检测到非中立镜头参数时会自动带上这个开关。
+
+### 4.1 单节点版：`APNG One Shot`
+
+不想搭图就用它：`model / clip / vae / positive / negative` 进，`IMAGE` 出。内部等价于 dynamic 图 ——
+K 拍各采样一次（不是每帧一次），latent 插值成整段，一次解码，再走镜头。
+
+| 参数 | 说明 |
+| --- | --- |
+| `actions` | 每拍一段提示词，用 `\|` 或换行分隔；base positive 放不变的锁定词和画风 |
+| `frames` | 总帧数，平均分给各拍，余数给最后一拍 |
+| `refine` | 第 2 拍起的 denoise（默认 0.4，与 dynamic 图一致） |
+| `curve` | `linear` / `ease` / `snap`，拍内插值曲线 |
+| `x/y/zoom/angle/easing/loop/border` | 与 `APNG Camera Move` 同义；中立值时不额外重采样 |
+
+采样次数 = 拍数，所以 3 拍 24 帧仍然是 3 次采样，不会退化成逐帧重绘。
 
 > 整段镜头 + 缓动的思路参考 [ShmuelRonen/ComfyUI-AstralAnimator](https://github.com/ShmuelRonen/ComfyUI-AstralAnimator)。
 > 该仓库没有许可证文件，**未复用任何代码**；本节点是 `torch.nn.functional.affine_grid` + `grid_sample` 的独立实现。

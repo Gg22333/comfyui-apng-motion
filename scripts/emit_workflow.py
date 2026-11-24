@@ -80,7 +80,13 @@ DYN_INTERP = "APNGLatentInterpolateN"
 DYN_CONCAT = "APNGLatentConcat"
 DYN_STATS = "APNGFrameStats"
 DYN_CAMERA = "APNGCameraMove"
-CAM_EASINGS = ("linear", "sine", "cubic", "quint", "back", "elastic", "bounce")
+CAM_EASINGS = ("linear",
+                "sine", "sine_in", "sine_out",
+                "cubic", "cubic_in", "cubic_out",
+                "quint", "quint_in", "quint_out",
+                "back", "back_in", "back_out",
+                "elastic", "elastic_in", "elastic_out",
+                "bounce", "bounce_in", "bounce_out")
 
 
 def _new_node(nid, ntype, pos, size, inputs, outputs, widgets, title, order):

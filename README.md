@@ -647,6 +647,8 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json \
 
 十份 JSON，拖进 ComfyUI 就能跑（四份动态帧数的先装 `comfyui_nodes`）：
 
+懒得搭图也可以用单节点 `APNG One Shot`：`model/clip/vae/positive/negative` 直接出 `IMAGE`，内部等价于动态图（K 拍各采样一次，不是逐帧重绘）。
+
 | 环境 | 3 拍 | 4 拍 |
 | --- | --- | --- |
 | SDXL | [`workflow-sdxl.json`](workflows/workflow-sdxl.json) | [`workflow-sdxl-4beat.json`](workflows/workflow-sdxl-4beat.json) |

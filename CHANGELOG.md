@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 1.4.0 — 2026-11-24
+
+**一个节点出整段 + 缓动分档到 19 种。**
+
+- **`APNGOneShot`（`APNG One Shot`）**：`model/clip/vae/positive/negative` → `IMAGE`，不用搭图。
+  内部与 `--dynamic` 工作流等价：K 拍各跑一次 `common_ksampler`（第 1 拍 denoise 1.0，之后默认 0.4），
+  latent 插值成整段，一次 `VAEDecode`，最后走镜头。**采样次数 = 拍数，不是帧数**，不会退化成本项目
+  明确否掉的逐帧重绘。`actions` 用 `|` 或换行分隔，`frames` 平均分配到各拍（余数给最后一拍）。
+- **缓动 7 → 19**：在原有 `linear/sine/cubic/quint/back/elastic/bounce` 之外，新增
+  `sine_in/sine_out/cubic_in/cubic_out/quint_in/quint_out/back_in/back_out/elastic_in/elastic_out/bounce_in/bounce_out`。
+  裸名保持历史数值（`sine` 缓入缓出，`cubic/quint/back/elastic` 缓入，`bounce` 缓出），
+  已有工作流出帧不变 —— 有回归测试逐值比对。
+- **`apply_camera()` / `camera_is_neutral()`** 抽成模块函数，`APNGCameraMove` 与 `APNGOneShot` 共用；
+  中立参数直接跳过重采样。
+- **测试**：旧 7 种缓动逐值不变、`_out` 与 `_in` 镜像、19 种两端取到 0/1、`split_actions` / `split_segments`。
+- **版本号**：1.3.10 → 1.4.0。
+
 ## 1.3.10 — 2026-11-24
 
 **镜头出图的漂移误报修掉：`check_anim.py --camera`。**

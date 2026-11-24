@@ -212,6 +212,63 @@ def test_camera_progress_and_easing():
         assert lp[0] == 0.0 and abs(lp[0] - lp[-1]) < 1e-9, name
 
 
+LEGACY_EASE = {
+    "linear": lambda t: t,
+    "sine": lambda t: 0.5 - 0.5 * __import__("math").cos(__import__("math").pi * t),
+    "cubic": lambda t: t ** 3,
+    "quint": lambda t: t ** 5,
+    "back": lambda t: t * t * ((1.70158 + 1) * t - 1.70158),
+    "bounce": lambda t: (7.5625 * t * t if t < 1 / 2.75 else
+                         (7.5625 * (t - 1.5 / 2.75) ** 2 + 0.75 if t < 2 / 2.75 else
+                          (7.5625 * (t - 2.25 / 2.75) ** 2 + 0.9375 if t < 2.5 / 2.75 else
+                           7.5625 * (t - 2.625 / 2.75) ** 2 + 0.984375))),
+}
+
+
+def test_legacy_easing_values_unchanged():
+    """加 _in/_out 分档不能改动已有工作流的出帧。"""
+    mod = load_nodes()
+    for name, ref in LEGACY_EASE.items():
+        for i in range(11):
+            t = i / 10.0
+            got = mod._ease(name, t)
+            assert abs(got - ref(t)) < 1e-6, (name, t, got, ref(t))
+    # elastic 单独比对（分段公式）
+    for i in range(11):
+        t = i / 10.0
+        if t in (0.0, 1.0):
+            continue
+        ref = -(2.0 ** (10.0 * (t - 1.0))) * __import__("math").sin(
+            (t - 1.0 - 0.3 / 4.0) * (2.0 * __import__("math").pi) / 0.3)
+        assert abs(mod._ease("elastic", t) - ref) < 1e-9
+
+
+def test_easing_out_mirrors_in():
+    mod = load_nodes()
+    for fam in ("sine", "cubic", "quint", "back", "elastic", "bounce"):
+        for i in range(1, 10):
+            t = i / 10.0
+            assert abs(mod._ease(fam + "_out", t) - (1.0 - mod._ease(fam + "_in", 1.0 - t))) < 1e-9, (fam, t)
+
+
+def test_all_easings_hit_both_ends():
+    mod = load_nodes()
+    assert len(mod.CAMERA_EASINGS) == 19
+    for name in mod.CAMERA_EASINGS:
+        assert abs(mod._ease(name, 0.0)) < 1e-9, name
+        assert abs(mod._ease(name, 1.0) - 1.0) < 1e-9, name
+
+
+def test_oneshot_helpers():
+    mod = load_nodes()
+    assert mod.split_actions("neutral|notice|react") == ["neutral", "notice", "react"]
+    assert mod.split_actions("a\nb\n\nc") == ["a", "b", "c"]
+    assert mod.split_actions("   ") == []
+    assert mod.split_segments(24, 3) == [8, 8, 8]
+    assert mod.split_segments(25, 3) == [8, 8, 9]
+    assert mod.split_segments(2, 2) == [1, 1]
+
+
 def test_camera_emit_shape(tmp_path):
     wf = _emit_camera(tmp_path)
     nodes = wf["nodes"]
