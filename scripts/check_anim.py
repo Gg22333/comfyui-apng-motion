@@ -144,6 +144,7 @@ def main():
         "duration_ms": durations[0] if durations else None,
         "total_ms": total_ms,
         "total_s": round(total_ms / 1000.0, 2),
+        "effective_fps": round(1000.0 / (total_ms / float(n)), 2) if n and total_ms else None,
         "loop": im.info.get("loop"),
         "diff_min": min(diffs) if diffs else None,
         "diff_max": max(diffs) if diffs else None,
@@ -212,6 +213,8 @@ def main():
         print(f"file    : {res['file']}")
         print(f"format  : {res['format']}  size={res['size']}  frames={res['frames']}  loop={res['loop']}")
         ms_all = [d for d in durations if isinstance(d, (int, float))]
+        if res["effective_fps"]:
+            print(f"fps     : {res['effective_fps']} effective（GIF 会按 10ms 取整）")
         if ms_all and min(ms_all) != max(ms_all):
             print(f"timing  : {max(ms_all)} / {min(ms_all)} ms/frame (per-frame)  "
                   f"total={res['total_s']} s")

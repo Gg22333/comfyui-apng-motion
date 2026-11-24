@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 1.5.4 — 2026-11-24
+
+**闭环：能把成品拆回来，也能做正倒放与停留。**
+
+- **`scripts/split_frames.py`**：APNG / WebP / GIF → PNG 序列；`--pick N` 按段挑
+  「与前一帧差最大」的关键帧，覆盖全片而不是只看开头。
+- **`scripts/make_loop.py`**：`--ping-pong`（正放 + 倒放，接缝不重复端点）、
+  `--hold-first/--hold-last`、`--repeat`、`--fps`；默认保住帧数，不让 Pillow 合并相同帧。
+- **`check_anim`**：新增 `effective fps`（GIF 时长按 10ms 取整后的真实帧率），JSON 同步。
+- **文档**：输出页补拆帧与后处理用法（中英）。
+- **版本号**：1.5.3 → 1.5.4（PATCH）。
+
 ## 1.5.3 — 2026-11-24
 
 **分镜脚本 + 允许「判不了」。**

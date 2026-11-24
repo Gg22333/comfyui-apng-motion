@@ -133,6 +133,23 @@ graph has a non-neutral camera (otherwise a legitimate pan is reported as colour
 
 5. Run `check_output.py` again: `FAIL 总数: 0`.
 
+### Split and post-process
+
+```powershell
+# back to a PNG sequence, plus 4 picked keyframes
+python scripts/split_frames.py output/apng/anim24_00001_.png --out frames/ --pick 4
+
+# forward + reverse (seam endpoints not duplicated), holds at both ends, repeat twice
+python scripts/make_loop.py output/apng/anim24_00001_.png --ping-pong `
+  --hold-first 2 --hold-last 2 --repeat 2 --out looped.png
+```
+
+- `split_frames.py --pick N` picks the largest-difference frame in each slice, so coverage stays even.
+- `make_loop.py` keeps the frame count by default (Pillow merges identical neighbours and sums
+  durations; `--allow-merge` opts out).
+- `check_anim` prints `effective fps`: GIF durations round to 10 ms, so 12 fps may be stored as 11.9.
+
+
 ---
 
 ## 6 · Archive conventions

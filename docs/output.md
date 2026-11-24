@@ -134,6 +134,23 @@ python scripts/check_output.py --profile profiles/xl.json --fix
 
 5. 再跑一次 `check_output.py`，`FAIL 总数: 0`。
 
+### 拆帧与后处理
+
+```powershell
+# 把成品拆回 PNG 序列，顺手挑 4 个关键帧
+python scripts/split_frames.py output/apng/anim24_00001_.png --out frames/ --pick 4
+
+# 正放 + 倒放（接缝不重复端点），开头/结尾各停 2 帧，整段再重复一次
+python scripts/make_loop.py output/apng/anim24_00001_.png --ping-pong `
+  --hold-first 2 --hold-last 2 --repeat 2 --out looped.png
+```
+
+- `split_frames.py --pick N`：按段取「与前一帧差最大」的那帧，保证覆盖全片；
+  输出 `frame_000.png` 与 `key_00.png`。
+- `make_loop.py`：默认保住帧数（Pillow 会把相同相邻帧合并、时长相加；用 `--allow-merge` 可关掉）。
+- `check_anim` 会打印 `effective fps`：GIF 时长按 10ms 取整，请求 12fps 实际可能存成 11.9。
+
+
 ---
 
 ## 6 · 归档约定
