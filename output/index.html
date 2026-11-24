@@ -977,6 +977,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5 · 一次运行后的验收清单">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#拆帧与后处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        拆帧与后处理
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1323,6 +1340,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5 · 一次运行后的验收清单">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#拆帧与后处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        拆帧与后处理
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1581,6 +1615,20 @@
 <ol>
 <li>再跑一次 <code>check_output.py</code>，<code>FAIL 总数: 0</code>。</li>
 </ol>
+<h3 id="拆帧与后处理">拆帧与后处理<a class="headerlink" href="#拆帧与后处理" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c"># 把成品拆回 PNG 序列，顺手挑 4 个关键帧</span>
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">split_frames</span><span class="p">.</span><span class="n">py</span> <span class="n">output</span><span class="p">/</span><span class="n">apng</span><span class="p">/</span><span class="n">anim24_00001_</span><span class="p">.</span><span class="n">png</span> <span class="p">-</span><span class="n">-out</span> <span class="n">frames</span><span class="p">/</span> <span class="p">-</span><span class="n">-pick</span> <span class="n">4</span>
+
+<span class="c"># 正放 + 倒放（接缝不重复端点），开头/结尾各停 2 帧，整段再重复一次</span>
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">make_loop</span><span class="p">.</span><span class="n">py</span> <span class="n">output</span><span class="p">/</span><span class="n">apng</span><span class="p">/</span><span class="n">anim24_00001_</span><span class="p">.</span><span class="n">png</span> <span class="p">-</span><span class="n">-ping-pong</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-hold-first</span> <span class="n">2</span> <span class="p">-</span><span class="n">-hold-last</span> <span class="n">2</span> <span class="p">-</span><span class="n">-repeat</span> <span class="n">2</span> <span class="p">-</span><span class="n">-out</span> <span class="n">looped</span><span class="p">.</span><span class="n">png</span>
+</code></pre></div>
+<ul>
+<li><code>split_frames.py --pick N</code>：按段取「与前一帧差最大」的那帧，保证覆盖全片；
+  输出 <code>frame_000.png</code> 与 <code>key_00.png</code>。</li>
+<li><code>make_loop.py</code>：默认保住帧数（Pillow 会把相同相邻帧合并、时长相加；用 <code>--allow-merge</code> 可关掉）。</li>
+<li><code>check_anim</code> 会打印 <code>effective fps</code>：GIF 时长按 10ms 取整，请求 12fps 实际可能存成 11.9。</li>
+</ul>
 <hr />
 <h2 id="6--归档约定">6 · 归档约定<a class="headerlink" href="#6--归档约定" title="Permanent link">&para;</a></h2>
 <table>

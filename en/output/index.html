@@ -977,6 +977,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5 · Acceptance checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#split-and-post-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split and post-process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1323,6 +1340,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5 · Acceptance checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#split-and-post-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split and post-process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1581,6 +1615,20 @@ graph has a non-neutral camera (otherwise a legitimate pan is reported as colour
 <ol>
 <li>Run <code>check_output.py</code> again: <code>FAIL 总数: 0</code>.</li>
 </ol>
+<h3 id="split-and-post-process">Split and post-process<a class="headerlink" href="#split-and-post-process" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c"># back to a PNG sequence, plus 4 picked keyframes</span>
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">split_frames</span><span class="p">.</span><span class="n">py</span> <span class="n">output</span><span class="p">/</span><span class="n">apng</span><span class="p">/</span><span class="n">anim24_00001_</span><span class="p">.</span><span class="n">png</span> <span class="p">-</span><span class="n">-out</span> <span class="n">frames</span><span class="p">/</span> <span class="p">-</span><span class="n">-pick</span> <span class="n">4</span>
+
+<span class="c"># forward + reverse (seam endpoints not duplicated), holds at both ends, repeat twice</span>
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">make_loop</span><span class="p">.</span><span class="n">py</span> <span class="n">output</span><span class="p">/</span><span class="n">apng</span><span class="p">/</span><span class="n">anim24_00001_</span><span class="p">.</span><span class="n">png</span> <span class="p">-</span><span class="n">-ping-pong</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-hold-first</span> <span class="n">2</span> <span class="p">-</span><span class="n">-hold-last</span> <span class="n">2</span> <span class="p">-</span><span class="n">-repeat</span> <span class="n">2</span> <span class="p">-</span><span class="n">-out</span> <span class="n">looped</span><span class="p">.</span><span class="n">png</span>
+</code></pre></div>
+<ul>
+<li><code>split_frames.py --pick N</code> picks the largest-difference frame in each slice, so coverage stays even.</li>
+<li><code>make_loop.py</code> keeps the frame count by default (Pillow merges identical neighbours and sums
+  durations; <code>--allow-merge</code> opts out).</li>
+<li><code>check_anim</code> prints <code>effective fps</code>: GIF durations round to 10 ms, so 12 fps may be stored as 11.9.</li>
+</ul>
 <hr />
 <h2 id="6--archive-conventions">6 · Archive conventions<a class="headerlink" href="#6--archive-conventions" title="Permanent link">&para;</a></h2>
 <table>
