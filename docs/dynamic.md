@@ -98,6 +98,34 @@ K 个关键帧 KSampler（同 seed，首帧 latent）
   RGB 均值一起平移，`--camera` 把漂移阈值从 20 放宽到 45，避免把正常位移误判成闪色；
   `emit_workflow.py --run` 检测到非中立镜头参数时会自动带上这个开关。
 
+### 4.2 预设与出图前预览
+
+```powershell
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json `
+  --story assets/story.example.json --dynamic --camera-preset dolly_in --out my.json
+
+python scripts/make_camera_preview.py still.png --preset pan_left `
+  --frames 24 --fps 10 --out preview.gif
+```
+
+| 预设 | 效果 |
+| --- | --- |
+| `still` | 不动 |
+| `zoom_in` / `zoom_out` | 推近 / 拉远 |
+| `dolly_in` / `dolly_out` | 2D 代理：用 zoom 模拟推近，**不产生视差** |
+| `pan_left` / `pan_right` / `pan_up` / `pan_down` | 横向 / 纵向平移，幅度按画面宽高的比例算 |
+| `roll_cw` / `roll_ccw` | 顺时针 / 逆时针旋转 |
+| `spiral` | 旋转 + 推近 |
+| `breathe` | 轻微缩放呼吸（建议配 `loop=True`） |
+| `rise` | 上移 + 轻微推近 |
+
+`--camera-speed` 管倍速，`--camera-amp` 管幅度。`orbit_*`、`tilt_*`、`crane_up`、`shake`
+这类需要 3D 或逐帧抖动，**直接报错**而不是静默不动 —— 2D 仿射做不了，就不装作能做。
+
+预览脚本只用 Pillow：拿一张静图，按同一套缓动和仿射生成 GIF/APNG/WebP，一秒出，
+不占显存、不采样。先把运镜在预览里定下来，再去烧 GPU。预览会保留每一帧
+（Pillow 写 GIF 默认会合并相同帧、把时长相加，这里已经处理）。
+
 ### 4.1 单节点版：`APNG One Shot`
 
 不想搭图就用它：`model / clip / vae / positive / negative` 进，`IMAGE` 出。内部等价于 dynamic 图 ——

@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 1.5.2 — 2026-11-24
+
+**镜头预设 + 出图前预览，把「先试后烧」补上。**
+
+- **`scripts/camera_presets.py`**：14 个 2D 预设（`zoom/dolly/pan/roll/spiral/breathe/rise/still`），
+  `--camera-preset` 直接写进工作流镜头节点，`--camera-speed` / `--camera-amp` 调倍速与幅度。
+  `orbit/tilt/crane/shake` 这类需要 3D 或逐帧抖动的运镜**直接报错**，不静默不动。
+- **`scripts/make_camera_preview.py`**：一张静图 + 同一套缓动/仿射，纯 Pillow 出 GIF/APNG/WebP，
+  不占显存、不采样；GIF 会保留每一帧（修掉 Pillow 合并相同帧、时长相加的问题）。
+- **文档**：新增预设表与预览用法；架构页补实测成本、能控/不能控边界、APNG 与 GIF 的取舍。
+- **版本号**：1.5.1 → 1.5.2（PATCH）。
+
 ## 1.5.1 — 2026-11-24
 
 **把漂移曲线也搬进工作流节点。**

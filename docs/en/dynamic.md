@@ -105,6 +105,26 @@ Semantics:
   from 20 to 45 so motion is not misread as colour flashing. `emit_workflow.py --run` adds the flag
   automatically when the camera widgets are off-centre.
 
+### 4.2 Presets and preview before rendering
+
+```powershell
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json `
+  --story assets/story.example.json --dynamic --camera-preset dolly_in --out my.json
+
+python scripts/make_camera_preview.py still.png --preset pan_left `
+  --frames 24 --fps 10 --out preview.gif
+```
+
+Presets: `still`, `zoom_in`, `zoom_out`, `dolly_in`, `dolly_out`, `pan_left`, `pan_right`,
+`pan_up`, `pan_down`, `roll_cw`, `roll_ccw`, `spiral`, `breathe`, `rise`.
+`--camera-speed` scales the move, `--camera-amp` scales the amplitude.
+`dolly_in/out` are **2D proxies** (zoom, no parallax). `orbit_*`, `tilt_*`, `crane_up`,
+`shake` need 3D or per-frame jitter and raise an error instead of silently doing nothing.
+
+The preview script is Pillow-only: one still, the same easing and affine math, a GIF in a
+second, no GPU, no sampling. Decide the move in the preview first, then spend the render.
+Every frame is kept (Pillow's GIF writer otherwise merges identical frames and sums durations).
+
 ### 4.1 Single-node version: `APNG One Shot`
 
 If you would rather not wire a graph: feed `model / clip / vae / positive / negative`, get `IMAGE`.

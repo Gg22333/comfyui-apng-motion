@@ -87,3 +87,15 @@ the end, easily read as a jump. Segments keep a 0.004 gap so Pillow never merges
 
 Frame-by-frame img2img needs one sample per frame: N samples for N frames. Interpolation needs 3–5 samples plus N decodes; VRAM is unchanged and time grows linearly, while in-between frames come from a mathematical transition and are more evenly spaced.
 The trade-off is no real motion trajectory, which is why this route is for micro-performance only.
+
+Measured (512x512, 8 steps, 24 frames): per-frame redraw 40 s / 24 samples, interpolation
+15.5 s / 3 samples; per-frame drift accumulates (0 -> 38) while interpolation closes
+(peak 16 -> last frame 1.5).
+
+Controllable here: storyboard prompts per beat, frame count, fps, in-beat curve, whole-sequence
+2D camera (pan / zoom / rotate + easing), loop seam. Not controllable: true 3D parallax,
+newly generated detail per frame, complex physics. Those need per-frame or video models.
+
+**APNG is the primary output**: lossless, true colour + alpha, no palette quantisation.
+GIF is the compatibility export (256 colours, identical frames merged with summed durations),
+so check the APNG first and only confirm the GIF plays.

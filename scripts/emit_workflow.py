@@ -27,6 +27,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import comfy_lib as L
+import camera_presets as CP
 import timing as T
 
 
@@ -98,7 +99,7 @@ def _new_node(nid, ntype, pos, size, inputs, outputs, widgets, title, order):
     }
 
 
-def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, camera=False):
+def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, camera=False, camera_vals=None):
     """静态 N 插值 + N 解码 -> 每拍一个插值节点 + 一次解码 + 帧报告。"""
     nodes = wf["nodes"]
     # 也清掉上一次 --dynamic 留下的节点，保证对动态图重复跑是幂等的
@@ -177,9 +178,10 @@ def apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, camera=False):
 
     img_src = dec
     if camera:
+        cv = camera_vals or {"x": 0.0, "y": 0.0, "zoom": 1.0, "angle": 0.0}
         cam = add(DYN_CAMERA, [max_x + 1140, 140], [320, 260],
                   [{"name": "images", "type": "IMAGE", "link": None}],
-                  [0.0, 0.0, 1.0, 0.0, "sine", True, "reflection"],
+                  [cv["x"], cv["y"], cv["zoom"], cv["angle"], "sine", True, "reflection"],
                   "镜头运动（x/y/zoom/angle；默认中立）",
                   out_name="IMAGE", out_type="IMAGE")
         cam["inputs"][0]["link"] = ledger.add(dec["id"], 0, cam["id"], 0, "IMAGE")
@@ -243,6 +245,10 @@ def main():
                     help="动态帧数模式：每拍一个 APNG Latent Interpolate N + 一次解码（需要 comfyui_nodes 节点）")
     ap.add_argument("--camera", action="store_true",
                     help="动态模式配 --camera：解码后插入 APNG Camera Move（默认中立，图上再调）")
+    ap.add_argument("--camera-preset", default="",
+                    help="镜头预设：dolly_in / pan_left / zoom_in / spiral ...（自动开启 --camera）")
+    ap.add_argument("--camera-speed", type=float, default=1.0, help="预设倍速，默认 1.0")
+    ap.add_argument("--camera-amp", type=float, default=1.0, help="预设幅度倍率，默认 1.0")
     ap.add_argument("--size", type=int, default=0, help="正方形边长；写 640 就是 640x640")
     ap.add_argument("--width", type=int, default=0)
     ap.add_argument("--height", type=int, default=0)
@@ -351,6 +357,13 @@ def main():
     # 尺寸：直接改 latent 节点，避免用户在图堆里找「尺寸」节点
     w = a.width or a.size or int(story.get("width", 0) or 0)
     h = a.height or a.size or int(story.get("height", 0) or 0)
+    camera_vals = None
+    if a.camera_preset:
+        camera_vals = CP.resolve(a.camera_preset, w or 512, h or 512, a.camera_speed, a.camera_amp)
+        a.camera = True
+        print("camera  : %s -> x=%.1f y=%.1f zoom=%.3f angle=%.1f"
+              % (a.camera_preset, camera_vals["x"], camera_vals["y"],
+                 camera_vals["zoom"], camera_vals["angle"]))
     if w or h:
         for n in nodes:
             if n["type"] in ("EmptyLatentImage", "EmptyFlux2LatentImage", "EmptySD3LatentImage"):
@@ -539,7 +552,7 @@ def main():
     apply_notes(nodes)
 
     if a.dynamic:
-        apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, a.camera)
+        apply_dynamic(wf, ledger, chain, segs, curve, fps, vae_o, a.camera, camera_vals)
         print("dynamic: %d 拍 -> %d 个插值节点 + 1 次解码（帧数合计 %d）"
               % (len(segs), len(segs), sum(segs)))
     else:
