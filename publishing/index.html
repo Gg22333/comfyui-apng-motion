@@ -1347,6 +1347,30 @@
 </tr>
 </tbody>
 </table>
+<p>先选对号位：</p>
+<table>
+<thead>
+<tr>
+<th>改动</th>
+<th>升哪一位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>修 bug、文案、诊断参数、可选 widget</td>
+<td>PATCH：<code>1.5.0 → 1.5.1</code></td>
+</tr>
+<tr>
+<td>新增节点/工作流类别，且是成组的大改</td>
+<td>MINOR：<code>1.5.1 → 1.6.0</code></td>
+</tr>
+<tr>
+<td>工作流不兼容、必须重装</td>
+<td>MAJOR：<code>1.6.0 → 2.0.0</code></td>
+</tr>
+</tbody>
+</table>
+<p>默认 PATCH。一次只升一级；零散小改不要凑成 MINOR。</p>
 <h2 id="2--提交与打-tag">2 · 提交与打 tag<a class="headerlink" href="#2--提交与打-tag" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A
 git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat: 一句话说清这次做了什么 (v1.3.2)"</span>
