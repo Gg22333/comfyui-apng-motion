@@ -1573,6 +1573,9 @@
   <span class="s1">'&lt;ComfyUI&gt;\output\APNG\final\apng\anim24_00001_.png'</span> <span class="p">-</span><span class="n">-expect</span> <span class="n">24</span>
 </code></pre></div>
 <p>Expected: <code>frames=24</code>, <code>loop=0</code>, <code>identical_pairs=0</code>, <code>color_drift &lt; 6</code>.</p>
+<p>For camera-moved clips add <code>--camera</code>, or <code>--workflow &lt;workflow.json&gt;</code> so the script reads whether the
+graph has a non-neutral camera (otherwise a legitimate pan is reported as colour flashing). Add
+<code>--curve</code> to print the drift curve: returning near the start means closed loop, a monotone climb means accumulation.</p>
 <ol>
 <li>Run <code>check_output.py</code> again: <code>FAIL 总数: 0</code>.</li>
 </ol>

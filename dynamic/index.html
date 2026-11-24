@@ -1559,6 +1559,8 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 <li><code>loop=True</code> 时 <code>p = ease((1 - cos(2πt)) / 2)</code>，首尾两帧都回到 0，循环播放不跳；<code>loop=False</code> 是单向推进。</li>
 <li><code>zoom</code> 是<strong>末帧</strong>的倍率（<code>loop=True</code> 时是中点最大）；「推近再回来」用 <code>loop=True</code> + <code>zoom=1.2</code>。</li>
 <li><code>loop=True</code> 且总帧数 N=2 时，首尾都是原位，等于没有运动；要动就关 <code>loop</code> 或加帧。</li>
+<li><code>loop=True</code> 时所有缓动在两端的瞬时速度都是 0（0→1→0 本身就把端点压平），
+  <code>_in</code> / <code>_out</code> 改变的是中段形状，不是起停快慢。</li>
 <li>镜头和分镜是两件事：<strong>分镜</strong>改的是关键帧内容（K 个 KSampler + 各自的提示词），
   <strong>镜头</strong>只对已经解码好的像素做统一变换。两者可以叠加。</li>
 <li>
@@ -1601,6 +1603,10 @@ K 拍各采样一次（不是每帧一次），latent 插值成整段，一次�
 <tr>
 <td><code>x/y/zoom/angle/easing/loop/border</code></td>
 <td>与 <code>APNG Camera Move</code> 同义；中立值时不额外重采样</td>
+</tr>
+<tr>
+<td><code>segs</code></td>
+<td>可选，逗号分隔的每拍帧数（如 <code>10,12,4,12</code>）；留空则平均分</td>
 </tr>
 </tbody>
 </table>

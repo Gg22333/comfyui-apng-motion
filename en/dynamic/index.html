@@ -1565,6 +1565,8 @@ Defaults are neutral; adjust on the canvas after emitting.</p>
   <code>loop=True</code> with <code>zoom=1.2</code>.</li>
 <li><code>loop=True</code> with only N=2 frames returns to the origin on both frames, i.e. no motion; use
   <code>loop=False</code> or add frames.</li>
+<li>With <code>loop=True</code> every easing has zero velocity at both ends (the 0→1→0 path flattens them),
+  so <code>_in</code> / <code>_out</code> reshape the middle, not the start/stop.</li>
 <li>Camera and storyboard are different layers: the <strong>storyboard</strong> changes keyframe content (K
   KSamplers with their own prompts); the <strong>camera</strong> transforms already-decoded pixels. They compose.</li>
 <li>
@@ -1609,6 +1611,10 @@ interpolated into the full sequence, one decode, then the camera.</p>
 <tr>
 <td><code>x/y/zoom/angle/easing/loop/border</code></td>
 <td>Same meaning as <code>APNG Camera Move</code>; neutral values skip the extra resample</td>
+</tr>
+<tr>
+<td><code>segs</code></td>
+<td>Optional comma-separated frames per beat (e.g. <code>10,12,4,12</code>); empty means even split</td>
 </tr>
 </tbody>
 </table>

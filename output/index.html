@@ -1574,6 +1574,8 @@
   <span class="s1">'D:\ComfyUI-aki-v3.2-xl\ComfyUI\output\APNG\final\apng\anim24_00001_.png'</span> <span class="p">-</span><span class="n">-expect</span> <span class="n">24</span>
 </code></pre></div>
 <p>期望：<code>frames=24</code>、<code>loop=0</code>、<code>identical_pairs=0</code>、<code>color_drift &lt; 6</code>。</p>
+<p>带镜头运动的片子加 <code>--camera</code>；或者用 <code>--workflow &lt;工作流.json&gt;</code> 让它自己读有没有非中立镜头，
+免得整段位移被判成闪色。想看漂移形状加 <code>--curve</code>：末帧回到起点附近是「闭合」，一路向上是「累积」。</p>
 <ol>
 <li>再跑一次 <code>check_output.py</code>，<code>FAIL 总数: 0</code>。</li>
 </ol>
