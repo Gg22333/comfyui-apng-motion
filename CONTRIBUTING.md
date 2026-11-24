@@ -33,6 +33,16 @@ python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --story asse
 - 功能变更 → 更新 `skill.json` 的 `version` 与 `CHANGELOG.md`
 - 发版：`python scripts/package.py` 然后 `git tag vX.Y.Z`
 
+**版本号只升一级，能补丁就补丁：**
+
+| 位 | 什么时候动 | 例子 |
+| --- | --- | --- |
+| PATCH `x.y.Z` | 修 bug、改文案、加诊断参数、加可选 widget、兼容性小改 | 1.5.0 → 1.5.1 |
+| MINOR `x.Y.0` | 新增用户可见的节点或工作流类别，且一次至少 3 个以上大项 | 只有「单节点 + 19 档缓动」这种量级才配 |
+| MAJOR `X.0.0` | 工作流格式不兼容、必须重装或重新生成图 | 极少 |
+
+拿不准就升 PATCH。**不要一次跨两级**，也不要用 MINOR 装零散小改。
+
 ## 提交信息
 
 ```
