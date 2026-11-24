@@ -59,6 +59,7 @@ nav:
   - 参考:
       - 成品落盘: output.md
       - 方案对比: synthesis-comparison.md
+      - 定位与边界: positioning.md
       - 格式对比: formats.md
       - 架构: architecture.md
   - 帮助:
@@ -94,6 +95,7 @@ plugins:
             参考: Reference
             成品落盘: Output layout
             方案对比: Approach comparison
+            定位与边界: Positioning and limits
             格式对比: Formats
             架构: Architecture
             帮助: Help
