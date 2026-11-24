@@ -1575,6 +1575,8 @@
 </code></pre></div>
 <p>期望：<code>frames=24</code>、<code>loop=0</code>、<code>identical_pairs=0</code>、<code>color_drift &lt; 6</code>。</p>
 <p>带镜头运动的片子加 <code>--camera</code>；或者用 <code>--workflow &lt;工作流.json&gt;</code> 让它自己读有没有非中立镜头，
+判定分 <code>ok</code> / <code>warn</code> / <code>fail</code>，以及 <code>unknown</code>：既没给 <code>--camera</code> 也没给 <code>--workflow</code>、漂移又超标时，
+脚本不冒充结论，打 UNKNOWN 并提示补参数 —— UNKNOWN 不算通过。
 免得整段位移被判成闪色。想看漂移形状加 <code>--curve</code>：末帧回到起点附近是「闭合」，一路向上是「累积」。</p>
 <ol>
 <li>再跑一次 <code>check_output.py</code>，<code>FAIL 总数: 0</code>。</li>

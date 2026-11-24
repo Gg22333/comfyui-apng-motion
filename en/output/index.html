@@ -1574,6 +1574,8 @@
 </code></pre></div>
 <p>Expected: <code>frames=24</code>, <code>loop=0</code>, <code>identical_pairs=0</code>, <code>color_drift &lt; 6</code>.</p>
 <p>For camera-moved clips add <code>--camera</code>, or <code>--workflow &lt;workflow.json&gt;</code> so the script reads whether the
+Verdicts are <code>ok</code> / <code>warn</code> / <code>fail</code>, plus <code>unknown</code>: with neither <code>--camera</code> nor <code>--workflow</code>
+and drift over the limit, the script abstains instead of guessing; <code>unknown</code> is not a pass.
 graph has a non-neutral camera (otherwise a legitimate pan is reported as colour flashing). Add
 <code>--curve</code> to print the drift curve: returning near the start means closed loop, a monotone climb means accumulation.</p>
 <ol>
