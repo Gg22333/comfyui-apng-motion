@@ -851,6 +851,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4 · 镜头运动（整段平移 / 缩放 / 旋转）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-单节点版apng-one-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 单节点版：APNG One Shot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1323,6 +1340,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4 · 镜头运动（整段平移 / 缩放 / 旋转）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-单节点版apng-one-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 单节点版：APNG One Shot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1503,7 +1537,7 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
 </tr>
 <tr>
 <td><code>easing</code></td>
-<td>进度曲线：<code>linear</code> <code>sine</code> <code>cubic</code> <code>quint</code> <code>back</code> <code>elastic</code> <code>bounce</code></td>
+<td>进度曲线：<code>linear</code>；<code>sine</code> / <code>sine_in</code> / <code>sine_out</code>；<code>cubic</code> <code>quint</code> <code>back</code> <code>elastic</code> <code>bounce</code> 各带 <code>_in</code> / <code>_out</code>，共 19 种</td>
 <td>默认 <code>sine</code></td>
 </tr>
 <tr>
@@ -1537,6 +1571,40 @@ python<span class="w"> </span>scripts/install_nodes.py<span class="w"> </span>--
   <code>emit_workflow.py --run</code> 检测到非中立镜头参数时会自动带上这个开关。</p>
 </li>
 </ul>
+<h3 id="41-单节点版apng-one-shot">4.1 单节点版：<code>APNG One Shot</code><a class="headerlink" href="#41-单节点版apng-one-shot" title="Permanent link">&para;</a></h3>
+<p>不想搭图就用它：<code>model / clip / vae / positive / negative</code> 进，<code>IMAGE</code> 出。内部等价于 dynamic 图 ——
+K 拍各采样一次（不是每帧一次），latent 插值成整段，一次解码，再走镜头。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>actions</code></td>
+<td>每拍一段提示词，用 <code>\|</code> 或换行分隔；base positive 放不变的锁定词和画风</td>
+</tr>
+<tr>
+<td><code>frames</code></td>
+<td>总帧数，平均分给各拍，余数给最后一拍</td>
+</tr>
+<tr>
+<td><code>refine</code></td>
+<td>第 2 拍起的 denoise（默认 0.4，与 dynamic 图一致）</td>
+</tr>
+<tr>
+<td><code>curve</code></td>
+<td><code>linear</code> / <code>ease</code> / <code>snap</code>，拍内插值曲线</td>
+</tr>
+<tr>
+<td><code>x/y/zoom/angle/easing/loop/border</code></td>
+<td>与 <code>APNG Camera Move</code> 同义；中立值时不额外重采样</td>
+</tr>
+</tbody>
+</table>
+<p>采样次数 = 拍数，所以 3 拍 24 帧仍然是 3 次采样，不会退化成逐帧重绘。</p>
 <blockquote>
 <p>整段镜头 + 缓动的思路参考 <a href="https://github.com/ShmuelRonen/ComfyUI-AstralAnimator">ShmuelRonen/ComfyUI-AstralAnimator</a>。
 该仓库没有许可证文件，<strong>未复用任何代码</strong>；本节点是 <code>torch.nn.functional.affine_grid</code> + <code>grid_sample</code> 的独立实现。</p>

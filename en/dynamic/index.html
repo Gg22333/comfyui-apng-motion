@@ -851,6 +851,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4. Camera motion (whole-sequence pan / zoom / rotate)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-single-node-version-apng-one-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Single-node version: APNG One Shot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1323,6 +1340,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4. Camera motion (whole-sequence pan / zoom / rotate)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-single-node-version-apng-one-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Single-node version: APNG One Shot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1505,7 +1539,7 @@ Defaults are neutral; adjust on the canvas after emitting.</p>
 </tr>
 <tr>
 <td><code>easing</code></td>
-<td><code>linear</code> <code>sine</code> <code>cubic</code> <code>quint</code> <code>back</code> <code>elastic</code> <code>bounce</code></td>
+<td>Progress curve: <code>linear</code>; <code>sine</code> / <code>sine_in</code> / <code>sine_out</code>; <code>cubic</code> <code>quint</code> <code>back</code> <code>elastic</code> <code>bounce</code> each with <code>_in</code> / <code>_out</code> (19 total)</td>
 <td>default <code>sine</code></td>
 </tr>
 <tr>
@@ -1544,6 +1578,41 @@ Defaults are neutral; adjust on the canvas after emitting.</p>
   automatically when the camera widgets are off-centre.</p>
 </li>
 </ul>
+<h3 id="41-single-node-version-apng-one-shot">4.1 Single-node version: <code>APNG One Shot</code><a class="headerlink" href="#41-single-node-version-apng-one-shot" title="Permanent link">&para;</a></h3>
+<p>If you would rather not wire a graph: feed <code>model / clip / vae / positive / negative</code>, get <code>IMAGE</code>.
+It is equivalent to the dynamic graph — K beats each sampled once (not once per frame), latents
+interpolated into the full sequence, one decode, then the camera.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>actions</code></td>
+<td>One prompt fragment per beat, separated by <code>\|</code> or newlines; base positive holds the shared lock/style</td>
+</tr>
+<tr>
+<td><code>frames</code></td>
+<td>Total frames, split evenly across beats; the remainder goes to the last beat</td>
+</tr>
+<tr>
+<td><code>refine</code></td>
+<td>Denoise for beat 2 onward (default 0.4, same as the dynamic graph)</td>
+</tr>
+<tr>
+<td><code>curve</code></td>
+<td><code>linear</code> / <code>ease</code> / <code>snap</code> in-beat interpolation</td>
+</tr>
+<tr>
+<td><code>x/y/zoom/angle/easing/loop/border</code></td>
+<td>Same meaning as <code>APNG Camera Move</code>; neutral values skip the extra resample</td>
+</tr>
+</tbody>
+</table>
+<p>Sampling count equals beat count, so 3 beats / 24 frames still costs 3 samples, never per-frame re-drawing.</p>
 <blockquote>
 <p>The whole-sequence camera + easing idea was inspired by
 <a href="https://github.com/ShmuelRonen/ComfyUI-AstralAnimator">ShmuelRonen/ComfyUI-AstralAnimator</a>.
