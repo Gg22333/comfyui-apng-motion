@@ -128,6 +128,8 @@ python scripts/check_output.py --profile profiles/xl.json --fix
 期望：`frames=24`、`loop=0`、`identical_pairs=0`、`color_drift < 6`。
 
 带镜头运动的片子加 `--camera`；或者用 `--workflow <工作流.json>` 让它自己读有没有非中立镜头，
+判定分 `ok` / `warn` / `fail`，以及 `unknown`：既没给 `--camera` 也没给 `--workflow`、漂移又超标时，
+脚本不冒充结论，打 UNKNOWN 并提示补参数 —— UNKNOWN 不算通过。
 免得整段位移被判成闪色。想看漂移形状加 `--curve`：末帧回到起点附近是「闭合」，一路向上是「累积」。
 
 5. 再跑一次 `check_output.py`，`FAIL 总数: 0`。

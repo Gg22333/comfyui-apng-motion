@@ -125,6 +125,16 @@ def main():
             identical += 1
         diffs.append(round(mean_abs_diff(frames[i - 1], frames[i]), 2))
 
+    lim_fail, lim_warn = (45, 20) if camera else (20, 6)
+    if drift > lim_fail:
+        # 只有「明确说了静态」（--workflow 且镜头中立）才判 FAIL；
+        # 什么机位信息都没给时，允许判定为未知，不冒充结论。
+        verdict = "fail" if (camera or args.workflow) else "unknown"
+    elif drift > lim_warn:
+        verdict = "warn"
+    else:
+        verdict = "ok"
+
     total_ms = sum(d for d in durations if isinstance(d, (int, float)))
     res = {
         "file": args.path,
@@ -141,6 +151,7 @@ def main():
         "identical_pairs": identical,
         "color_drift": round(drift, 2),
         "camera": camera,
+        "color_verdict": verdict,
     }
 
     # ---- 逐拍检查 ----
@@ -208,12 +219,14 @@ def main():
             print(f"timing  : {res['duration_ms']} ms/frame  total={res['total_s']} s")
         print(f"diff    : min={res['diff_min']}  max={res['diff_max']}  avg={res['diff_avg']}")
         print(f"color   : drift={res['color_drift']}（相对第 1 帧的平均 RGB 最大偏移）")
-        lim_fail, lim_warn = (45, 20) if camera else (20, 6)
         if drift > lim_fail:
             if camera:
                 print("FAIL    : 颜色漂移 > %d，超过镜头运动的合理位移，先确认 x/y/zoom/angle 没写太大" % lim_fail)
+            elif args.workflow:
+                print("FAIL    : 颜色漂移 > %d，工作流里没有非中立镜头，按静态机位判闪色" % lim_fail)
             else:
-                print("FAIL    : 颜色漂移 > %d，大概率是色块闪，回去查 denoise 和提示词里的光照词" % lim_fail)
+                print("UNKNOWN : 颜色漂移 %.2f 超过静态阈值，但没给机位信息，判不了是位移还是闪色" % drift)
+                print("hint    : 带镜头就加 --camera，或给 --workflow <工作流.json>；UNKNOWN 不算通过")
         elif drift > lim_warn:
             print("WARN    : 颜色漂移偏大，检查关键帧里是否有 eyes closed / 光照词变化")
         if camera:

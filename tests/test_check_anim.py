@@ -21,12 +21,28 @@ def run(path, *extra):
     return r.returncode, (r.stdout or "") + (r.stderr or "")
 
 
-def test_drift_fails_without_camera(tmp_path):
+def test_drift_without_evidence_is_unknown(tmp_path):
     p = str(tmp_path / "drift.png")
     make_apng(p, [0, 15, 30])          # drift = 30，超过默认 20
     code, log = run(p)
     assert code == 0, log
-    assert "FAIL" in log and "颜色漂移" in log
+    assert "UNKNOWN" in log and "不算通过" in log
+
+
+def test_json_verdict_unknown(tmp_path):
+    p = str(tmp_path / "drift.png")
+    make_apng(p, [0, 15, 30])
+    code, log = run(p, "--json")
+    assert code == 0, log
+    assert '"color_verdict": "unknown"' in log
+
+
+def test_camera_flag_marks_ok(tmp_path):
+    p = str(tmp_path / "mild.png")
+    make_apng(p, [0, 5, 10])          # drift = 10，镜头阈值内
+    code, log = run(p, "--camera", "--json")
+    assert code == 0, log
+    assert '"color_verdict": "ok"' in log
 
 
 def test_camera_relaxes_drift(tmp_path):

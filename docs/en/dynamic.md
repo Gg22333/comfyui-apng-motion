@@ -105,6 +105,25 @@ Semantics:
   from 20 to 45 so motion is not misread as colour flashing. `emit_workflow.py --run` adds the flag
   automatically when the camera widgets are off-centre.
 
+### 4.3 Shot script: one beat per line
+
+```powershell
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --shot shot.txt --dynamic --out my.json
+```
+
+```text
+# comment
+0-7   | a red-haired girl at the window
+8-15  | pan_left slow | eyes opening, side light
+16-23 |               | laughing
+```
+
+- Frame ranges are inclusive and must start at 0 and stay contiguous; total frames = last end + 1.
+- The camera column is optional: preset plus `slow/fast` and `small/large`. One camera per file;
+  conflicting cameras raise an error.
+- The last column is that beat's prompt.
+- `--shot` overrides the story's `actions` / `segs`; an explicit `--camera-preset` wins.
+
 ### 4.2 Presets and preview before rendering
 
 ```powershell

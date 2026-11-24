@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 1.5.3 — 2026-11-24
+
+**分镜脚本 + 允许「判不了」。**
+
+- **`--shot shot.txt`**：一行一拍（`0-7 | pan_left slow | 提示词`），覆盖 story 的 actions/segs；
+  帧范围必须从 0 开始且首尾相接，镜头全文件只能一种，冲突/断档直接报错。
+  解析器在 `scripts/shot_script.py`，镜头预设复用 `camera_presets.py`。
+- **`check_anim` 增加 `UNKNOWN` 判定**：既没 `--camera` 也没 `--workflow`、漂移又超标时，
+  不硬判 FAIL，而是打 UNKNOWN + 两条明确出路；UNKNOWN 不算通过。JSON 增加 `color_verdict`。
+  给了工作流且镜头中立时仍然判 FAIL —— 那是「明确知道是静态」。
+- **文档**：分镜脚本章节、判定档位说明（中英）。
+- **版本号**：1.5.2 → 1.5.3（PATCH）。
+
 ## 1.5.2 — 2026-11-24
 
 **镜头预设 + 出图前预览，把「先试后烧」补上。**

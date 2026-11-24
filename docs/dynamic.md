@@ -98,6 +98,24 @@ K 个关键帧 KSampler（同 seed，首帧 latent）
   RGB 均值一起平移，`--camera` 把漂移阈值从 20 放宽到 45，避免把正常位移误判成闪色；
   `emit_workflow.py --run` 检测到非中立镜头参数时会自动带上这个开关。
 
+### 4.3 分镜脚本：一行一拍
+
+```powershell
+python scripts/emit_workflow.py --base workflows/workflow-sdxl.json --shot shot.txt --dynamic --out my.json
+```
+
+```text
+# 注释
+0-7   | 一位红发少女站在窗边
+8-15  | pan_left slow | 微微睁眼
+16-23 |               | 张嘴笑
+```
+
+- 帧范围是闭区间，必须从 0 开始、首尾相接；总帧数 = 最后一行的终点 + 1。
+- 镜头列可选，写「预设 + slow/fast + small/large」；**全文件只能一种镜头**，冲突直接报错。
+- 第三列是这一拍的提示词，写完整的动作/台词。
+- `--shot` 覆盖 story 的 `actions` / `segs`；显式 `--camera-preset` 优先级更高。
+
 ### 4.2 预设与出图前预览
 
 ```powershell

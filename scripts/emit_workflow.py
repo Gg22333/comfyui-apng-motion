@@ -28,6 +28,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import comfy_lib as L
 import camera_presets as CP
+import shot_script as SS
 import timing as T
 
 
@@ -245,6 +246,8 @@ def main():
                     help="动态帧数模式：每拍一个 APNG Latent Interpolate N + 一次解码（需要 comfyui_nodes 节点）")
     ap.add_argument("--camera", action="store_true",
                     help="动态模式配 --camera：解码后插入 APNG Camera Move（默认中立，图上再调）")
+    ap.add_argument("--shot", default="",
+                    help="分镜脚本：每行「帧范围 | [镜头] | 提示词」，覆盖 story 的 actions/segs")
     ap.add_argument("--camera-preset", default="",
                     help="镜头预设：dolly_in / pan_left / zoom_in / spiral ...（自动开启 --camera）")
     ap.add_argument("--camera-speed", type=float, default=1.0, help="预设倍速，默认 1.0")
@@ -298,6 +301,25 @@ def main():
 
     wf = L.load_json(a.base)
     story = L.load_json(a.story) if a.story else {}
+    if a.shot:
+        try:
+            with open(a.shot, encoding="utf-8-sig") as fh:
+                spec = SS.parse_shot(fh.read())
+        except Exception as exc:
+            print("shot 解析失败：%s" % exc)
+            return 2
+        story = dict(story)
+        story["actions"] = spec["actions"]
+        story["segs"] = spec["segs"]
+        story["beats"] = len(spec["actions"])
+        story["frames"] = sum(spec["segs"])
+        if spec["camera"] and not a.camera_preset:
+            a.camera_preset = spec["camera"]
+            a.camera_speed = spec["speed"]
+            a.camera_amp = spec["amp"]
+        print("shot    : %d 拍 / %d 帧%s" % (
+            len(spec["actions"]), sum(spec["segs"]),
+            (" / 镜头 " + spec["camera"]) if spec["camera"] else ""))
 
     kfs = story.get("keyframes") or []
     actions = story.get("actions") or ([x.strip() for x in a.actions.split("|")] if a.actions else [])

@@ -370,7 +370,10 @@ K 个关键帧 KSampler（不变）
 
 镜头预设：`--camera-preset dolly_in|pan_left|zoom_in|spiral|...`（`--camera-speed` / `--camera-amp` 调倍速和幅度）。
 3D-only 的 `orbit/tilt/crane/shake` 会直接报错，不会静默不动。
-出图前先预览：`python scripts/make_camera_preview.py still.png --preset pan_left --out preview.gif`（纯 Pillow，一秒）。图里的 `APNGFrameStats` 也会打印同口径漂移曲线（闭合 / 累积）。
+出图前先预览：`python scripts/make_camera_preview.py still.png --preset pan_left --out preview.gif`（纯 Pillow，一秒）。
+
+分镜也可以写成一行一拍：`--shot shot.txt`（`0-7 | pan_left slow | 提示词`），覆盖 story 的 actions/segs。
+`check_anim` 在没给机位信息又漂移超标时打 `UNKNOWN`，不冒充结论，也不算通过。图里的 `APNGFrameStats` 也会打印同口径漂移曲线（闭合 / 累积）。
 
 #### 2.4.2 懒人节点 `APNG One Shot`
 
